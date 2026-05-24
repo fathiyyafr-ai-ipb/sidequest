@@ -1,0 +1,41 @@
+﻿<!--
+  _layout.html
+  ─────────────────────────────────────────────────────
+  This file is a REFERENCE SNIPPET — it is NOT served
+  directly. Every page HTML includes the sidebar/topbar
+  inline so they can be opened as standalone files.
+
+  If you later add a backend (Node/PHP/etc.) you can
+  use a template engine (EJS, Blade, Jinja…) to include
+  this file automatically instead of duplicating it.
+  ─────────────────────────────────────────────────────
+
+  SHARED HEAD block (paste into every <head>):
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:        '#6C63FF',
+            'primary-dark': '#5A52E0',
+            'primary-light':'#EDE9FF',
+            accent:         '#FF6B35',
+            'accent-light': '#FFF1EB',
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          boxShadow: {
+            card:      '0 2px 12px rgba(108,99,255,0.10)',
+            'card-hover':'0 6px 24px rgba(108,99,255,0.18)',
+            topbar:    '0 2px 16px rgba(108,99,255,0.12)',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+-->

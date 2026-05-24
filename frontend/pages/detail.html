@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detail Lomba — SideQuest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:         '#6C63FF',
+            'primary-dark':  '#5A52E0',
+            'primary-light': '#EDE9FF',
+            accent:          '#FF6B35',
+            'accent-light':  '#FFF1EB',
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          boxShadow: {
+            card:         '0 2px 12px rgba(108,99,255,0.10)',
+            'card-hover': '0 6px 24px rgba(108,99,255,0.18)',
+            topbar:       '0 2px 16px rgba(108,99,255,0.12)',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="min-h-screen bg-[#FFF5F5]">
+<!-- ── Sidebar overlay (mobile) ── -->
+<div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden"
+     onclick="closeSidebar()"></div>
+
+<!-- ── Sidebar ── -->
+<aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col">
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100">
+    <a href="dashboard.html" class="text-xl font-extrabold text-primary tracking-tight">SideQuest</a>
+  </div>
+
+  <!-- User mini card -->
+  <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center
+                text-white font-bold text-sm flex-shrink-0">RA</div>
+    <div>
+      <p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight">Rizki Aditya</p>
+      <p id="sb-user-role" class="text-xs text-gray-400 mt-0.5">Teknik Informatika · UI</p>
+    </div>
+  </div>
+
+  <!-- Nav links -->
+  <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+    
+    <a href="dashboard.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
+      <span class="text-sm font-600">Dashboard</span>
+      
+    </a>
+    <a href="direktori.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="text-sm font-600">Direktori Lomba</span>
+      <span class="ml-auto bg-accent text-white text-xs font-bold px-1.5 py-0.5 rounded-full">12</span>
+    </a>
+    <a href="matchmaking.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="text-sm font-600">Matchmaking</span>
+      
+    </a>
+    <a href="cari-tim.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="text-sm font-600">Cari Tim</span>
+      <span class="ml-auto bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-full">8</span>
+    </a>
+    <a href="profil.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></span>
+      <span class="text-sm font-600">Profil Saya</span>
+      
+    </a>
+    <a href="posting-lomba.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-accent-light mt-1">
+      <span class="nav-icon text-accent w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="text-sm font-600 text-accent">Posting Lomba</span>
+    </a>
+  </nav>
+
+  <!-- Status -->
+  <div class="px-5 py-4 border-t border-gray-100">
+    <div class="flex items-center gap-2 text-xs text-gray-400">
+      <div class="w-2 h-2 rounded-full bg-green-400 pulse"></div>
+      <span>Status: Aktif cari tim</span>
+    </div>
+  </div>
+</aside>
+<!-- ── Mobile topbar ── -->
+<header class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white shadow-topbar px-4 py-3
+               flex items-center justify-between">
+  <button onclick="openSidebar()" class="p-2 rounded-xl hover:bg-gray-100 transition-colors">
+    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+      <path d="M4 6h16M4 12h16M4 18h16" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+  <div class="flex items-center gap-2">
+    <span class="font-extrabold text-primary text-base">SideQuest</span>
+  </div>
+  <div class="flex items-center gap-1.5">
+    <button class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+        <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
+                 C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
+                 A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5
+                 M15 17a3 3 0 11-6 0"
+              stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-accent rounded-full"></span>
+    </button>
+    <a href="profil.html"
+       class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA</a>
+  </div>
+</header>
+
+<!-- ── Desktop topbar ── -->
+<header class="hidden lg:flex fixed top-0 right-0 left-64 z-20 bg-white/95 backdrop-blur
+               shadow-topbar px-6 py-3.5 items-center justify-between">
+  <div>
+    <h2 class="text-base font-800 text-gray-800">Detail Lomba</h2>
+    <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, Rizki 👋</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <button class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+        <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
+                 C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
+                 A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5
+                 M15 17a3 3 0 11-6 0"
+              stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border border-white"></span>
+    </button>
+    <a href="profil.html"
+       class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
+      <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA</div>
+      <span class="text-sm font-600 text-gray-700">Rizki Aditya</span>
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+        <path d="M6 9l6 6 6-6" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </a>
+  </div>
+</header>
+<div class="lg:ml-64">
+  
+  <main class="main-content pt-16 lg:pt-20 pb-32 lg:pb-10 px-4 lg:px-8 max-w-6xl mx-auto">
+
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-3 mt-4 mb-4">
+      <a href="direktori.html" class="w-9 h-9 rounded-xl bg-white shadow-card flex items-center justify-center hover:bg-primary-light transition-colors">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+          <path d="M19 12H5M12 19l-7-7 7-7" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </a>
+      <div>
+        <p class="text-xs text-gray-400">Direktori Lomba</p>
+        <h1 class="text-sm font-700 text-gray-800">Detail Lomba</h1>
+      </div>
+      <div class="ml-auto flex gap-2">
+        <button onclick="showToast('🔔 Pengingat diaktifkan!')"
+                class="w-9 h-9 rounded-xl bg-white shadow-card flex items-center justify-center hover:bg-primary-light transition-colors">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"
+                  stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <a href="matchmaking.html"
+           class="w-9 h-9 rounded-xl bg-white shadow-card flex items-center justify-center hover:bg-primary-light transition-colors">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8z
+                     M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"
+                  stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="bg-gradient-to-br from-primary via-purple-500 to-primary-dark rounded-2xl p-6 mb-5 relative overflow-hidden">
+      <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"></div>
+      <div class="absolute right-12 -bottom-4 w-20 h-20 bg-white/5 rounded-full"></div>
+      <div class="relative z-10">
+        <span class="inline-block bg-white/20 backdrop-blur text-white text-xs font-700 px-3 py-1 rounded-full border border-white/30 mb-3">
+          🔬 Teknologi
+        </span>
+        <h2 class="text-xl font-800 text-accent mb-1">Gemastik XVII 2026</h2>
+        <h3 class="text-lg font-700 text-white mb-2">Pengembangan Perangkat Lunak</h3>
+        <p class="text-white/70 text-sm">Kemendikbud Ristek RI · Nasional</p>
+      </div>
+    </div>
+
+    <!-- 2-col -->
+    <div class="lg:grid lg:grid-cols-3 lg:gap-6">
+      <div class="lg:col-span-2 space-y-4">
+
+        <!-- Deskripsi -->
+        <div class="bg-white rounded-2xl shadow-card p-5">
+          <h3 class="font-800 text-gray-800 mb-3 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-lg bg-primary-light flex items-center justify-center text-xs">📋</span>
+            Deskripsi Lomba
+          </h3>
+          <p class="text-sm text-gray-600 leading-relaxed">
+            Gemastik (Pagelaran Mahasiswa Nasional Bidang TIK) adalah kompetisi nasional yang diselenggarakan
+            Kemendikbud. Bidang PPL mencakup pengembangan aplikasi web, mobile, dan desktop yang inovatif.
+          </p>
+          <div class="flex flex-wrap gap-2 mt-3">
+            <span class="tag-purple text-xs font-600 px-2.5 py-1 rounded-full">Web Development</span>
+            <span class="tag-orange text-xs font-600 px-2.5 py-1 rounded-full">Mobile App</span>
+            <span class="tag-blue text-xs font-600 px-2.5 py-1 rounded-full">Tim 3 orang</span>
+          </div>
+        </div>
+
+        <!-- Timeline + Syarat -->
+        <div class="bg-white rounded-2xl shadow-card p-5">
+          <div class="flex items-start justify-between mb-4">
+            <h3 class="font-800 text-gray-800 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-primary-light flex items-center justify-center text-xs">📅</span>
+              Timeline
+            </h3>
+            <h3 class="font-800 text-gray-800 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-accent-light flex items-center justify-center text-xs">📜</span>
+              Syarat & Ketentuan
+            </h3>
+          </div>
+          <div class="flex gap-6">
+            <!-- Timeline -->
+            <div class="flex-1 relative pl-6">
+              <div class="absolute left-2 top-2 bottom-2 w-0.5 tl-line rounded-full"></div>
+              <div class="relative mb-5">
+                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-accent border-2 border-white shadow-sm"></div>
+                <p class="text-xs font-700 text-accent">1 Maret 2026</p>
+                <p class="text-sm font-600 text-gray-800">Pendaftaran Dibuka</p>
+                <p class="text-xs text-gray-400">Daftar via portal gemastik.id</p>
+              </div>
+              <div class="relative mb-5">
+                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-primary border-2 border-white shadow-sm"></div>
+                <p class="text-xs font-700 text-primary">14 Mei 2026 ← Sekarang</p>
+                <p class="text-sm font-600 text-gray-800">Batas Upload Proposal</p>
+                <p class="text-xs text-gray-400">Format PDF, max 10 halaman</p>
+              </div>
+              <div class="relative mb-5">
+                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full border-2 border-gray-300 bg-white shadow-sm"></div>
+                <p class="text-xs font-700 text-gray-400">1 Juni 2026</p>
+                <p class="text-sm font-600 text-gray-800">Pengumuman 30 Besar</p>
+                <p class="text-xs text-gray-400">Via email & portal resmi</p>
+              </div>
+              <div class="relative">
+                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full border-2 border-gray-300 bg-white shadow-sm"></div>
+                <p class="text-xs font-700 text-gray-400">15–17 Juli 2026</p>
+                <p class="text-sm font-600 text-gray-800">Grand Final</p>
+                <p class="text-xs text-gray-400">Presentasi & penjurian</p>
+              </div>
+            </div>
+            <!-- Syarat -->
+            <div class="flex-1 space-y-3">
+              <div class="flex items-start gap-2">
+                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                </div>
+                <p class="text-xs text-gray-600">Mahasiswa S1/D4 aktif, semua jurusan</p>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                </div>
+                <p class="text-xs text-gray-600">Tim: 3 mahasiswa + 1 dosen pembimbing</p>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                </div>
+                <p class="text-xs text-gray-600">Karya orisinil, belum menang kompetisi lain</p>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                </div>
+                <p class="text-xs text-gray-600">Daftar via portal resmi gemastik.id</p>
+              </div>
+              <div class="flex items-start gap-2">
+                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                </div>
+                <p class="text-xs text-gray-600">Wajib hadir grand final di Bandung</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right col -->
+      <div class="space-y-4 mt-4 lg:mt-0">
+        <!-- Hadiah -->
+        <div class="bg-white rounded-2xl shadow-card p-5">
+          <h3 class="font-800 text-gray-800 mb-3 text-sm">🏆 Hadiah</h3>
+          <div class="space-y-2">
+            <div class="flex items-center gap-3 p-2.5 rounded-xl bg-yellow-50">
+              <span class="text-xl">🥇</span>
+              <div><p class="text-xs font-700 text-gray-800">Juara 1</p><p class="text-xs text-accent font-600">Rp 25.000.000</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50">
+              <span class="text-xl">🥈</span>
+              <div><p class="text-xs font-700 text-gray-800">Juara 2</p><p class="text-xs text-gray-500 font-600">Rp 15.000.000</p></div>
+            </div>
+            <div class="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50">
+              <span class="text-xl">🥉</span>
+              <div><p class="text-xs font-700 text-gray-800">Juara 3</p><p class="text-xs text-gray-500 font-600">Rp 10.000.000</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="bg-white rounded-2xl shadow-card p-5 space-y-3">
+          <h3 class="font-800 text-gray-800 text-sm mb-2">ℹ️ Info</h3>
+          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Penyelenggara</span><span class="text-xs font-600 text-gray-700">Kemendikbud</span></div>
+          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Lingkup</span><span class="text-xs font-600 text-gray-700">Nasional</span></div>
+          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Biaya Daftar</span><span class="text-xs font-700 text-green-600">Gratis</span></div>
+          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Peserta</span><span class="text-xs font-600 text-gray-700">340 tim</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Action buttons (fixed bottom) -->
+  <div class="fixed bottom-16 lg:bottom-0 left-0 right-0 lg:left-64 bg-white border-t border-gray-100 px-4 lg:px-8 py-3 flex gap-3 shadow-topbar z-10">
+    <a href="matchmaking.html" class="flex-1 py-3 rounded-xl border-2 border-primary text-primary text-sm font-700 hover:bg-primary-light transition-colors text-center">
+      Cari Tim
+    </a>
+    <button onclick="showToast('🔖 Lomba disimpan!')"
+            class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors">
+      Simpan
+    </button>
+    <button onclick="showToast('✅ Berhasil mendaftar!')"
+            class="flex-[2] py-3 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">
+      Daftar Sekarang →
+    </button>
+  </div>
+
+  
+</div>
+<!-- ── Bottom tab bar (mobile only) ── -->
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100
+            shadow-topbar flex items-center">
+  
+    <a href="dashboard.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
+      <span class="tab-label text-xs font-600 text-gray-400">Home</span>
+      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+    </a>
+    <a href="direktori.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="tab-label text-xs font-600 text-gray-400">Lomba</span>
+      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+    </a>
+    <a href="matchmaking.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="tab-label text-xs font-600 text-gray-400">Match</span>
+      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+    </a>
+    <a href="profil.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="tab-label text-xs font-600 text-gray-400">Profil</span>
+      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+    </a>
+</nav>
+<script type="module">
+import { api, ui, handleApiError, token } from '../js/api.js';
+import { initSession, bindLogout } from '../js/auth.js';
+
+bindLogout();
+initSession();
+
+// Read competition ID from URL: detail.html?id=UUID
+const params = new URLSearchParams(window.location.search);
+const compId = params.get('id');
+
+if (compId) {
+  // Fetch real competition from backend
+  (async () => {
+    try {
+      const c = await api.competitions.getById(compId);
+      // Update page title
+      document.title = c.title + ' — SideQuest';
+      // Update hero section
+      const heroTitle = document.querySelector('.text-xl.font-800.text-accent');
+      if (heroTitle) heroTitle.textContent = c.title;
+      const heroOrg = document.querySelector('.text-white\/70.text-sm');
+      if (heroOrg) heroOrg.textContent = c.organizer + ' · ' + c.scope;
+      // Update deadline badge
+      const days = c.daysUntilClose;
+      if (days != null) {
+        const deadlineEl = document.querySelector('.text-xs.text-accent.font-600');
+        if (deadlineEl) {
+          const urgency = days <= 3 ? '🔥' : days <= 7 ? '⏰' : '📅';
+          deadlineEl.textContent = `${urgency} Deadline: ${ui.formatDate(c.registrationClose)}`;
+          if (days <= 3) deadlineEl.classList.add('text-red-500');
+        }
+      }
+    } catch(err) {
+      // Page still shows static content if API fails
+      console.warn('Detail fetch failed, showing static content:', err.message);
+    }
+  })();
+}
+
+// ── Save / bookmark button ──
+document.querySelectorAll('[onclick*="showToast"][onclick*="disimpan"]').forEach(btn => {
+  btn.removeAttribute('onclick');
+  btn.addEventListener('click', async () => {
+    if (!token.isPresent()) { window.location.href = 'login.html'; return; }
+    try {
+      if (!compId) { ui.toast('🔖 Lomba disimpan!', 'success'); return; }
+      await api.competitions.save(compId);
+      ui.toast('🔖 Lomba disimpan!', 'success');
+      btn.textContent = '✅ Tersimpan';
+      btn.disabled = true;
+    } catch(e) {
+      if (e.message?.includes('Already')) {
+        ui.toast('Lomba sudah ada di daftar simpan', 'info');
+      } else {
+        handleApiError(e, 'Gagal menyimpan lomba');
+      }
+    }
+  });
+});
+
+// ── Register / Daftar button ──
+document.querySelectorAll('[onclick*="Berhasil mendaftar"]').forEach(btn => {
+  btn.removeAttribute('onclick');
+  btn.addEventListener('click', () => {
+    if (!token.isPresent()) { window.location.href = 'login.html'; return; }
+    ui.toast('🚀 Fitur pendaftaran akan segera tersedia!', 'warning', 3000);
+  });
+});
+
+// ── Reminder button ──
+document.querySelectorAll('[onclick*="Pengingat"]').forEach(btn => {
+  btn.removeAttribute('onclick');
+  btn.addEventListener('click', () => {
+    ui.toast('🔔 Pengingat diaktifkan!', 'success');
+  });
+});
+</script>
+</body>
+</html>

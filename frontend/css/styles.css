@@ -1,0 +1,215 @@
+/* ═══════════════════════════════════════════════════
+   SideQuest — styles.css
+   Custom styles (Tailwind handles utilities via CDN)
+═══════════════════════════════════════════════════ */
+
+/* ── Reset ── */
+* { box-sizing: border-box; }
+
+/* ── Base ── */
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: #FFF5F5;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar           { width: 4px; height: 4px; }
+::-webkit-scrollbar-track     { background: transparent; }
+::-webkit-scrollbar-thumb     { background: #D4D0FF; border-radius: 9px; }
+::-webkit-scrollbar-thumb:hover { background: #6C63FF; }
+
+/* ── Hide scrollbar (utility) ── */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ── Font weight utilities (complement Tailwind) ── */
+.font-500 { font-weight: 500; }
+.font-600 { font-weight: 600; }
+.font-700 { font-weight: 700; }
+.font-800 { font-weight: 800; }
+
+/* ── Line clamp ── */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── Page transition ── */
+.page { display: none; }
+.page.active {
+  display: block;
+  animation: fadeUp 0.25s ease;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Sidebar nav ── */
+.nav-link { transition: background 0.18s, color 0.18s; }
+
+.nav-link.active {
+  background: #EDE9FF;
+  color: #6C63FF;
+}
+.nav-link.active .nav-icon { color: #6C63FF; }
+
+.nav-link:hover:not(.active) { background: #F5F3FF; }
+
+/* ── Bottom tab bar ── */
+.tab-btn.active .tab-icon  { color: #6C63FF; }
+.tab-btn.active .tab-label { color: #6C63FF; }
+.tab-btn.active .tab-dot   { display: block; }
+
+/* ── Gradient header (purple) ── */
+.grad-header {
+  background: linear-gradient(135deg, #6C63FF 0%, #9B8FFF 100%);
+}
+
+/* ── Timeline gradient line ── */
+.tl-line {
+  background: linear-gradient(to bottom, #FF6B35, #6C63FF);
+}
+
+/* ── Lomba card hover ── */
+.lomba-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.lomba-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(108, 99, 255, 0.18);
+}
+
+/* ── Match card hover ── */
+.match-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.match-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(108, 99, 255, 0.14);
+}
+
+/* ── Compatibility score badge ── */
+.score-badge {
+  background: linear-gradient(135deg, #4CAF50, #45a049);
+}
+
+/* ── Filter chip ── */
+.chip {
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.chip.selected {
+  background: #6C63FF !important;
+  color: #fff !important;
+  border-color: #6C63FF !important;
+}
+
+/* ── Tag pills ── */
+.tag-purple { background: #EDE9FF; color: #6C63FF; }
+.tag-orange { background: #FFF1EB; color: #FF6B35; }
+.tag-green  { background: #E8F5E9; color: #388E3C; }
+.tag-blue   { background: #E3F2FD; color: #1565C0; }
+.tag-pink   { background: #FCE4EC; color: #C62828; }
+
+/* ── Search input focus ── */
+.search-input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(108, 99, 255, 0.25);
+  border-color: #6C63FF;
+}
+
+/* ── Pulse animation (deadline warning) ── */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+.pulse { animation: pulse 1.5s ease-in-out infinite; }
+
+/* ── Smooth scroll ── */
+.main-content { scroll-behavior: smooth; }
+
+/* ── Mobile sidebar ── */
+@media (max-width: 1023px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-overlay { display: none; }
+  .sidebar-overlay.open { display: block; }
+}
+
+/* ── Stat card hover ── */
+.stat-card {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 99, 255, 0.14);
+}
+
+/* ── Feature button ── */
+.feat-btn {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.feat-btn:hover  { transform: translateY(-3px); }
+.feat-btn:active { transform: scale(0.95); }
+
+/* ── Active page indicator stripe (sidebar) ── */
+.nav-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #6C63FF;
+  border-radius: 0 4px 4px 0;
+}
+.nav-link { position: relative; }
+
+/* ── Compat bar animation ── */
+.compat-bar-fill {
+  transition: width 0.6s ease;
+}
+
+/* ── Toast notification ── */
+.toast {
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #1F1F2E;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 9999;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── Skeleton loader ── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 8px;
+}
