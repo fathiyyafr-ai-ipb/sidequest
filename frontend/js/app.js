@@ -214,17 +214,16 @@ function filterLomba(query) {
 
 function setChip(el, cat) {
   /* reset all chips in the direktori section */
-  document.querySelectorAll("#page-direktori .chip").forEach((c) => {
-    c.classList.remove("selected");
+  document.querySelectorAll(".chip").forEach((c) => {
+    c.classList.remove("selected", "border-primary", "bg-primary", "text-white");
     c.classList.add("border-gray-200", "text-gray-600");
-    c.classList.remove("border-primary", "text-white");
   });
   /* activate clicked chip */
-  el.classList.add("selected");
+  el.classList.add("selected", "border-primary", "bg-primary", "text-white");
   el.classList.remove("border-gray-200", "text-gray-600");
 
   _currentCat = cat;
-  const q = document.querySelector("#page-direktori input")?.value || "";
+  const q = document.getElementById("direktori-search")?.value || "";
   filterLomba(q);
 }
 
@@ -342,7 +341,7 @@ function filterMatch(skillCat) {
 
 function setMatchChip(el, skillCat) {
   /* reset semua chip matchmaking */
-  document.querySelectorAll("#page-matchmaking .chip, .match-chip").forEach((c) => {
+  document.querySelectorAll(".chip, .match-chip").forEach((c) => {
     c.classList.remove("selected", "bg-primary", "text-white", "border-primary");
     c.classList.add("border-gray-200", "text-gray-600");
   });
