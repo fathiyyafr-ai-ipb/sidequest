@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
@@ -10,6 +11,9 @@ const matchmakingRoutes = require('./routes/matchmakingRoutes');
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Serve static files from frontend directory
+app.use(express.static(path.join(__dirname, '../frontend')));
 
 // Test Database Connection
 const pool = require('./config/db');

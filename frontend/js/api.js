@@ -204,10 +204,12 @@ export const ui = {
 
   fillSidebarUser() {
     const u=currentUser.get(); if (!u) return;
-    const parts=(u.fullName||u.full_name||'U').split(' ');
+    const parts=(u.fullName||u.full_name||u.name||'U').split(' ');
+    const fname=parts[0]||'';
     const init=((parts[0]?.[0]||'')+(parts[1]?.[0]||'')).toUpperCase();
-    document.querySelectorAll('[data-sb-name]').forEach(el=>el.textContent=u.fullName||u.full_name||'');
-    document.querySelectorAll('[data-sb-role]').forEach(el=>el.textContent=u.university||u.studyProgram||'');
+    document.querySelectorAll('[data-sb-name]').forEach(el=>el.textContent=u.fullName||u.full_name||u.name||'');
+    document.querySelectorAll('[data-sb-fname]').forEach(el=>el.textContent=fname);
+    document.querySelectorAll('[data-sb-role]').forEach(el=>el.textContent=u.university||u.studyProgram||u.prodi||'');
     document.querySelectorAll('[data-sb-init]').forEach(el=>el.textContent=init||'U');
   },
 

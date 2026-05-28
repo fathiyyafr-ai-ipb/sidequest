@@ -407,11 +407,11 @@ const matchData = [
 
 /* ── Current user profile ── */
 const currentUser = {
-  name: "Rizki Aditya",
-  initials: "RA",
-  prodi: "Teknik Informatika",
-  uni: "Universitas Indonesia",
-  bio: "Mahasiswa Teknik Informatika UI semester 6. Passionate di web development & AI. Suka ikut hackathon dan kompetisi startup. Mencari tim untuk Gemastik & ASEAN Business Plan.",
+  name: "Fathiyya Fitriani Refananda",
+  initials: "FF",
+  prodi: "Artificial Intelligence",
+  uni: "IPB University",
+  bio: "Mahasiswa Artificial Intelligence IPB University. Passionate di web development & AI. Suka ikut hackathon dan kompetisi startup. Mencari tim untuk Gemastik & ASEAN Business Plan.",
   stats: { lombaIkuti: 7, timAktif: 3, undangan: 2, matchRate: "92%" },
   skills: [
     { label: "React.js",       cls: "tag-purple" },

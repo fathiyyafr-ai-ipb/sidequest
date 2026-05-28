@@ -423,8 +423,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /* Coba ambil data lomba dari API; fallback ke lokal */
   fetchData().then(() => {
-    /* Setelah data siap, navigasi ke halaman default */
-    navigate("dashboard");
+    /* Setelah data siap, navigasi ke halaman berdasarkan URL */
+    let path = window.location.pathname.split('/').pop().replace('.html', '');
+    if (!path || path === '' || path === 'index') path = 'dashboard';
+    
+    if (TAB_ORDER.includes(path) || SIDEBAR_ORDER.includes(path)) {
+      navigate(path);
+    } else {
+      navigate('dashboard');
+    }
   });
 });
 

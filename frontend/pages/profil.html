@@ -47,10 +47,10 @@
     <!-- User mini card -->
     <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
       <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center
-                text-white font-bold text-sm flex-shrink-0">RA</div>
+                text-white font-bold text-sm flex-shrink-0" data-sb-init>RA</div>
       <div>
-        <p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight">Rizki Aditya</p>
-        <p id="sb-user-role" class="text-xs text-gray-400 mt-0.5">Teknik Informatika · UI</p>
+        <p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight" data-sb-name>Rizki Aditya</p>
+        <p id="sb-user-role" class="text-xs text-gray-400 mt-0.5" data-sb-role>Teknik Informatika · UI</p>
       </div>
     </div>
 
@@ -116,16 +116,20 @@
             <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
             <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
           </svg></span>
-        <span class="text-sm font-600 text-accent">Posting Lomba</span>
+        <span class="text-sm font-600 text-accent font-700">Posting Lomba</span>
       </a>
     </nav>
 
     <!-- Status -->
-    <div class="px-5 py-4 border-t border-gray-100">
+    <div class="px-5 py-4 border-t border-gray-100 space-y-2">
       <div class="flex items-center gap-2 text-xs text-gray-400">
         <div class="w-2 h-2 rounded-full bg-green-400 pulse"></div>
         <span>Status: Aktif cari tim</span>
       </div>
+      <a href="#" data-logout class="flex items-center gap-2 text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Keluar
+      </a>
     </div>
   </aside>
   <!-- ── Mobile topbar ── -->
@@ -159,7 +163,7 @@
                shadow-topbar px-6 py-3.5 items-center justify-between">
     <div>
       <h2 class="text-base font-800 text-gray-800">Profil Saya</h2>
-      <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, Rizki 👋</p>
+      <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, <span data-sb-fname>Rizki</span> 👋</p>
     </div>
     <div class="flex items-center gap-3">
       <button class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
@@ -173,9 +177,9 @@
       </button>
       <a href="profil.html"
         class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
-        <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA
+        <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs" data-sb-init>RA
         </div>
-        <span class="text-sm font-600 text-gray-700">Rizki Aditya</span>
+        <span class="text-sm font-600 text-gray-700" data-sb-name>Rizki Aditya</span>
         <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
           <path d="M6 9l6 6 6-6" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
         </svg>
@@ -200,8 +204,8 @@
           </div>
           <span class="absolute bottom-0 right-0 w-5 h-5 bg-green-400 rounded-full border-2 border-white"></span>
         </div>
-        <h2 class="text-xl font-800 text-white">Rizki Aditya</h2>
-        <p class="text-white/70 text-sm mt-0.5">Teknik Informatika · Universitas Indonesia</p>
+        <h2 class="text-xl font-800 text-white" id="profil-name">Rizki Aditya</h2>
+        <p class="text-white/70 text-sm mt-0.5" id="profil-school">Teknik Informatika · Universitas Indonesia</p>
         <div class="flex justify-center gap-6 mt-4">
           <div class="text-center">
             <p id="profil-stat-lomba" class="text-white font-800 text-lg">7</p>
@@ -226,7 +230,7 @@
           <!-- Bio -->
           <div class="bg-white rounded-2xl shadow-card p-5">
             <h3 class="font-800 text-gray-800 text-sm mb-2">Bio</h3>
-            <p class="text-sm text-gray-600 leading-relaxed">
+            <p class="text-sm text-gray-600 leading-relaxed" id="profil-bio">
               Mahasiswa Teknik Informatika UI semester 6. Passionate di web dev & AI.
               Suka hackathon dan kompetisi startup. Mencari tim untuk Gemastik & ASEAN BPC.
             </p>
@@ -260,7 +264,7 @@
             <div id="profil-prestasi" class="grid grid-cols-2 gap-3"></div>
           </div>
           <!-- Edit button -->
-          <button onclick="showToast('✏️ Mode edit profil segera hadir!')" class="w-full py-3.5 rounded-2xl bg-primary text-white font-700 text-sm
+          <button onclick="location.href='edit-profil.html'" class="w-full py-3.5 rounded-2xl bg-primary text-white font-700 text-sm
                        hover:bg-primary-dark transition-colors shadow-md">
             ✏️&nbsp; Edit Profil
           </button>
@@ -325,6 +329,17 @@
       <span class="tab-dot block w-1.5 h-1.5 rounded-full bg-primary mt-0.5"></span>
     </a>
   </nav>
+  <script type="module">
+    import { initSession } from '../js/auth.js';
+    document.addEventListener('DOMContentLoaded', async () => {
+      const u = await initSession();
+      if (u) {
+        document.getElementById('profil-name').textContent = u.fullName || u.name || 'Fathiyya Fitriani Refananda';
+        document.getElementById('profil-school').textContent = `${u.studyProgram || u.prodi || 'Artificial Intelligence'} · ${u.university || 'IPB University'}`;
+        document.getElementById('profil-bio').textContent = u.bio || 'Belum ada bio singkat.';
+      }
+    });
+  </script>
   <script src="../js/data.js"></script>
   <script src="../js/app.js"></script>
 </body>

@@ -24,6 +24,7 @@ export async function initSession() {
   if (!requireAuth()) return null;
   ui.fillSidebarUser();          // immediate from cache
   ui.updateNotifBadge();         // badge in background
+  bindLogout();
   try {
     const profile = await api.users.me();
     ui.fillSidebarUser();        // refresh with latest

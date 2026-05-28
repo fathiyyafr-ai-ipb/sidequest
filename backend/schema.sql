@@ -50,5 +50,4 @@ INSERT INTO categories (slug, name) VALUES
 ('web-dev', 'Web Development');
 
 INSERT INTO users (name, email, password, university, prodi, avatar_color, bio) VALUES 
-('Fathi', 'fathi@example.com', '$2a$10$wT.VdE.zU1/t1x7H.9j.N.bO3d/R8H9J.H/yXm2E.nL.m.z1q9L/S', 'Universitas Andalas', 'Sistem Informasi', 'bg-blue-500', 'Mahasiswa tingkat akhir'),
-('Rizki Aditya', 'rizki@ui.ac.id', '$2a$10$Dsxdimd8njKOD3nAUrQmm.7hLuHzCA5cnf03PrvnZ57yWkUN/bLDq', 'Universitas Indonesia', 'Teknik Informatika', 'bg-purple-500', 'Mahasiswa Teknik Informatika UI semester 6. Passionate di web development & AI.');
+('Fathiyya Fitriani Refananda', 'fathiyya@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Artificial Intelligence', 'bg-blue-500', 'Mahasiswa tingkat akhir');
