@@ -248,7 +248,62 @@ const connectUser = async (req, res) => {
   }
 };
 
+/**
+ * Merespons permintaan koneksi (Approve/Reject)
+ */
+const respondConnection = async (req, res) => {
+  const userId = req.userId;
+  const connectionId = parseInt(req.params.id, 10);
+  const { status } = req.body; // 'accepted' atau 'rejected'
+
+  try {
+    if (!status || !['accepted', 'rejected'].includes(status)) {
+      return res.status(400).json({ message: 'Status tidak valid' });
+    }
+
+    // Cek apakah koneksi ada dan ditujukan ke kita
+    const connCheck = await pool.query(
+      'SELECT * FROM connections WHERE id = $1 AND receiver_id = $2',
+      [connectionId, userId]
+    );
+
+    if (connCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Permintaan koneksi tidak ditemukan atau bukan milik Anda' });
+    }
+
+    const conn = connCheck.rows[0];
+
+    // Update status koneksi
+    await pool.query(
+      'UPDATE connections SET status = $1 WHERE id = $2',
+      [status === 'accepted' ? 'accepted' : 'rejected', connectionId]
+    );
+
+    // Kirim notifikasi ke pengirim permohonan koneksi
+    const responderRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);
+    const responderName = responderRes.rows[0].name;
+
+    if (status === 'accepted') {
+      await pool.query(
+        `INSERT INTO notifications (user_id, title, message, applicant_id) VALUES ($1, $2, $3, $4)`,
+        [
+          conn.sender_id,
+          'Koneksi Diterima',
+          `${responderName} menerima permintaan koneksi Anda! Sekarang Anda dapat berkolaborasi.`,
+          userId
+        ]
+      );
+    }
+
+    res.json({ message: status === 'accepted' ? 'Koneksi berhasil diterima!' : 'Koneksi ditolak.' });
+  } catch (err) {
+    console.error('[matchmakingController.respondConnection]', err);
+    res.status(500).json({ message: 'Gagal merespons permintaan koneksi' });
+  }
+};
+
 module.exports = {
   getMatchmaking,
-  connectUser
+  connectUser,
+  respondConnection
 };

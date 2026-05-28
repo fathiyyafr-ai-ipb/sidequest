@@ -36,6 +36,8 @@ app.use('/api/matchmaking', matchmakingRoutes);
 app.use('/api/notifications', notificationRoutes);
 const teamRoutes = require('./routes/teamRoutes');
 app.use('/api/teams', teamRoutes);
+const connectionRoutes = require('./routes/connectionRoutes');
+app.use('/api/connections', connectionRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
