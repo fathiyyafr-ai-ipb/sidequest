@@ -108,7 +108,7 @@
     <span class="font-extrabold text-primary text-base">SideQuest</span>
   </div>
   <div class="flex items-center gap-1.5">
-    <button class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
+    <button id="notif-btn-mobile" class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
         <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
                  C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
@@ -116,10 +116,10 @@
                  M15 17a3 3 0 11-6 0"
               stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-accent rounded-full"></span>
+      <span id="notif-badge-mobile" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-800 text-white border border-white hidden"></span>
     </button>
     <a href="profil.html"
-       class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA</a>
+       class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs" data-sb-init>RA</a>
   </div>
 </header>
 
@@ -131,7 +131,7 @@
     <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, <span data-sb-fname>Rizki</span> 👋</p>
   </div>
   <div class="flex items-center gap-3">
-    <button class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
+    <button id="notif-btn-desktop" class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
         <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
                  C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
@@ -139,7 +139,7 @@
                  M15 17a3 3 0 11-6 0"
               stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border border-white"></span>
+      <span id="notif-badge-desktop" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-800 text-white border border-white hidden"></span>
     </button>
     <a href="profil.html"
        class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
@@ -196,6 +196,35 @@
   </main>
   
 </div>
+
+<!-- ── Notification Panel ── -->
+<div id="notification-panel" class="hidden fixed top-16 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 p-4 animate-fade-in">
+  <div class="flex items-center justify-between border-b border-gray-100 pb-2.5 mb-3">
+    <h3 class="font-800 text-sm text-gray-800">Notifikasi</h3>
+    <button id="mark-all-read-btn" class="text-[10px] font-700 text-primary hover:text-primary-dark transition-colors border-0 bg-transparent cursor-pointer">
+      Tandai dibaca semua
+    </button>
+  </div>
+  <div id="notification-list" class="space-y-3 max-h-60 overflow-y-auto no-scrollbar">
+    <p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>
+  </div>
+</div>
+
+<!-- ── Profile Details Modal ── -->
+<div id="profile-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100 p-6 md:p-8">
+    <!-- Close Button -->
+    <button id="close-profile-modal-btn" class="absolute top-4 right-4 p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 border-0 cursor-pointer">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div id="profile-modal-content">
+      <!-- Loaded dynamically -->
+    </div>
+  </div>
+</div>
+
 <!-- ── Bottom tab bar (mobile only) ── -->
 <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100
             shadow-topbar flex items-center">
@@ -240,6 +269,7 @@
     if (u) {
       // Muat daftar matchmaking pertama kali
       await loadMatchmaking('all');
+      await updateNotificationState();
     }
   });
 
@@ -407,6 +437,264 @@
       ui.loading(false);
     }
   }
+
+  // Notifikasi Toggle Panel & Status
+  async function updateNotificationState() {
+    const badgeDesktop = document.getElementById('notif-badge-desktop');
+    const badgeMobile = document.getElementById('notif-badge-mobile');
+    const panel = document.getElementById('notification-panel');
+    const list = document.getElementById('notification-list');
+    const clearBtn = document.getElementById('mark-all-read-btn');
+
+    try {
+      const countData = await api.notifications.unreadCount();
+      const n = countData;
+      
+      // Update badge desktop & mobile secara sinkron
+      const refreshBadge = (badge) => {
+        if (badge) {
+          if (n > 0) {
+            badge.classList.remove('hidden');
+            badge.textContent = n > 99 ? '99+' : n;
+          } else {
+            badge.classList.add('hidden');
+            badge.textContent = '';
+          }
+        }
+      };
+
+      refreshBadge(badgeDesktop);
+      refreshBadge(badgeMobile);
+
+      // Tampilkan Notifikasi di Dropdown
+      const loadNotifications = async () => {
+        list.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>';
+        try {
+          const res = await api.notifications.list();
+          if (res.length === 0) {
+            list.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">Tidak ada notifikasi baru.</p>';
+            return;
+          }
+          list.innerHTML = res.map(notif => {
+            const isJoinRequest = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
+            const clickHandler = isJoinRequest 
+              ? `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId})"` 
+              : '';
+            const cursorClass = isJoinRequest ? 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]' : '';
+            const pendingBadge = isJoinRequest 
+              ? `<span class="bg-orange-100 text-orange-700 text-[9px] font-700 px-1.5 py-0.5 rounded-md uppercase flex-shrink-0">Pending</span>` 
+              : '';
+
+            return `
+              <div ${clickHandler} class="p-2.5 rounded-xl ${notif.isRead ? 'bg-gray-50/50' : 'bg-primary-light/10 border-l-4 border-primary'} ${cursorClass} flex flex-col gap-1 transition-all">
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-xs font-700 text-gray-800 leading-snug">${notif.title}</p>
+                  ${pendingBadge}
+                </div>
+                <p class="text-[10px] text-gray-500 mt-0.5 leading-relaxed">${notif.message}</p>
+                <span class="text-[8px] text-gray-400 mt-1 block">${ui.formatDate(notif.createdAt)}</span>
+              </div>
+            `;
+          }).join('');
+        } catch(err) {
+          list.innerHTML = '<p class="text-center text-xs text-red-500 py-4">Gagal memuat notifikasi.</p>';
+        }
+      };
+
+      // Togel Handler
+      const togglePanel = async (e) => {
+        e.stopPropagation();
+        const isOpen = !panel.classList.contains('hidden');
+        if (isOpen) {
+          panel.classList.add('hidden');
+        } else {
+          panel.classList.remove('hidden');
+          await loadNotifications();
+          // Tandai sudah dibaca secara otomatis
+          if (n > 0) {
+            await api.notifications.markAllRead();
+            await updateNotificationState();
+          }
+        }
+      };
+
+      // Pasang click handler ke tombol notifikasi desktop & mobile
+      const notifBtnDesktop = document.getElementById('notif-btn-desktop');
+      const notifBtnMobile = document.getElementById('notif-btn-mobile');
+
+      if (notifBtnDesktop) {
+        notifBtnDesktop.onclick = togglePanel;
+      }
+      if (notifBtnMobile) {
+        notifBtnMobile.onclick = togglePanel;
+      }
+
+      // Close panel saat klik di luar
+      document.addEventListener('click', (e) => {
+        const clickedInsidePanel = panel && panel.contains(e.target);
+        const clickedNotifBtn = e.target.closest('#notif-btn-desktop') || e.target.closest('#notif-btn-mobile');
+        
+        if (!clickedInsidePanel && !clickedNotifBtn) {
+          panel.classList.add('hidden');
+        }
+      });
+
+      // Clear notifications button
+      if (clearBtn) {
+        clearBtn.onclick = async () => {
+          try {
+            await api.notifications.markAllRead();
+            ui.toast('✅ Semua notifikasi ditandai telah dibaca', 'success');
+            await loadNotifications();
+            await updateNotificationState();
+          } catch(e) {
+            handleApiError(e);
+          }
+        };
+      }
+
+    } catch(e) {
+      console.warn('Gagal memuat notifikasi:', e.message);
+    }
+  }
+
+  // Tampilkan Profile Modal untuk Calon Anggota
+  window.viewApplicantProfile = async (applicantId, teamId = null) => {
+    const modal = document.getElementById('profile-modal');
+    const content = document.getElementById('profile-modal-content');
+    modal.classList.remove('hidden');
+    content.innerHTML = `
+      <div class="flex items-center justify-center py-12">
+        <div style="width:32px;height:32px;border:3px solid #EDE9FF;border-top-color:#6C63FF;border-radius:50%;animation:sq-spin .7s linear infinite"></div>
+      </div>
+    `;
+
+    try {
+      const applicant = await api.users.getById(applicantId);
+      const m = applicant;
+
+      // Format skills tag
+      const skillsHtml = (m.skills || []).map(s => `
+        <span class="tag-purple text-xs font-600 px-2.5 py-1 rounded-xl bg-primary-light text-primary">
+          ${s.label || s}
+        </span>
+      `).join('');
+
+      // Format riwayat lomba
+      const riwayatHtml = (m.riwayat || []).length === 0 
+        ? '<p class="text-xs text-gray-400">Belum mengikuti lomba apa pun.</p>'
+        : (m.riwayat || []).map(r => `
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+            <div class="w-8 h-8 rounded-xl ${r.bg || 'bg-primary-light'} flex items-center justify-center text-xs">
+              ${r.emoji || '🏆'}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-700 text-gray-800 truncate">${r.title}</p>
+              <p class="text-[10px] text-gray-400 truncate">${r.org}</p>
+            </div>
+            <span class="text-[9px] font-700 ${r.badgeCls || 'text-primary bg-primary-light'} px-2 py-0.5 rounded-lg flex-shrink-0">
+              ${r.badge}
+            </span>
+          </div>
+        `).join('');
+
+      // Format prestasi
+      const prestasiHtml = (m.prestasi || []).length === 0
+        ? '<p class="text-xs text-gray-400">Belum menambahkan prestasi.</p>'
+        : (m.prestasi || []).map(p => `
+          <div class="p-2.5 rounded-xl border border-gray-100">
+            <p class="text-[11px] font-700 text-gray-800 mb-0.5">${p.title}</p>
+            <p class="text-[10px] text-gray-400">${p.sub}</p>
+          </div>
+        `).join('');
+
+      // Cek apakah ada tombol aksi (Approve/Reject) jika teamId disediakan & user saat ini adalah owner tim tersebut
+      let actionHtml = '';
+      if (teamId) {
+        const myTeams = await api.teams.mine();
+        const activeTeam = Array.isArray(myTeams) 
+          ? myTeams.find(t => t.id === parseInt(teamId, 10)) 
+          : (myTeams && myTeams.id === parseInt(teamId, 10) ? myTeams : null);
+
+        if (activeTeam && activeTeam.role === 'owner') {
+          const applicantPending = activeTeam.applicants.some(a => a.id === parseInt(applicantId, 10));
+          if (applicantPending) {
+            actionHtml = `
+              <div class="flex gap-3 pt-4 mt-4 border-t border-gray-100">
+                <button onclick="respondJoinRequest(${teamId}, ${applicantId}, 'approve', '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-700 transition-all shadow-sm cursor-pointer border-0">
+                  Setuju Bergabung
+                </button>
+                <button onclick="respondJoinRequest(${teamId}, ${applicantId}, 'reject', '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-xs font-700 transition-all cursor-pointer border-0">
+                  Tolak Permohonan
+                </button>
+              </div>
+            `;
+          }
+        }
+      }
+
+      content.innerHTML = `
+        <div class="text-center pb-4 border-b border-gray-100">
+          <div class="w-16 h-16 rounded-full ${m.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-bold text-lg mx-auto shadow-md border-2 border-white mb-3">
+            ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+          </div>
+          <h3 class="font-800 text-gray-800 text-base">${m.name}</h3>
+          <p class="text-xs text-primary font-600 mt-0.5">${m.prodi || m.studyProgram}</p>
+          <p class="text-[10px] text-gray-400">${m.university || m.uni}</p>
+        </div>
+        
+        <div class="space-y-4 mt-4">
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-1">Bio Singkat</h4>
+            <p class="text-xs text-gray-600 leading-relaxed">${m.bio || 'Siap berkolaborasi!'}</p>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Keahlian / Skills</h4>
+            <div class="flex flex-wrap gap-1.5">${skillsHtml || '<p class="text-xs text-gray-400">Belum menambahkan skill.</p>'}</div>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Riwayat Lomba</h4>
+            <div class="space-y-2">${riwayatHtml}</div>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Prestasi</h4>
+            <div class="grid grid-cols-2 gap-2">${prestasiHtml}</div>
+          </div>
+
+          ${actionHtml}
+        </div>
+      `;
+    } catch(e) {
+      handleApiError(e, 'Gagal mengambil profil detail');
+      modal.classList.add('hidden');
+    }
+  };
+
+  window.closeProfileModal = () => {
+    document.getElementById('profile-modal').classList.add('hidden');
+  };
+
+  document.getElementById('close-profile-modal-btn').addEventListener('click', window.closeProfileModal);
+
+  // Proses Aksi Approve / Reject
+  window.respondJoinRequest = async (teamId, applicantId, action, applicantName) => {
+    ui.loading(true);
+    try {
+      await api.teams.respond(teamId, applicantId, action);
+      const actionMsg = action === 'approve' ? 'diterima masuk tim!' : 'ditolak.';
+      ui.toast(`✅ Permohonan ${applicantName} berhasil ${actionMsg}`, 'success');
+      
+      window.closeProfileModal();
+      await updateNotificationState();
+    } catch(e) {
+      handleApiError(e, 'Gagal memproses permohonan bergabung');
+    } finally {
+      ui.loading(false);
+    }
+  };
 </script>
 </body>
 </html>

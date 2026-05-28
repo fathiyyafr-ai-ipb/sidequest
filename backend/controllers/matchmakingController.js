@@ -155,17 +155,80 @@ const connectUser = async (req, res) => {
 
     const receiverName = receiverCheck.rows[0].name;
 
-    // 3. Masukkan koneksi baru
-    await pool.query(`
-      INSERT INTO connections (sender_id, receiver_id, status) 
-      VALUES ($1, $2, 'pending')
-      ON CONFLICT (sender_id, receiver_id) DO NOTHING
+    // 3. Periksa apakah sudah ada relasi koneksi antara kedua user ini
+    const existingRes = await pool.query(`
+      SELECT id, sender_id, receiver_id, status 
+      FROM connections 
+      WHERE (sender_id = $1 AND receiver_id = $2)
+         OR (sender_id = $2 AND receiver_id = $1)
     `, [userId, receiverId]);
 
-    // 4. Kirim notifikasi ke penerima
     const senderRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);
     const senderName = senderRes.rows[0].name;
 
+    if (existingRes.rows.length > 0) {
+      const conn = existingRes.rows[0];
+
+      if (conn.status === 'accepted') {
+        return res.json({ message: `Anda sudah terhubung dengan ${receiverName}!` });
+      }
+
+      if (conn.status === 'pending') {
+        // Jika permintaan dikirim oleh orang lain (kandidat), dan kita mengklik Connect/Accept
+        if (parseInt(conn.sender_id, 10) === parseInt(receiverId, 10)) {
+          // Terima permohonan koneksi secara otomatis
+          await pool.query(`
+            UPDATE connections 
+            SET status = 'accepted' 
+            WHERE id = $1
+          `, [conn.id]);
+
+          // Kirim notifikasi sukses ke pengirim awal
+          await pool.query(`
+            INSERT INTO notifications (user_id, title, message) 
+            VALUES ($1, $2, $3)
+          `, [
+            receiverId,
+            'Koneksi Diterima',
+            `${senderName} menerima permintaan koneksi Anda! Sekarang Anda dapat berkolaborasi.`
+          ]);
+
+          return res.json({ message: `Anda sekarang terhubung dengan ${receiverName}!` });
+        } else {
+          // Permintaan dikirim oleh kita sendiri dan masih pending
+          return res.json({ message: `Permintaan koneksi Anda ke ${receiverName} sedang tertunda.` });
+        }
+      }
+
+      if (conn.status === 'rejected') {
+        // Jika ditolak sebelumnya, reset status menjadi pending dengan pengirim kita
+        await pool.query(`
+          UPDATE connections 
+          SET sender_id = $1, receiver_id = $2, status = 'pending', created_at = CURRENT_TIMESTAMP
+          WHERE id = $3
+        `, [userId, receiverId, conn.id]);
+
+        // Kirim notifikasi ke penerima
+        await pool.query(`
+          INSERT INTO notifications (user_id, title, message) 
+          VALUES ($1, $2, $3)
+        `, [
+          receiverId,
+          'Permintaan Koneksi Baru',
+          `${senderName} ingin terhubung dengan Anda di Matchmaker! Cek dashboard untuk mulai berkolaborasi.`
+        ]);
+
+        return res.json({ message: `Permintaan koneksi berhasil dikirim ke ${receiverName}!` });
+      }
+    }
+
+    // 4. Masukkan koneksi baru jika belum ada relasi sama sekali
+    await pool.query(`
+      INSERT INTO connections (sender_id, receiver_id, status) 
+      VALUES ($1, $2, 'pending')
+    `, [userId, receiverId]);
+
+    // Kirim notifikasi ke penerima
     await pool.query(`
       INSERT INTO notifications (user_id, title, message) 
       VALUES ($1, $2, $3)
