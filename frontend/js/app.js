@@ -96,40 +96,60 @@ function showToast(msg, durationMs = 2500) {
    DASHBOARD RENDER
    ───────────────────────────────────────────────── */
 function renderDashboard(user) {
+  if (!user) return;
+
   /* sidebar user info */
   const sbName = document.getElementById("sb-user-name");
   const sbRole = document.getElementById("sb-user-role");
-  if (sbName) sbName.textContent = user.name;
-  if (sbRole) sbRole.textContent = `${user.prodi} · ${user.uni.split(" ")[0]}`;
+  if (sbName) sbName.textContent = user.name || '';
+  if (sbRole && user.prodi && user.uni) {
+    sbRole.textContent = `${user.prodi} · ${user.uni.split(" ")[0]}`;
+  }
 
   /* stats */
-  const stats = {
-    "stat-lomba":     user.stats.lombaIkuti,
-    "stat-tim":       user.stats.timAktif,
-    "stat-undangan":  user.stats.undangan,
-  };
-  Object.entries(stats).forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val;
-  });
+  if (user.stats) {
+    const stats = {
+      "stat-lomba":     user.stats.lombaIkuti ?? 0,
+      "stat-tim":       user.stats.timAktif ?? 0,
+      "stat-undangan":  user.stats.undangan ?? 0,
+    };
+    Object.entries(stats).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    });
+  }
+
+  /* hero deadline count */
+  const heroDlCount = document.getElementById("hero-deadline-count");
+  if (heroDlCount && user.deadlines) {
+    heroDlCount.textContent = `${user.deadlines.length} deadline`;
+  }
 
   /* deadlines */
   const dlContainer = document.getElementById("deadline-list");
   if (dlContainer) {
-    dlContainer.innerHTML = user.deadlines.map((d, i) => `
-      <div class="flex items-center gap-4 p-4 ${i < user.deadlines.length - 1 ? "border-b border-gray-50" : ""}
-           hover:bg-gray-50/50 transition-colors cursor-pointer" onclick="window.location.href='detail.html?id=${d.id || 1}'">
-        <div class="w-12 h-12 rounded-xl ${d.bgCls} flex flex-col items-center justify-center flex-shrink-0">
-          <span class="${d.numCls} font-800 text-base leading-none">${d.day}</span>
-          <span class="text-xs opacity-70 ${d.numCls}">${d.month}</span>
+    const deadlines = user.deadlines || [];
+    if (deadlines.length === 0) {
+      dlContainer.innerHTML = `
+        <div class="p-6 text-center text-xs text-gray-400">
+          Belum memiliki deadline kompetisi aktif.
+        </div>`;
+    } else {
+      dlContainer.innerHTML = deadlines.map((d, i) => `
+        <div class="flex items-center gap-4 p-4 ${i < deadlines.length - 1 ? "border-b border-gray-50" : ""}
+             hover:bg-gray-50/50 transition-colors cursor-pointer" onclick="window.location.href='detail.html?id=${d.id || 1}'">
+          <div class="w-12 h-12 rounded-xl ${d.bgCls} flex flex-col items-center justify-center flex-shrink-0">
+            <span class="${d.numCls} font-800 text-base leading-none">${d.day}</span>
+            <span class="text-xs opacity-70 ${d.numCls}">${d.month}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-700 text-sm text-gray-800 truncate">${d.name}</p>
+            <p class="text-xs text-gray-400 mt-0.5">Sisa <span class="${d.urgentCls} font-700">${d.left}</span></p>
+          </div>
+          <span class="w-2 h-2 rounded-full flex-shrink-0 ${d.dotCls}"></span>
         </div>
-        <div class="flex-1 min-w-0">
-          <p class="font-700 text-sm text-gray-800 truncate">${d.name}</p>
-          <p class="text-xs text-gray-400 mt-0.5">Sisa <span class="${d.urgentCls} font-700">${d.left}</span></p>
-        </div>
-        <span class="w-2 h-2 rounded-full flex-shrink-0 ${d.dotCls}"></span>
-      </div>
-    `).join("");
+      `).join("");
+    }
   }
 }
 

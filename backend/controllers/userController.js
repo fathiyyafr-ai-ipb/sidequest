@@ -54,6 +54,68 @@ const getProfile = async (req, res) => {
       badgeCls: r.team_role === 'owner' ? 'text-accent bg-accent-light' : 'text-primary bg-primary-light'
     }));
 
+    // Hitung undangan dinamis dari database
+    const undanganRes = await pool.query(
+      `SELECT COUNT(*) FROM team_members WHERE user_id = $1 AND status = 'invited'`,
+      [userId]
+    );
+    const undangan = parseInt(undanganRes.rows[0].count) || 0;
+
+    // Ambil tenggat daftar terdekat (deadlines) dari tim/kompetisi yang diikuti user
+    const deadlinesRes = await pool.query(`
+      SELECT c.id, c.title as name, c.deadline, c.emoji, c.color_gradient
+      FROM team_members tm
+      JOIN teams t ON tm.team_id = t.id
+      JOIN competitions c ON t.competition_id = c.id
+      WHERE tm.user_id = $1 AND tm.status = 'joined'
+      ORDER BY c.deadline ASC
+    `, [userId]);
+
+    const deadlines = deadlinesRes.rows.map(c => {
+      const d = new Date(c.deadline);
+      const day = d.getDate();
+      const monthNames = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agt", "Sep", "Okt", "Nov", "Des"];
+      const month = monthNames[d.getMonth()] || "Mei";
+
+      const daysLeft = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
+      
+      let left = `${daysLeft} hari`;
+      let bgCls = "bg-primary-light";
+      let numCls = "text-primary";
+      let urgentCls = "text-primary";
+      let dotCls = "bg-primary";
+
+      if (daysLeft <= 0) {
+        left = "Telah lewat";
+        bgCls = "bg-red-50";
+        numCls = "text-red-500";
+        urgentCls = "text-red-500";
+        dotCls = "bg-red-400";
+      } else if (daysLeft <= 3) {
+        bgCls = "bg-red-50";
+        numCls = "text-red-500";
+        urgentCls = "text-red-500";
+        dotCls = "bg-red-400 pulse";
+      } else if (daysLeft <= 10) {
+        bgCls = "bg-accent-light";
+        numCls = "text-accent";
+        urgentCls = "text-accent";
+        dotCls = "bg-accent";
+      }
+
+      return {
+        id: c.id,
+        name: c.name,
+        day,
+        month,
+        left,
+        bgCls,
+        numCls,
+        urgentCls,
+        dotCls
+      };
+    });
+
     const userData = {
       id: user.id,
       name: user.name,
@@ -66,9 +128,10 @@ const getProfile = async (req, res) => {
       bio: user.bio,
       initials: user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U',
       skills: skillRes.rows,
-      stats: { lombaIkuti, timAktif, undangan: 0, matchRate },
+      stats: { lombaIkuti, timAktif, undangan, matchRate },
       riwayat,
-      prestasi: [] // New users or demo users start with empty prestasi
+      prestasi: [], // New users or demo users start with empty prestasi
+      deadlines
     };
     res.json({ data: userData });
   } catch (err) {
