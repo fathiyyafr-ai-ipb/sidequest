@@ -226,11 +226,187 @@
       <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
     </a>
 </nav>
-  <script type="module">
-    import { initSession } from '../js/auth.js';
-    document.addEventListener('DOMContentLoaded', initSession);
-  </script>
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+
+<script type="module">
+  import { api, ui, handleApiError, token } from '../js/api.js';
+  import { initSession, bindLogout } from '../js/auth.js';
+
+  let currentCategory = 'all';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const u = await initSession();
+    bindLogout();
+
+    if (u) {
+      // Muat daftar matchmaking pertama kali
+      await loadMatchmaking('all');
+    }
+  });
+
+  // Togel filter chips
+  window.setMatchChip = async (el, skillCat) => {
+    document.querySelectorAll(".match-chip").forEach(c => {
+      c.classList.remove("selected", "bg-primary", "text-white", "border-primary");
+      c.classList.add("border-gray-200", "text-gray-600");
+    });
+    el.classList.add("selected", "bg-primary", "text-white", "border-primary");
+    el.classList.remove("border-gray-200", "text-gray-600");
+
+    currentCategory = skillCat;
+    await loadMatchmaking(skillCat);
+  };
+
+  // Mengirim permintaan koneksi
+  window.sendConnection = async (receiverId, receiverName) => {
+    if (!token.isPresent()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    
+    ui.loading(true);
+    try {
+      await api.matchmaking.connect(receiverId);
+      ui.toast(`✅ Permintaan koneksi terkirim ke ${receiverName}!`, 'success');
+      
+      // Muat ulang matchmaking list untuk memperbarui status tombol menjadi pending secara instan
+      await loadMatchmaking(currentCategory);
+    } catch(e) {
+      handleApiError(e, 'Gagal mengirim permintaan koneksi');
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  // Fungsi memuat matchmaking
+  async function loadMatchmaking(skillCat = 'all') {
+    const list = document.getElementById('match-list');
+    const countEl = document.getElementById('match-count');
+    if (!list) return;
+
+    ui.loading(true, list);
+    try {
+      const res = await api.matchmaking.get(skillCat);
+      
+      if (countEl) countEl.textContent = res.length;
+
+      if (res.length === 0) {
+        list.innerHTML = `
+          <div class="text-center py-16 bg-white rounded-3xl shadow-card border border-gray-100">
+            <p class="text-4xl mb-3">🔍</p>
+            <p class="font-700 text-gray-600">Tidak ada kandidat ditemukan</p>
+            <p class="text-sm text-gray-400 mt-1">Coba filter skill yang lain</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = res.map(m => {
+        // Tentukan gradient warna berdasarkan kecocokan
+        const gradColor = m.compat >= 85 ? 'from-green-400 to-emerald-500' :
+                          m.compat >= 70 ? 'from-blue-400 to-indigo-500' : 'from-orange-400 to-accent';
+        const barColor = m.compat >= 85 ? 'bg-green-500' :
+                         m.compat >= 70 ? 'bg-blue-500' : 'bg-orange-500';
+
+        // Tentukan style tombol koneksi berdasarkan status di database
+        let connectBtnHtml = '';
+        if (m.connectionStatus === 'connected') {
+          connectBtnHtml = `
+            <button class="flex-1 py-2.5 rounded-xl bg-green-50 text-green-700 text-sm font-700 border-0 flex items-center justify-center gap-1.5 cursor-not-allowed" disabled>
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Connected
+            </button>
+          `;
+        } else if (m.connectionStatus === 'sent') {
+          connectBtnHtml = `
+            <button class="flex-1 py-2.5 rounded-xl bg-gray-50 text-gray-400 text-sm font-700 border border-gray-200 cursor-not-allowed" disabled>
+              Request Sent
+            </button>
+          `;
+        } else if (m.connectionStatus === 'received') {
+          connectBtnHtml = `
+            <button onclick="sendConnection(${m.id}, '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-accent text-white text-sm font-700 hover:bg-accent-dark transition-colors shadow-sm cursor-pointer border-0">
+              Accept Request
+            </button>
+          `;
+        } else {
+          connectBtnHtml = `
+            <button onclick="sendConnection(${m.id}, '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-sm cursor-pointer border-0">
+              Connect
+            </button>
+          `;
+        }
+
+        return `
+          <div class="match-card bg-white rounded-3xl shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300 border border-gray-100/50">
+            <!-- Header -->
+            <div class="p-5 flex items-start gap-4">
+              <div class="relative flex-shrink-0">
+                <div class="w-14 h-14 rounded-full ${m.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-bold text-base shadow-md border-2 border-white">
+                  ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+                </div>
+                ${m.online ? `<span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-white animate-pulse"></span>` : ''}
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center justify-between gap-2">
+                  <h3 class="font-800 text-gray-800 text-sm truncate">${m.name}</h3>
+                  <div class="bg-gradient-to-r ${gradColor} text-white text-[10px] font-800 px-2.5 py-1 rounded-full shadow-sm flex-shrink-0">
+                    ${m.compat}% Match
+                  </div>
+                </div>
+                <p class="text-xs text-primary font-600 mt-0.5">${m.prodi}</p>
+                <p class="text-[10px] text-gray-400">${m.uni}</p>
+              </div>
+            </div>
+
+            <!-- Skills -->
+            <div class="px-5 pb-4">
+              <p class="text-[10px] font-800 text-gray-400 uppercase tracking-wider mb-2">Skill / Keahlian</p>
+              <div class="flex flex-wrap gap-1.5">
+                ${m.skills.map(s => `<span class="tag-purple text-xs font-600 px-2 py-0.5 rounded-lg bg-primary-light text-primary">${s}</span>`).join('')}
+              </div>
+            </div>
+
+            <!-- Experience -->
+            <div class="px-5 pb-4">
+              <p class="text-[10px] font-800 text-gray-400 uppercase tracking-wider mb-1.5">Pengalaman Lomba</p>
+              <div class="space-y-1">
+                ${m.exp.map(e => `<p class="text-xs text-gray-600 flex items-start gap-1.5"><span>•</span> <span class="leading-relaxed">${e}</span></p>`).join('')}
+              </div>
+            </div>
+
+            <!-- Prestasi -->
+            <div class="px-5 pb-4 flex flex-wrap gap-1.5">
+              ${m.prestasi.map(p => `<span class="text-[10px] font-700 px-2.5 py-1 rounded-lg bg-accent-light text-accent">${p}</span>`).join('')}
+            </div>
+
+            <!-- Actions -->
+            <div class="px-5 pb-5 flex gap-2">
+              ${connectBtnHtml}
+              <button onclick="ui.toast('💬 Fitur pesan masuk segera hadir!', 'info')" class="w-11 h-10 rounded-xl bg-primary-light flex items-center justify-center hover:bg-primary group transition-colors border-0 cursor-pointer">
+                <svg width="16" height="16" fill="none" viewBox="0 0 24 24" class="group-hover:stroke-white transition-colors">
+                  <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Compat bar -->
+            <div class="bg-gray-50/50 px-5 py-3.5 flex items-center gap-3 border-t border-gray-100">
+              <span class="text-[10px] text-gray-400 font-700 uppercase tracking-wider flex-shrink-0">Kecocokan</span>
+              <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="compat-bar-fill ${barColor} h-full rounded-full transition-all duration-500" style="width:${m.compat}%"></div>
+              </div>
+              <span class="text-xs font-800 text-gray-700 flex-shrink-0">${m.compat}%</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+    } catch(e) {
+      handleApiError(e, 'Gagal memuat kandidat matchmaking');
+    } finally {
+      ui.loading(false);
+    }
+  }
+</script>
 </body>
 </html>

@@ -137,6 +137,11 @@ export const api = {
     async sent()     { const res=await _get('/connections/sent');     return res.data; },
   },
 
+  matchmaking: {
+    async get(skill = 'all') { const res = await _get(`/matchmaking?skill=${skill}`); return res.data; },
+    async connect(receiverId) { const res = await _post('/matchmaking/connect', { receiverId }); return res; }
+  },
+
   teams: {
     async mine()      { const res=await _get('/teams/me');   return res.data; },
     async candidates(){ const res=await _get('/teams/candidates'); return res.data; },
