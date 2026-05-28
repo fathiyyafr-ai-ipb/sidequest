@@ -17,6 +17,43 @@ const getProfile = async (req, res) => {
     `, [userId]);
 
     const user = userRes.rows[0];
+
+    // Hitung stats dinamis dari database
+    const timAktifRes = await pool.query(
+      `SELECT COUNT(*) FROM team_members WHERE user_id = $1 AND status = 'joined'`,
+      [userId]
+    );
+    const timAktif = parseInt(timAktifRes.rows[0].count) || 0;
+
+    const lombaIkutiRes = await pool.query(
+      `SELECT COUNT(DISTINCT t.competition_id) 
+       FROM team_members tm 
+       JOIN teams t ON tm.team_id = t.id 
+       WHERE tm.user_id = $1 AND tm.status = 'joined'`,
+      [userId]
+    );
+    const lombaIkuti = parseInt(lombaIkutiRes.rows[0].count) || 0;
+
+    const matchRate = timAktif > 0 ? "92%" : "-";
+
+    // Ambil riwayat lomba dari tim yang diikuti user
+    const teamsRes = await pool.query(`
+      SELECT t.id, t.name as team_name, c.title as comp_title, c.organizer as comp_org, tm.role as team_role
+      FROM team_members tm
+      JOIN teams t ON tm.team_id = t.id
+      JOIN competitions c ON t.competition_id = c.id
+      WHERE tm.user_id = $1 AND tm.status = 'joined'
+    `, [userId]);
+
+    const riwayat = teamsRes.rows.map(r => ({
+      emoji: "🏆",
+      bg: "bg-primary-light",
+      title: `${r.team_name} — ${r.comp_title}`,
+      org: `${r.comp_org} · Peran: ${r.team_role === 'owner' ? 'Owner' : 'Member'}`,
+      badge: r.team_role === 'owner' ? 'Owner' : 'Member',
+      badgeCls: r.team_role === 'owner' ? 'text-accent bg-accent-light' : 'text-primary bg-primary-light'
+    }));
+
     const userData = {
       id: user.id,
       name: user.name,
@@ -29,7 +66,9 @@ const getProfile = async (req, res) => {
       bio: user.bio,
       initials: user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U',
       skills: skillRes.rows,
-      stats: { lombaIkuti: 7, timAktif: 3, undangan: 2, matchRate: "92%" }
+      stats: { lombaIkuti, timAktif, undangan: 0, matchRate },
+      riwayat,
+      prestasi: [] // New users or demo users start with empty prestasi
     };
     res.json({ data: userData });
   } catch (err) {
@@ -59,6 +98,25 @@ const updateProfile = async (req, res) => {
     }
 
     const updatedUser = result.rows[0];
+
+    // Hitung stats dinamis dari database
+    const timAktifRes = await pool.query(
+      `SELECT COUNT(*) FROM team_members WHERE user_id = $1 AND status = 'joined'`,
+      [userId]
+    );
+    const timAktif = parseInt(timAktifRes.rows[0].count) || 0;
+
+    const lombaIkutiRes = await pool.query(
+      `SELECT COUNT(DISTINCT t.competition_id) 
+       FROM team_members tm 
+       JOIN teams t ON tm.team_id = t.id 
+       WHERE tm.user_id = $1 AND tm.status = 'joined'`,
+      [userId]
+    );
+    const lombaIkuti = parseInt(lombaIkutiRes.rows[0].count) || 0;
+
+    const matchRate = timAktif > 0 ? "92%" : "-";
+
     const userData = {
       id: updatedUser.id,
       name: updatedUser.name,
@@ -71,7 +129,7 @@ const updateProfile = async (req, res) => {
       bio: updatedUser.bio,
       initials: updatedUser.name ? updatedUser.name.split(' ').map(n => n[0]).join('') : 'U',
       skills: [],
-      stats: { lombaIkuti: 7, timAktif: 3, undangan: 2, matchRate: "92%" }
+      stats: { lombaIkuti, timAktif, undangan: 0, matchRate }
     };
 
     res.json({ message: "Profile updated successfully", data: userData });

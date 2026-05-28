@@ -32,6 +32,8 @@ app.use('/api/users', userRoutes);
 // Untuk kompatibilitas backward jika frontend manggil /api/profile/:id langsung
 app.use('/api/profile', userRoutes); 
 app.use('/api/matchmaking', matchmakingRoutes);
+const teamRoutes = require('./routes/teamRoutes');
+app.use('/api/teams', teamRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

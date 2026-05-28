@@ -357,40 +357,53 @@ function setMatchChip(el, skillCat) {
    PROFIL — RENDER
    ───────────────────────────────────────────────── */
 function renderProfil(user) {
+  if (!user) return;
+
   /* Skills */
   const skillsEl = document.getElementById("profil-skills");
-  if (skillsEl) {
+  if (skillsEl && user.skills) {
     skillsEl.innerHTML = user.skills
-      .map((s) => `<span class="${s.cls} text-xs font-600 px-2.5 py-1.5 rounded-xl">${s.label}</span>`)
+      .map((s) => `<span class="${s.cls || 'tag-purple'} text-xs font-600 px-2.5 py-1.5 rounded-xl">${s.label || s}</span>`)
       .join("");
   }
 
   /* Riwayat */
   const riwayatEl = document.getElementById("profil-riwayat");
   if (riwayatEl) {
-    riwayatEl.innerHTML = user.riwayat.map((r) => `
-      <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
-        <div class="w-10 h-10 rounded-xl ${r.bg} flex items-center justify-center flex-shrink-0">
-          <span class="text-sm">${r.emoji}</span>
+    const riwayat = user.riwayat || [];
+    if (riwayat.length === 0) {
+      riwayatEl.innerHTML = `<div class="p-3 text-center text-xs text-gray-400">Belum mengikuti lomba apa pun.</div>`;
+    } else {
+      riwayatEl.innerHTML = riwayat.map((r) => `
+        <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+          <div class="w-10 h-10 rounded-xl ${r.bg || 'bg-primary-light'} flex items-center justify-center flex-shrink-0">
+            <span class="text-sm">${r.emoji || '🏆'}</span>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-700 text-gray-800 truncate">${r.title}</p>
+            <p class="text-xs text-gray-400">${r.org}</p>
+          </div>
+          <span class="text-xs font-700 ${r.badgeCls || 'text-primary bg-primary-light'} px-2 py-1 rounded-lg flex-shrink-0">${r.badge}</span>
         </div>
-        <div class="flex-1 min-w-0">
-          <p class="text-xs font-700 text-gray-800 truncate">${r.title}</p>
-          <p class="text-xs text-gray-400">${r.org}</p>
-        </div>
-        <span class="text-xs font-700 ${r.badgeCls} px-2 py-1 rounded-lg flex-shrink-0">${r.badge}</span>
-      </div>
-    `).join("");
+      `).join("");
+    }
   }
 
   /* Prestasi */
   const prestasiEl = document.getElementById("profil-prestasi");
   if (prestasiEl) {
-    const items = user.prestasi.map((p) => `
-      <div class="p-3 rounded-xl border border-gray-100 hover:border-primary transition-colors">
-        <p class="text-xs font-700 text-gray-800 mb-0.5">${p.title}</p>
-        <p class="text-xs text-gray-400">${p.sub}</p>
-      </div>
-    `).join("");
+    const prestasi = user.prestasi || [];
+    let items = "";
+    if (prestasi.length === 0) {
+      items = `<div class="p-3 text-center text-xs text-gray-400 col-span-2">Belum menambahkan prestasi.</div>`;
+    } else {
+      items = prestasi.map((p) => `
+        <div class="p-3 rounded-xl border border-gray-100 hover:border-primary transition-colors">
+          <p class="text-xs font-700 text-gray-800 mb-0.5">${p.title}</p>
+          <p class="text-xs text-gray-400">${p.sub}</p>
+        </div>
+      `).join("");
+    }
     /* keep the + button */
     prestasiEl.innerHTML = items + `
       <div class="p-3 rounded-xl border border-dashed border-gray-200 hover:border-primary
@@ -401,15 +414,17 @@ function renderProfil(user) {
   }
 
   /* Stats header */
-  const statMap = {
-    "profil-stat-lomba":   user.stats.lombaIkuti,
-    "profil-stat-tim":     user.stats.timAktif,
-    "profil-stat-match":   user.stats.matchRate,
-  };
-  Object.entries(statMap).forEach(([id, val]) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = val;
-  });
+  if (user.stats) {
+    const statMap = {
+      "profil-stat-lomba":   user.stats.lombaIkuti ?? 0,
+      "profil-stat-tim":     user.stats.timAktif ?? 0,
+      "profil-stat-match":   user.stats.matchRate ?? '-',
+    };
+    Object.entries(statMap).forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    });
+  }
 }
 
 /* ─────────────────────────────────────────────────

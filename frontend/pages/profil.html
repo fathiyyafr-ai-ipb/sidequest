@@ -334,9 +334,14 @@
     document.addEventListener('DOMContentLoaded', async () => {
       const u = await initSession();
       if (u) {
-        document.getElementById('profil-name').textContent = u.fullName || u.name || 'Fathiyya Fitriani Refananda';
-        document.getElementById('profil-school').textContent = `${u.studyProgram || u.prodi || 'Artificial Intelligence'} · ${u.university || 'IPB University'}`;
+        document.getElementById('profil-name').textContent = u.fullName || u.name || '';
+        document.getElementById('profil-school').textContent = `${u.studyProgram || u.prodi || ''} · ${u.university || ''}`;
         document.getElementById('profil-bio').textContent = u.bio || 'Belum ada bio singkat.';
+        
+        // Render dynamic stats, skills, and team history (riwayat)
+        if (window.renderProfil) {
+          window.renderProfil(u);
+        }
       }
     });
   </script>

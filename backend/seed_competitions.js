@@ -138,6 +138,26 @@ async function seed() {
   `);
 
   console.log('✅ Seed selesai: 5 kategori + 20 lomba berhasil dimasukkan.');
+
+  // Clean and Seed Team Data
+  console.log('Seeding demo team and members...');
+  await client.query(`DELETE FROM team_members`);
+  await client.query(`DELETE FROM teams`);
+  await client.query(`ALTER SEQUENCE teams_id_seq RESTART WITH 1`);
+
+  await client.query(`
+    INSERT INTO teams (id, name, competition_id, created_by) VALUES 
+    (1, 'team Metaverse', 1, 1)
+  `);
+  await client.query(`ALTER SEQUENCE teams_id_seq RESTART WITH 2`);
+
+  await client.query(`
+    INSERT INTO team_members (team_id, user_id, role, status) VALUES 
+    (1, 1, 'owner', 'joined'),
+    (1, 2, 'member', 'joined')
+  `);
+  console.log('✅ Seeding team data selesai.');
+
   await client.end();
 }
 

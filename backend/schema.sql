@@ -28,7 +28,24 @@ CREATE TABLE users (
   university VARCHAR(100),
   prodi VARCHAR(100),
   avatar_color VARCHAR(20),
-  bio TEXT
+  bio TEXT,
+  role VARCHAR(20) DEFAULT 'peserta'
+);
+
+CREATE TABLE teams (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  competition_id INT REFERENCES competitions(id) ON DELETE CASCADE,
+  created_by INT REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE team_members (
+  team_id INT REFERENCES teams(id) ON DELETE CASCADE,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  role VARCHAR(20) NOT NULL CHECK (role IN ('owner', 'member')),
+  status VARCHAR(20) NOT NULL CHECK (status IN ('joined', 'invited', 'applied')),
+  PRIMARY KEY (team_id, user_id)
 );
 
 CREATE TABLE skills (
@@ -49,5 +66,26 @@ INSERT INTO categories (slug, name) VALUES
 ('data-science', 'Data Science'), 
 ('web-dev', 'Web Development');
 
-INSERT INTO users (name, email, password, university, prodi, avatar_color, bio) VALUES 
-('Fathiyya Fitriani Refananda', 'fathiyya@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Artificial Intelligence', 'bg-blue-500', 'Mahasiswa tingkat akhir');
+-- Seed Users (Fathiyya, Aqilah, Gilbran)
+INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, role) VALUES 
+('Fathiyya Fitriani Refananda', 'fathiyya@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Artificial Intelligence', 'bg-blue-500', 'Mahasiswa tingkat akhir', 'peserta'),
+('Aqilah Callysta Abygail Febyan', 'aqilah@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Software Engineering', 'bg-purple-500', 'Mahasiswa yang tertarik dengan frontend development', 'peserta'),
+('M. Gilbran Firdiansyah', 'gilbran@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Computer Science', 'bg-green-500', 'Mahasiswa backend developer pemula', 'peserta');
+
+-- Seed Skills
+INSERT INTO skills (name, tag_class) VALUES 
+('UI/UX', 'tag-purple'),
+('Figma', 'tag-purple'),
+('Postgres', 'tag-blue'),
+('Frontend Dev', 'tag-purple'),
+('React', 'tag-blue'),
+('Node.js', 'tag-green');
+
+-- Map User Skills
+INSERT INTO user_skills (user_id, skill_id) VALUES 
+(1, 1), (1, 2), (1, 3), -- Fathiyya: UI/UX, Figma, Postgres
+(2, 4), (2, 5),         -- Aqilah: Frontend Dev, React
+(3, 6), (3, 3);         -- Gilbran: Node.js, Postgres
+
+
+
