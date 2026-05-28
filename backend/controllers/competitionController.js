@@ -84,4 +84,126 @@ const getCompetitionById = async (req, res) => {
   }
 };
 
-module.exports = { getCompetitions, getCompetitionById };
+const saveCompetition = async (req, res) => {
+  const userId = req.userId;
+  const compId = req.params.id;
+  try {
+    const exists = await pool.query(
+      'SELECT * FROM saved_competitions WHERE user_id = $1 AND competition_id = $2',
+      [userId, compId]
+    );
+    if (exists.rows.length > 0) {
+      return res.status(400).json({ message: 'Already saved' });
+    }
+    await pool.query(
+      'INSERT INTO saved_competitions (user_id, competition_id) VALUES ($1, $2)',
+      [userId, compId]
+    );
+    res.json({ message: 'Competition saved successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+const unsaveCompetition = async (req, res) => {
+  const userId = req.userId;
+  const compId = req.params.id;
+  try {
+    await pool.query(
+      'DELETE FROM saved_competitions WHERE user_id = $1 AND competition_id = $2',
+      [userId, compId]
+    );
+    res.json({ message: 'Competition unsaved successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+const getSavedCompetitions = async (req, res) => {
+  const userId = req.userId;
+  try {
+    const result = await pool.query(`
+      SELECT c.*, cat.slug as category_slug 
+      FROM competitions c 
+      JOIN categories cat ON c.category_id = cat.id
+      JOIN saved_competitions sc ON c.id = sc.competition_id
+      WHERE sc.user_id = $1
+    `, [userId]);
+
+    const formattedData = result.rows.map(row => ({
+      id: row.id,
+      cat: row.category_slug,
+      title: row.title,
+      org: row.organizer,
+      deadline: row.deadline ? new Date(row.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-',
+      daysLeft: row.deadline ? Math.ceil((new Date(row.deadline) - new Date()) / (1000 * 60 * 60 * 24)) : 0,
+      tags: row.tags,
+      color: row.color_gradient,
+      emoji: row.emoji,
+      free: row.is_free,
+      prize: row.prize,
+      desc: row.description
+    }));
+
+    res.json({ data: formattedData });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+const registerCompetition = async (req, res) => {
+  const userId = req.userId;
+  const compId = req.params.id;
+  try {
+    const exists = await pool.query(
+      'SELECT * FROM competition_registrations WHERE user_id = $1 AND competition_id = $2',
+      [userId, compId]
+    );
+    if (exists.rows.length > 0) {
+      return res.status(400).json({ message: 'Already registered' });
+    }
+    await pool.query(
+      'INSERT INTO competition_registrations (user_id, competition_id) VALUES ($1, $2)',
+      [userId, compId]
+    );
+    res.json({ message: 'Successfully registered for competition' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+const getRegistrationStatus = async (req, res) => {
+  const userId = req.userId;
+  const compId = req.params.id;
+  try {
+    const result = await pool.query(
+      'SELECT * FROM competition_registrations WHERE user_id = $1 AND competition_id = $2',
+      [userId, compId]
+    );
+    const saved = await pool.query(
+      'SELECT * FROM saved_competitions WHERE user_id = $1 AND competition_id = $2',
+      [userId, compId]
+    );
+    res.json({ 
+      registered: result.rows.length > 0,
+      saved: saved.rows.length > 0
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+};
+
+module.exports = { 
+  getCompetitions, 
+  getCompetitionById,
+  saveCompetition,
+  unsaveCompetition,
+  getSavedCompetitions,
+  registerCompetition,
+  getRegistrationStatus
+};

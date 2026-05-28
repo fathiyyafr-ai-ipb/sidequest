@@ -5,7 +5,7 @@ const getProfile = async (req, res) => {
     const userId = req.params.id || req.userId; // Support params or auth middleware
     
     // Ambil data user
-    const userRes = await pool.query('SELECT id, name, email, university, prodi, avatar_color, bio FROM users WHERE id = $1', [userId]);
+    const userRes = await pool.query('SELECT id, name, email, university, prodi, avatar_color, bio, role FROM users WHERE id = $1', [userId]);
     if (userRes.rows.length === 0) return res.status(404).send("User not found");
 
     // Ambil skill user
@@ -127,6 +127,7 @@ const getProfile = async (req, res) => {
       university: user.university, // compatibility
       bio: user.bio,
       initials: user.name ? user.name.split(' ').map(n => n[0]).join('') : 'U',
+      role: user.role,
       skills: skillRes.rows,
       stats: { lombaIkuti, timAktif, undangan, matchRate },
       riwayat,

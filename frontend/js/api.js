@@ -108,6 +108,8 @@ export const api = {
     save(id)   { return _post(`/competitions/${id}/save`); },
     unsave(id) { return _del(`/competitions/${id}/save`); },
     async getSaved() { const res=await _get('/competitions/saved'); return res.data; },
+    register(id) { return _post(`/competitions/${id}/register`); },
+    async getRegistrationStatus(id) { const res=await _get(`/competitions/${id}/registration-status`); return res.data; },
   },
 
   users: {
@@ -212,6 +214,18 @@ export const ui = {
     document.querySelectorAll('[data-sb-fname]').forEach(el=>el.textContent=fname);
     document.querySelectorAll('[data-sb-role]').forEach(el=>el.textContent=u.university||u.studyProgram||u.prodi||'');
     document.querySelectorAll('[data-sb-init]').forEach(el=>el.textContent=init||'U');
+
+    // Hide "Posting Lomba" for role 'peserta'
+    const role = u.role || 'peserta';
+    if (role === 'peserta') {
+      document.querySelectorAll('[href*="posting-lomba.html"]').forEach(el => {
+        el.style.setProperty('display', 'none', 'important');
+      });
+    } else {
+      document.querySelectorAll('[href*="posting-lomba.html"]').forEach(el => {
+        el.style.display = '';
+      });
+    }
   },
 
   async updateNotifBadge() {

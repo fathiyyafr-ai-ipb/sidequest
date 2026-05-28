@@ -214,12 +214,10 @@
     <a href="matchmaking.html" class="flex-1 py-3 rounded-xl border-2 border-primary text-primary text-sm font-700 hover:bg-primary-light transition-colors text-center">
       Cari Tim
     </a>
-    <button onclick="showToast('🔖 Lomba disimpan!')"
-            class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors">
+    <button id="detail-save-btn" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors">
       Simpan
     </button>
-    <button onclick="showToast('✅ Berhasil mendaftar!')"
-            class="flex-[2] py-3 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">
+    <button id="detail-register-btn" class="flex-[2] py-3 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">
       Daftar Sekarang →
     </button>
   </div>
@@ -235,6 +233,9 @@ initSession();
 const params = new URLSearchParams(window.location.search);
 const compId = params.get('id');
 
+const saveBtn = document.getElementById('detail-save-btn');
+const regBtn = document.getElementById('detail-register-btn');
+
 if (compId) {
   // Fetch real competition from backend
   (async () => {
@@ -242,11 +243,13 @@ if (compId) {
       const c = await api.competitions.getById(compId);
       // Update page title
       document.title = c.title + ' — SideQuest';
+      
       // Update hero section
       const heroTitle = document.querySelector('.text-xl.font-800.text-accent');
       if (heroTitle) heroTitle.textContent = c.title;
       const heroOrg = document.querySelector('.text-white\/70.text-sm');
       if (heroOrg) heroOrg.textContent = c.organizer + ' · ' + c.scope;
+      
       // Update deadline badge
       const days = c.daysUntilClose;
       if (days != null) {
@@ -257,42 +260,84 @@ if (compId) {
           if (days <= 3) deadlineEl.classList.add('text-red-500');
         }
       }
+
+      // Check registration & save status
+      if (token.isPresent()) {
+        try {
+          const status = await api.competitions.getRegistrationStatus(compId);
+          
+          if (status.saved) {
+            saveBtn.textContent = 'Tersimpan 🔖';
+            saveBtn.classList.remove('text-gray-600', 'bg-white');
+            saveBtn.classList.add('text-primary', 'bg-primary-light');
+            saveBtn.dataset.saved = 'true';
+          }
+
+          if (status.registered) {
+            regBtn.textContent = 'Sudah Terdaftar ✅';
+            regBtn.disabled = true;
+            regBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
+            regBtn.classList.add('bg-green-600', 'cursor-default');
+          }
+        } catch(e) {
+          console.warn('Gagal memuat status pendaftaran/simpan:', e.message);
+        }
+      }
     } catch(err) {
-      // Page still shows static content if API fails
       console.warn('Detail fetch failed, showing static content:', err.message);
     }
   })();
 }
 
-// ── Save / bookmark button ──
-document.querySelectorAll('[onclick*="showToast"][onclick*="disimpan"]').forEach(btn => {
-  btn.removeAttribute('onclick');
-  btn.addEventListener('click', async () => {
+// ── Save / Bookmark Action ──
+if (saveBtn) {
+  saveBtn.addEventListener('click', async () => {
     if (!token.isPresent()) { window.location.href = 'login.html'; return; }
     try {
-      if (!compId) { ui.toast('🔖 Lomba disimpan!', 'success'); return; }
-      await api.competitions.save(compId);
-      ui.toast('🔖 Lomba disimpan!', 'success');
-      btn.textContent = '✅ Tersimpan';
-      btn.disabled = true;
-    } catch(e) {
-      if (e.message?.includes('Already')) {
-        ui.toast('Lomba sudah ada di daftar simpan', 'info');
+      if (!compId) return;
+      if (saveBtn.dataset.saved === 'true') {
+        // Toggle unsave
+        await api.competitions.unsave(compId);
+        ui.toast('🔖 Lomba dihapus dari daftar simpan!', 'info');
+        saveBtn.textContent = 'Simpan';
+        saveBtn.classList.add('text-gray-600', 'bg-white');
+        saveBtn.classList.remove('text-primary', 'bg-primary-light');
+        saveBtn.dataset.saved = 'false';
       } else {
-        handleApiError(e, 'Gagal menyimpan lomba');
+        // Toggle save
+        await api.competitions.save(compId);
+        ui.toast('🔖 Lomba disimpan!', 'success');
+        saveBtn.textContent = 'Tersimpan 🔖';
+        saveBtn.classList.remove('text-gray-600', 'bg-white');
+        saveBtn.classList.add('text-primary', 'bg-primary-light');
+        saveBtn.dataset.saved = 'true';
       }
+    } catch(e) {
+      handleApiError(e, 'Gagal memproses simpan lomba');
     }
   });
-});
+}
 
-// ── Register / Daftar button ──
-document.querySelectorAll('[onclick*="Berhasil mendaftar"]').forEach(btn => {
-  btn.removeAttribute('onclick');
-  btn.addEventListener('click', () => {
+// ── Register / Daftar Action ──
+if (regBtn) {
+  regBtn.addEventListener('click', async () => {
     if (!token.isPresent()) { window.location.href = 'login.html'; return; }
-    ui.toast('🚀 Fitur pendaftaran akan segera tersedia!', 'warning', 3000);
+    try {
+      if (!compId) return;
+      regBtn.disabled = true;
+      regBtn.textContent = 'Memproses…';
+      await api.competitions.register(compId);
+      ui.toast('✅ Berhasil mendaftar lomba!', 'success');
+      regBtn.textContent = 'Sudah Terdaftar ✅';
+      regBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
+      regBtn.classList.add('bg-green-600', 'cursor-default');
+    } catch(e) {
+      regBtn.disabled = false;
+      regBtn.textContent = 'Daftar Sekarang →';
+      handleApiError(e, 'Gagal mendaftar lomba');
+    }
   });
-});
+}
 
 // ── Reminder button ──
 document.querySelectorAll('[onclick*="Pengingat"]').forEach(btn => {

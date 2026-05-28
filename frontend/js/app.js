@@ -219,11 +219,35 @@ function renderLombaList(data) {
   `).join("");
 }
 
+let _onlyFree = false;
+
+function toggleFreeFilter(btn) {
+  _onlyFree = !_onlyFree;
+  if (_onlyFree) {
+    btn.classList.remove("text-primary", "bg-primary-light");
+    btn.classList.add("text-white", "bg-primary");
+    const svg = btn.querySelector("svg");
+    if (svg) svg.innerHTML = `<path d="M20 6L9 17l-5-5" stroke="white" stroke-width="3" stroke-linecap="round"/>`;
+    if (typeof showToast === "function") showToast("Menampilkan Lomba Gratis saja");
+  } else {
+    btn.classList.remove("text-white", "bg-primary");
+    btn.classList.add("text-primary", "bg-primary-light");
+    const svg = btn.querySelector("svg");
+    if (svg) svg.innerHTML = `<path d="M3 6h18M7 12h10M11 18h2" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>`;
+    if (typeof showToast === "function") showToast("Menampilkan semua lomba");
+  }
+  const q = document.getElementById("direktori-search")?.value || "";
+  filterLomba(q);
+}
+
 function filterLomba(query) {
   const q = query.toLowerCase().trim();
   let filtered = _currentCat === "all"
     ? lombaData
     : lombaData.filter((l) => l.cat === _currentCat);
+  if (_onlyFree) {
+    filtered = filtered.filter((l) => l.free === true);
+  }
   if (q) {
     filtered = filtered.filter(
       (l) => l.title.toLowerCase().includes(q) || l.org.toLowerCase().includes(q)

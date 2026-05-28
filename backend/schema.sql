@@ -48,6 +48,19 @@ CREATE TABLE team_members (
   PRIMARY KEY (team_id, user_id)
 );
 
+CREATE TABLE saved_competitions (
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  competition_id INT REFERENCES competitions(id) ON DELETE CASCADE,
+  PRIMARY KEY (user_id, competition_id)
+);
+
+CREATE TABLE competition_registrations (
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  competition_id INT REFERENCES competitions(id) ON DELETE CASCADE,
+  registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, competition_id)
+);
+
 CREATE TABLE skills (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
