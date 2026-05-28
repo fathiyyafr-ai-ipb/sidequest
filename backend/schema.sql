@@ -29,7 +29,10 @@ CREATE TABLE users (
   prodi VARCHAR(100),
   avatar_color VARCHAR(20),
   bio TEXT,
-  role VARCHAR(20) DEFAULT 'peserta'
+  role VARCHAR(20) DEFAULT 'peserta',
+  experience JSONB,
+  achievements JSONB,
+  online BOOLEAN DEFAULT false
 );
 
 CREATE TABLE teams (
@@ -81,6 +84,24 @@ CREATE TABLE user_skills (
   PRIMARY KEY (user_id, skill_id)
 );
 
+CREATE TABLE connections (
+  id SERIAL PRIMARY KEY,
+  sender_id INT REFERENCES users(id) ON DELETE CASCADE,
+  receiver_id INT REFERENCES users(id) ON DELETE CASCADE,
+  status VARCHAR(20) DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(sender_id, receiver_id)
+);
+
+CREATE TABLE notifications (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(200) NOT NULL,
+  message TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Seed Data Awal
 INSERT INTO categories (slug, name) VALUES 
 ('ui-ux', 'UI/UX Design'), 
@@ -88,16 +109,16 @@ INSERT INTO categories (slug, name) VALUES
 ('web-dev', 'Web Development');
 
 -- Seed Users (Fathiyya, Aqilah, Gilbran, and Matchmaker Candidates)
-INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, role) VALUES 
-('Fathiyya Fitriani Refananda', 'fathiyya@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Artificial Intelligence', 'bg-blue-500', 'Mahasiswa tingkat akhir', 'peserta'),
-('Aqilah Callysta Abygail Febyan', 'aqilah@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Software Engineering', 'bg-purple-500', 'Mahasiswa yang tertarik dengan frontend development', 'peserta'),
-('M. Gilbran Firdiansyah', 'gilbran@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Computer Science', 'bg-green-500', 'Mahasiswa backend developer pemula', 'peserta'),
-('Aurel Salsabila', 'aurel@itb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'ITB Bandung', 'Sistem dan Teknologi Informasi', 'bg-purple-500', 'UI/UX Designer', 'peserta'),
-('Bimo Prasetyo', 'bimo@its.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'ITS Surabaya', 'Teknik Komputer', 'bg-blue-500', 'Backend Developer', 'peserta'),
-('Citra Dewi', 'citra@ugm.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas Gadjah Mada', 'Manajemen', 'bg-green-500', 'Business Developer', 'peserta'),
-('Dimas Arfian', 'dimas@binus.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'BINUS University', 'Computer Science', 'bg-orange-500', 'Machine Learning Engineer', 'peserta'),
-('Evan Wijaya', 'evan@ui.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas UI', 'Ilmu Komputer', 'bg-cyan-500', 'Frontend Developer', 'peserta'),
-('Farah Nadia', 'farah@telkom.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Telkom University', 'Desain Komunikasi Visual', 'bg-pink-500', 'UI/UX Designer', 'peserta');
+INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, role, experience, achievements, online) VALUES 
+('Fathiyya Fitriani Refananda', 'fathiyya@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Artificial Intelligence', 'bg-blue-500', 'Mahasiswa tingkat akhir yang menyukai AI dan Web Dev.', 'peserta', '["Hackathon Nasional 2025 — Juara 2", "Hult Prize Campus Round 2025 — Top 10", "Ksatria Data UI 2024 — Peserta"]', '["Ksatria Data 2024 — Juara 1 Kategori ML", "Dokumentasi Terbaik — Gemastik XVI 2024", "Google DSC Speaker"]', true),
+('Aqilah Callysta Abygail Febyan', 'aqilah@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Software Engineering', 'bg-purple-500', 'Mahasiswa yang tertarik dengan frontend development.', 'peserta', '["Web Dev Competition 2025 — Finalist", "UI/UX Design Challenge — Juara 3"]', '["Best UI Design", "Frontend Champion"]', true),
+('M. Gilbran Firdiansyah', 'gilbran@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Computer Science', 'bg-green-500', 'Mahasiswa backend developer pemula.', 'peserta', '["Belum memiliki riwayat lomba resmi"]', '["Sertifikat Backend Dev Dicoding", "Hackerrank SQL Gold Badge"]', true),
+('Aurel Salsabila', 'aurel@itb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'ITB Bandung', 'Sistem dan Teknologi Informasi', 'bg-purple-500', 'UI/UX Designer yang berfokus pada riset pengguna.', 'peserta', '["Hult Prize 2025 — Juara 1", "COMPFEST Design Finalist"]', '["Ksatria Data", "Dokumentasi Terbaik"]', true),
+('Bimo Prasetyo', 'bimo@its.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'ITS Surabaya', 'Teknik Komputer', 'bg-blue-500', 'Backend Developer yang menyukai DevOps.', 'peserta', '["Gemastik XVI — Juara 2", "Hackathon Smart City 2025"]', '["Hackaton Champion", "Ksatria Data"]', true),
+('Citra Dewi', 'citra@ugm.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas Gadjah Mada', 'Manajemen', 'bg-green-500', 'Business Developer yang menyukai ide startup.', 'peserta', '["ASEAN BPC 2025 — Finalist", "Startup Weekend 2024"]', '["Best Pitch Award", "Top Presenter"]', false),
+('Dimas Arfian', 'dimas@binus.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'BINUS University', 'Computer Science', 'bg-orange-500', 'Machine Learning Engineer dengan fokus Deep Learning.', 'peserta', '["Kaggle Competition — Top 5%", "Data Olympiad 2025"]', '["Ksatria Data", "Kaggle Expert"]', true),
+('Evan Wijaya', 'evan@ui.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas UI', 'Ilmu Komputer', 'bg-cyan-500', 'Frontend Developer dengan fokus React/TypeScript.', 'peserta', '["Google DSC Lead 2025", "Web Dev Competition — Juara 1"]', '["Best Developer", "Google Badge"]', true),
+('Farah Nadia', 'farah@telkom.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Telkom University', 'Desain Komunikasi Visual', 'bg-pink-500', 'UI/UX Designer dan Illustrator digital.', 'peserta', '["Redot Design Award 2024", "COMPFEST Design — Juara 2"]', '["Best Design", "Creative Award"]', false);
 
 -- Seed Skills
 INSERT INTO skills (name, tag_class) VALUES 

@@ -216,6 +216,9 @@
       </div>
     </div>
 
+    <!-- ── Tim Saya & Rekrutmen Widget ── -->
+    <div id="widget-my-team" class="mb-6"></div>
+
     <!-- Rekomendasi Lomba -->
     <div class="mb-6">
       <div class="flex items-center justify-between mb-3">
@@ -319,46 +322,412 @@
   </main>
   
 </div>
+<!-- ── Notification Panel Container ── -->
+<div id="notification-panel" class="hidden fixed top-16 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 p-4 animate-fade-in">
+  <div class="flex items-center justify-between border-b border-gray-100 pb-2 mb-2">
+    <h4 class="font-800 text-xs text-gray-800 uppercase tracking-wide">Notifikasi</h4>
+    <button id="mark-all-read-btn" class="text-[10px] font-700 text-primary hover:underline bg-transparent border-0 cursor-pointer">Tandai Dibaca</button>
+  </div>
+  <div id="notification-list" class="space-y-3 max-h-60 overflow-y-auto no-scrollbar">
+    <p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>
+  </div>
+</div>
+
+<!-- ── Profile Details Modal ── -->
+<div id="profile-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+  <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl relative border border-gray-100 p-6 md:p-8">
+    <!-- Close Button -->
+    <button id="close-profile-modal-btn" class="absolute top-4 right-4 p-2 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-600 border-0 cursor-pointer">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+        <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+    <div id="profile-modal-content">
+      <!-- Loaded dynamically -->
+    </div>
+  </div>
+</div>
+
 <!-- ── Bottom tab bar (mobile only) ── -->
-<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100
-            shadow-topbar flex items-center">
-  
-    <a href="dashboard.html" class="tab-btn active flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Home</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="direktori.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Lomba</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="matchmaking.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Match</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="cari-tim.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Tim</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="profil.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Profil</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
+<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100 shadow-topbar flex items-center">
+  <a href="dashboard.html" class="tab-btn active flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+    <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
+    <span class="tab-label text-xs font-600 text-gray-400">Home</span>
+    <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+  </a>
+  <a href="direktori.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+    <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <span class="tab-label text-xs font-600 text-gray-400">Lomba</span>
+    <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+  </a>
+  <a href="matchmaking.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+    <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <span class="tab-label text-xs font-600 text-gray-400">Match</span>
+    <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+  </a>
+  <a href="cari-tim.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+    <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <span class="tab-label text-xs font-600 text-gray-400">Tim</span>
+    <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+  </a>
+  <a href="profil.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+    <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <span class="tab-label text-xs font-600 text-gray-400">Profil</span>
+    <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
+  </a>
 </nav>
-  <script type="module">
-    import { initSession } from '../js/auth.js';
-    document.addEventListener('DOMContentLoaded', async () => {
-      const u = await initSession();
-      if (u && window.renderDashboard) {
+
+<script type="module">
+  import { api, ui, handleApiError, token } from '../js/api.js';
+  import { initSession, bindLogout } from '../js/auth.js';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const u = await initSession();
+    bindLogout();
+
+    if (u) {
+      // 1. Render data profile awal
+      if (window.renderDashboard) {
         window.renderDashboard(u);
       }
-    });
-  </script>
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+
+      // 2. Muat widget Tim Saya secara dinamis
+      await loadMyTeamWidget();
+
+      // 3. Muat badge notifikasi & pasang event toggle panel
+      await updateNotificationState();
+    }
+  });
+
+  // Tampilkan Profile Modal untuk Calon Anggota
+  window.viewApplicantProfile = async (applicantId) => {
+    const modal = document.getElementById('profile-modal');
+    const content = document.getElementById('profile-modal-content');
+    modal.classList.remove('hidden');
+    content.innerHTML = `
+      <div class="flex items-center justify-center py-12">
+        <div style="width:32px;height:32px;border:3px solid #EDE9FF;border-top-color:#6C63FF;border-radius:50%;animation:sq-spin .7s linear infinite"></div>
+      </div>
+    `;
+
+    try {
+      const applicant = await api.users.getById(applicantId);
+      const m = applicant;
+
+      // Format skills tag
+      const skillsHtml = (m.skills || []).map(s => `
+        <span class="tag-purple text-xs font-600 px-2.5 py-1 rounded-xl bg-primary-light text-primary">
+          ${s.label || s}
+        </span>
+      `).join('');
+
+      // Format riwayat lomba
+      const riwayatHtml = (m.riwayat || []).length === 0 
+        ? '<p class="text-xs text-gray-400">Belum mengikuti lomba apa pun.</p>'
+        : (m.riwayat || []).map(r => `
+          <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+            <div class="w-8 h-8 rounded-xl ${r.bg || 'bg-primary-light'} flex items-center justify-center text-xs">
+              ${r.emoji || '🏆'}
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-700 text-gray-800 truncate">${r.title}</p>
+              <p class="text-[10px] text-gray-400 truncate">${r.org}</p>
+            </div>
+            <span class="text-[9px] font-700 ${r.badgeCls || 'text-primary bg-primary-light'} px-2 py-0.5 rounded-lg flex-shrink-0">
+              ${r.badge}
+            </span>
+          </div>
+        `).join('');
+
+      // Format prestasi
+      const prestasiHtml = (m.prestasi || []).length === 0
+        ? '<p class="text-xs text-gray-400">Belum menambahkan prestasi.</p>'
+        : (m.prestasi || []).map(p => `
+          <div class="p-2.5 rounded-xl border border-gray-100">
+            <p class="text-[11px] font-700 text-gray-800 mb-0.5">${p.title}</p>
+            <p class="text-[10px] text-gray-400">${p.sub}</p>
+          </div>
+        `).join('');
+
+      content.innerHTML = `
+        <div class="text-center pb-4 border-b border-gray-100">
+          <div class="w-16 h-16 rounded-full ${m.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-bold text-lg mx-auto shadow-md border-2 border-white mb-3">
+            ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+          </div>
+          <h3 class="font-800 text-gray-800 text-base">${m.name}</h3>
+          <p class="text-xs text-primary font-600 mt-0.5">${m.prodi || m.studyProgram}</p>
+          <p class="text-[10px] text-gray-400">${m.university || m.uni}</p>
+        </div>
+        
+        <div class="space-y-4 mt-4">
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-1">Bio Singkat</h4>
+            <p class="text-xs text-gray-600 leading-relaxed">${m.bio || 'Siap berkolaborasi!'}</p>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Keahlian / Skills</h4>
+            <div class="flex flex-wrap gap-1.5">${skillsHtml || '<p class="text-xs text-gray-400">Belum menambahkan skill.</p>'}</div>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Riwayat Lomba</h4>
+            <div class="space-y-2">${riwayatHtml}</div>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Prestasi</h4>
+            <div class="grid grid-cols-2 gap-2">${prestasiHtml}</div>
+          </div>
+        </div>
+      `;
+    } catch(e) {
+      handleApiError(e, 'Gagal mengambil profil detail');
+      modal.classList.add('hidden');
+    }
+  };
+
+  window.closeProfileModal = () => {
+    document.getElementById('profile-modal').classList.add('hidden');
+  };
+
+  document.getElementById('close-profile-modal-btn').addEventListener('click', window.closeProfileModal);
+
+  // Proses Aksi Approve / Reject
+  window.respondJoinRequest = async (teamId, applicantId, action, applicantName) => {
+    ui.loading(true);
+    try {
+      await api.teams.respond(teamId, applicantId, action);
+      const actionMsg = action === 'approve' ? 'diterima masuk tim!' : 'ditolak.';
+      ui.toast(`✅ Permohonan ${applicantName} berhasil ${actionMsg}`, 'success');
+      
+      // Muat ulang widget tim & notifikasi
+      await loadMyTeamWidget();
+      await updateNotificationState();
+    } catch(e) {
+      handleApiError(e, 'Gagal memproses permohonan bergabung');
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  // Muat Widget Tim
+  async function loadMyTeamWidget() {
+    const container = document.getElementById('widget-my-team');
+    if (!container) return;
+
+    try {
+      const team = await api.teams.mine();
+      if (!team) {
+        // Tampilkan Banner Empty State
+        container.innerHTML = `
+          <div class="bg-gradient-to-r from-primary-light to-white rounded-3xl p-5 lg:p-6 shadow-card border border-primary/10 relative overflow-hidden flex flex-col sm:flex-row items-center gap-4">
+            <div class="text-4xl flex-shrink-0 animate-bounce">🤝</div>
+            <div class="flex-1 text-center sm:text-left">
+              <h3 class="font-800 text-gray-800 text-sm">Belum memiliki tim aktif?</h3>
+              <p class="text-xs text-gray-500 mt-1 max-w-md">Cari rekrutmen tim untuk lomba pilihanmu atau buka rekrutmen tim baru sekarang dan mulailah berkolaborasi!</p>
+            </div>
+            <div class="flex gap-2 flex-shrink-0 w-full sm:w-auto justify-center">
+              <a href="cari-tim.html" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-700 transition-colors shadow-sm text-center no-underline">
+                Cari Tim
+              </a>
+              <a href="cari-tim.html?tab=post" class="px-4 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-xl text-xs font-700 transition-colors text-center no-underline">
+                Buka Rekrutmen
+              </a>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      const isOwner = team.role === 'owner';
+      
+      // Render Widget Tim
+      container.innerHTML = `
+        <div class="bg-white rounded-3xl p-5 lg:p-6 shadow-card border border-gray-100/50 relative overflow-hidden">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-50 pb-4 mb-4">
+            <div>
+              <span class="text-[10px] font-800 text-primary bg-primary-light px-2.5 py-1 rounded-full uppercase tracking-wider">
+                ${team.competition.organizer || 'Penyelenggara Lomba'}
+              </span>
+              <h3 class="font-800 text-gray-800 text-base mt-1.5 flex items-center gap-2">
+                <span>👥 ${team.name}</span>
+                <span class="text-[10px] font-700 px-2 py-0.5 rounded-lg ${isOwner ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} uppercase">
+                  ${isOwner ? 'Owner / Leader' : 'Anggota Tim'}
+                </span>
+              </h3>
+              <p class="text-xs text-gray-400 mt-1">Kompetisi: <strong class="text-gray-600">${team.competition.title}</strong></p>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Kolom Anggota Tim -->
+            <div>
+              <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Anggota Terdaftar (${team.members.length})</h4>
+              <div class="space-y-3">
+                ${team.members.map(m => `
+                  <div class="flex items-center gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100/30">
+                    <div class="w-9 h-9 rounded-full ${m.avatarColor || 'bg-blue-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                      ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-xs font-700 text-gray-800 truncate">${m.name}</p>
+                      <p class="text-[10px] text-gray-400 truncate">${m.prodi} · ${m.university}</p>
+                    </div>
+                    <span class="text-[9px] font-700 ${m.teamRole === 'owner' ? 'text-orange-600 bg-orange-50' : 'text-primary bg-primary-light'} px-2 py-0.5 rounded-md uppercase flex-shrink-0">
+                      ${m.teamRole === 'owner' ? 'Owner' : 'Member'}
+                    </span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+            
+            <!-- Kolom Calon Anggota (Permohonan Bergabung) -->
+            <div>
+              <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Permohonan Bergabung (${team.applicants.length})</h4>
+              ${team.applicants.length === 0 ? `
+                <div class="p-6 text-center text-xs text-gray-400 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                  Belum ada permohonan bergabung baru.
+                </div>
+              ` : `
+                <div class="space-y-3">
+                  ${team.applicants.map(a => `
+                    <div class="p-3.5 rounded-2xl bg-primary-light/20 border border-primary-light/50">
+                      <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-full ${a.avatarColor || 'bg-purple-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                          ${a.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                          <p class="text-xs font-700 text-gray-800 truncate">${a.name}</p>
+                          <p class="text-[10px] text-gray-400 truncate">${a.prodi} · ${a.uni}</p>
+                        </div>
+                      </div>
+                      <div class="flex gap-2">
+                        <button onclick="viewApplicantProfile(${a.id})" class="flex-1 py-1.5 rounded-xl border border-primary text-primary text-[10px] font-700 hover:bg-primary hover:text-white transition-all bg-white cursor-pointer">
+                          Lihat Profil
+                        </button>
+                        ${isOwner ? `
+                          <button onclick="respondJoinRequest(${team.id}, ${a.id}, 'approve', '${a.name}')" class="flex-1 py-1.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[10px] font-700 transition-all shadow-sm cursor-pointer border-0">
+                            Setuju
+                          </button>
+                          <button onclick="respondJoinRequest(${team.id}, ${a.id}, 'reject', '${a.name}')" class="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-[10px] font-700 transition-all cursor-pointer border-0">
+                            Tolak
+                          </button>
+                        ` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              `}
+            </div>
+          </div>
+        </div>
+      `;
+    } catch(e) {
+      console.error('Gagal memuat widget tim:', e);
+    }
+  }
+
+  // Notifikasi Toggle Panel & Status
+  async function updateNotificationState() {
+    const badge = document.getElementById('notif-badge');
+    const panel = document.getElementById('notification-panel');
+    const list = document.getElementById('notification-list');
+    const clearBtn = document.getElementById('mark-all-read-btn');
+
+    try {
+      const countData = await api.notifications.unreadCount();
+      const n = countData;
+      
+      // Update badge
+      if (badge) {
+        if (n > 0) {
+          badge.classList.remove('hidden');
+          badge.innerHTML = `<span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-800 text-white border border-white">${n}</span>`;
+        } else {
+          badge.classList.add('hidden');
+          badge.innerHTML = '';
+        }
+      }
+
+      // Tampilkan Notifikasi di Dropdown
+      const loadNotifications = async () => {
+        list.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>';
+        try {
+          const res = await api.notifications.list();
+          if (res.length === 0) {
+            list.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">Tidak ada notifikasi baru.</p>';
+            return;
+          }
+          list.innerHTML = res.map(notif => `
+            <div class="p-2.5 rounded-xl ${notif.isRead ? 'bg-gray-50/50' : 'bg-primary-light/10 border-l-4 border-primary'} transition-all">
+              <p class="text-xs font-700 text-gray-800 leading-snug">${notif.title}</p>
+              <p class="text-[10px] text-gray-500 mt-0.5 leading-relaxed">${notif.message}</p>
+              <span class="text-[8px] text-gray-400 mt-1 block">${ui.formatDate(notif.createdAt)}</span>
+            </div>
+          `).join('');
+        } catch(err) {
+          list.innerHTML = '<p class="text-center text-xs text-red-500 py-4">Gagal memuat notifikasi.</p>';
+        }
+      };
+
+      // Togel Handler
+      const togglePanel = async (e) => {
+        e.stopPropagation();
+        const isOpen = !panel.classList.contains('hidden');
+        if (isOpen) {
+          panel.classList.add('hidden');
+        } else {
+          panel.classList.remove('hidden');
+          await loadNotifications();
+          // Tandai sudah dibaca secara otomatis
+          if (n > 0) {
+            await api.notifications.markAllRead();
+            await updateNotificationState();
+          }
+        }
+      };
+
+      // Pasang click handler ke tombol notifikasi desktop & mobile
+      const notifBtnDesktop = document.querySelector('header.hidden button');
+      const notifBtnMobile = document.querySelector('header.lg:hidden button.relative');
+
+      if (notifBtnDesktop) {
+        notifBtnDesktop.id = 'notif-btn-desktop';
+        notifBtnDesktop.onclick = togglePanel;
+      }
+      if (notifBtnMobile) {
+        notifBtnMobile.id = 'notif-btn-mobile';
+        notifBtnMobile.onclick = togglePanel;
+      }
+
+      // Close panel saat klik di luar
+      document.addEventListener('click', (e) => {
+        if (panel && !panel.contains(e.target) && e.target !== notifBtnDesktop && e.target !== notifBtnMobile) {
+          panel.classList.add('hidden');
+        }
+      });
+
+      // Clear notifications button
+      if (clearBtn) {
+        clearBtn.onclick = async () => {
+          try {
+            await api.notifications.markAllRead();
+            ui.toast('✅ Semua notifikasi ditandai telah dibaca', 'success');
+            await loadNotifications();
+            await updateNotificationState();
+          } catch(e) {
+            handleApiError(e);
+          }
+        };
+      }
+
+    } catch(e) {
+      console.warn('Gagal memuat notifikasi:', e.message);
+    }
+  }
+</script>
+<script src="../js/data.js"></script>
+<script src="../js/app.js"></script>
 </body>
 </html>

@@ -5,7 +5,7 @@ const getProfile = async (req, res) => {
     const userId = req.params.id || req.userId; // Support params or auth middleware
     
     // Ambil data user
-    const userRes = await pool.query('SELECT id, name, email, university, prodi, avatar_color, bio, role FROM users WHERE id = $1', [userId]);
+    const userRes = await pool.query('SELECT id, name, email, university, prodi, avatar_color, bio, role, experience, achievements FROM users WHERE id = $1', [userId]);
     if (userRes.rows.length === 0) return res.status(404).send("User not found");
 
     // Ambil skill user
@@ -116,6 +116,40 @@ const getProfile = async (req, res) => {
       };
     });
 
+    // Parse seeded experience dan gabungkan dengan riwayat tim aktif
+    const parsedSeededExp = (user.experience || []).map(e => {
+      let emoji = "🏆";
+      let bg = "bg-primary-light";
+      let badge = "Peserta";
+      let badgeCls = "text-primary bg-primary-light";
+      let title = e;
+      let org = "Kompetisi Mahasiswa";
+
+      if (e.includes(' — ')) {
+        const parts = e.split(' — ');
+        title = parts[0];
+        badge = parts[1];
+      }
+      
+      if (badge.includes('Juara') || badge.includes('Top')) {
+        emoji = "🏆";
+        badgeCls = "text-accent bg-accent-light";
+      }
+
+      return { emoji, bg, title, org, badge, badgeCls };
+    });
+
+    const mergedRiwayat = [...riwayat, ...parsedSeededExp];
+
+    // Parse seeded achievements ke prestasi [{ title, sub }]
+    const prestasi = (user.achievements || []).map(p => {
+      if (p.includes(' — ')) {
+        const parts = p.split(' — ');
+        return { title: parts[0], sub: parts[1] };
+      }
+      return { title: p, sub: '' };
+    });
+
     const userData = {
       id: user.id,
       name: user.name,
@@ -130,8 +164,8 @@ const getProfile = async (req, res) => {
       role: user.role,
       skills: skillRes.rows,
       stats: { lombaIkuti, timAktif, undangan, matchRate },
-      riwayat,
-      prestasi: [], // New users or demo users start with empty prestasi
+      riwayat: mergedRiwayat,
+      prestasi,
       deadlines
     };
     res.json({ data: userData });

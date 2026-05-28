@@ -68,17 +68,52 @@ const getMine = async (req, res) => {
       });
     }
 
+    // 5. Ambil calon anggota (applicants) yang berstatus 'applied'
+    const applicantsRes = await pool.query(
+      `SELECT u.id, u.name, u.email, u.university, u.prodi, u.avatar_color, u.bio
+       FROM team_members tm
+       JOIN users u ON tm.user_id = u.id
+       WHERE tm.team_id = $1 AND tm.status = 'applied'`,
+      [team_id]
+    );
+
+    const applicants = [];
+    for (const applicant of applicantsRes.rows) {
+      const skillsRes = await pool.query(
+        `SELECT s.name as label, s.tag_class as cls
+         FROM skills s
+         JOIN user_skills us ON s.id = us.skill_id
+         WHERE us.user_id = $1`,
+        [applicant.id]
+      );
+      
+      applicants.push({
+        id: applicant.id,
+        name: applicant.name,
+        fullName: applicant.name,
+        email: applicant.email,
+        university: applicant.university,
+        uni: applicant.university,
+        prodi: applicant.prodi,
+        avatarColor: applicant.avatar_color || 'bg-blue-500',
+        bio: applicant.bio || 'Siap berkolaborasi!',
+        skills: skillsRes.rows.map(s => s.label)
+      });
+    }
+
     res.json({
       data: {
         id: team.id,
         name: team.name,
+        role: role, // 'owner' atau 'member'
         competition: {
           id: team.competition_id,
           title: team.competition_title,
           organizer: team.competition_organizer,
           emoji: team.competition_emoji
         },
-        members
+        members,
+        applicants
       }
     });
 
@@ -309,6 +344,27 @@ const applyTeam = async (req, res) => {
       [teamId, userId]
     );
 
+    // 4. Kirim notifikasi ke semua anggota tim yang sudah bergabung
+    const applicantNameRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);
+    const applicantName = applicantNameRes.rows[0].name;
+    const teamName = teamCheck.rows[0].name;
+
+    const membersToNotify = await pool.query(
+      `SELECT user_id FROM team_members WHERE team_id = $1 AND status = 'joined'`,
+      [teamId]
+    );
+
+    for (const member of membersToNotify.rows) {
+      await pool.query(
+        `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+        [
+          member.user_id,
+          'Permohonan Bergabung Baru',
+          `${applicantName} mengajukan permohonan untuk bergabung dengan tim Anda, ${teamName}!`
+        ]
+      );
+    }
+
     res.json({ message: 'Permintaan bergabung berhasil dikirim!' });
 
   } catch (err) {
@@ -317,10 +373,112 @@ const applyTeam = async (req, res) => {
   }
 };
 
+/**
+ * Memproses respon owner terhadap calon anggota (approve/reject)
+ */
+const respondApplicant = async (req, res) => {
+  const userId = req.userId; // logged-in user
+  const teamId = parseInt(req.params.id, 10);
+  const { applicantId, action } = req.body;
+
+  try {
+    // 1. Validasi input
+    if (!applicantId || !action || !['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ message: 'ApplicantId dan action (approve/reject) wajib diset' });
+    }
+
+    // 2. Cek apakah user login adalah owner tim
+    const ownerCheck = await pool.query(
+      `SELECT * FROM team_members WHERE team_id = $1 AND user_id = $2 AND role = 'owner' AND status = 'joined'`,
+      [teamId, userId]
+    );
+    if (ownerCheck.rows.length === 0) {
+      return res.status(403).json({ message: 'Hanya owner tim yang dapat memproses permohonan bergabung' });
+    }
+
+    // 3. Ambil nama tim
+    const teamRes = await pool.query('SELECT name FROM teams WHERE id = $1', [teamId]);
+    const teamName = teamRes.rows[0].name;
+
+    // 4. Proses aksi
+    if (action === 'approve') {
+      // Ubah status pelamar menjadi joined
+      const updateRes = await pool.query(
+        `UPDATE team_members SET status = 'joined' WHERE team_id = $1 AND user_id = $2 AND status = 'applied' RETURNING *`,
+        [teamId, applicantId]
+      );
+
+      if (updateRes.rows.length === 0) {
+        return res.status(400).json({ message: 'Pelamar tidak ditemukan atau permohonan tidak aktif' });
+      }
+
+      // Kirim notifikasi ke pelamar
+      await pool.query(
+        `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+        [
+          applicantId,
+          'Permohonan Bergabung Diterima',
+          `Selamat! Permohonan Anda untuk bergabung dengan tim ${teamName} telah diterima oleh owner.`
+        ]
+      );
+
+      // Kirim notifikasi ke seluruh anggota tim lainnya
+      const applicantNameRes = await pool.query('SELECT name FROM users WHERE id = $1', [applicantId]);
+      const applicantName = applicantNameRes.rows[0].name;
+
+      const otherMembers = await pool.query(
+        `SELECT user_id FROM team_members WHERE team_id = $1 AND status = 'joined' AND user_id != $2`,
+        [teamId, applicantId]
+      );
+
+      for (const member of otherMembers.rows) {
+        await pool.query(
+          `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+          [
+            member.user_id,
+            'Anggota Baru Bergabung',
+            `${applicantName} telah bergabung dengan tim Anda, ${teamName}!`
+          ]
+        );
+      }
+
+      return res.json({ message: 'Permohonan bergabung berhasil disetujui!' });
+
+    } else if (action === 'reject') {
+      // Hapus baris applied pelamar
+      const deleteRes = await pool.query(
+        `DELETE FROM team_members WHERE team_id = $1 AND user_id = $2 AND status = 'applied' RETURNING *`,
+        [teamId, applicantId]
+      );
+
+      if (deleteRes.rows.length === 0) {
+        return res.status(400).json({ message: 'Pelamar tidak ditemukan atau permohonan tidak aktif' });
+      }
+
+      // Kirim notifikasi ke pelamar
+      await pool.query(
+        `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+        [
+          applicantId,
+          'Permohonan Bergabung Belum Diterima',
+          `Mohon maaf, permohonan Anda untuk bergabung dengan tim ${teamName} belum dapat diterima saat ini.`
+        ]
+      );
+
+      return res.json({ message: 'Permohonan bergabung berhasil ditolak' });
+    }
+
+  } catch (err) {
+    console.error('[teamController.respondApplicant]', err);
+    res.status(500).json({ message: 'Gagal memproses permohonan bergabung' });
+  }
+};
+
 module.exports = {
   getMine,
   getCandidates,
   getTeams,
   createTeam,
-  applyTeam
+  applyTeam,
+  respondApplicant
 };

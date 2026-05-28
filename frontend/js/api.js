@@ -143,6 +143,7 @@ export const api = {
     async create(p)   { const res=await _post('/teams',p);   return res.data; },
     async list(cat='all') { const res=await _get(`/teams?cat=${cat}`); return res.data; },
     async apply(id)   { const res=await _post(`/teams/${id}/apply`); return res; },
+    async respond(id, applicantId, action) { const res=await _post(`/teams/${id}/respond`, { applicantId, action }); return res; },
     leave(id)         { return _del(`/teams/${id}/leave`); },
     invite(id,userId) { return _post(`/teams/${id}/invite`,{userId}); },
   },

@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const competitionRoutes = require('./routes/competitionRoutes');
 const userRoutes = require('./routes/userRoutes');
 const matchmakingRoutes = require('./routes/matchmakingRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
 
 const app = express();
 app.use(cors());
@@ -32,6 +33,7 @@ app.use('/api/users', userRoutes);
 // Untuk kompatibilitas backward jika frontend manggil /api/profile/:id langsung
 app.use('/api/profile', userRoutes); 
 app.use('/api/matchmaking', matchmakingRoutes);
+app.use('/api/notifications', notificationRoutes);
 const teamRoutes = require('./routes/teamRoutes');
 app.use('/api/teams', teamRoutes);
 
