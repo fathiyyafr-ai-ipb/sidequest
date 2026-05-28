@@ -476,12 +476,14 @@
             return;
           }
           list.innerHTML = res.map(notif => {
-            const isJoinRequest = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
-            const clickHandler = isJoinRequest 
-              ? `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId})"` 
+            const isClickableProfile = !!notif.applicantId;
+            const clickHandler = isClickableProfile 
+              ? `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId || 'null'})"` 
               : '';
-            const cursorClass = isJoinRequest ? 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]' : '';
-            const pendingBadge = isJoinRequest 
+            const cursorClass = isClickableProfile ? 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]' : '';
+            
+            const isPendingJoin = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
+            const pendingBadge = isPendingJoin 
               ? `<span class="bg-orange-100 text-orange-700 text-[9px] font-700 px-1.5 py-0.5 rounded-md uppercase flex-shrink-0">Pending</span>` 
               : '';
 

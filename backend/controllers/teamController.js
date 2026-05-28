@@ -416,13 +416,15 @@ const respondApplicant = async (req, res) => {
         return res.status(400).json({ message: 'Pelamar tidak ditemukan atau permohonan tidak aktif' });
       }
 
-      // Kirim notifikasi ke pelamar
+      // Kirim notifikasi ke pelamar (set team_id dan applicant_id ke owner yang melakukan approve)
       await pool.query(
-        `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+        `INSERT INTO notifications (user_id, title, message, team_id, applicant_id) VALUES ($1, $2, $3, $4, $5)`,
         [
           applicantId,
           'Permohonan Bergabung Diterima',
-          `Selamat! Permohonan Anda untuk bergabung dengan tim ${teamName} telah diterima oleh owner.`
+          `Selamat! Permohonan Anda untuk bergabung dengan tim ${teamName} telah diterima oleh owner.`,
+          teamId,
+          userId
         ]
       );
 
@@ -437,11 +439,13 @@ const respondApplicant = async (req, res) => {
 
       for (const member of otherMembers.rows) {
         await pool.query(
-          `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+          `INSERT INTO notifications (user_id, title, message, team_id, applicant_id) VALUES ($1, $2, $3, $4, $5)`,
           [
             member.user_id,
             'Anggota Baru Bergabung',
-            `${applicantName} telah bergabung dengan tim Anda, ${teamName}!`
+            `${applicantName} telah bergabung dengan tim Anda, ${teamName}!`,
+            teamId,
+            applicantId
           ]
         );
       }

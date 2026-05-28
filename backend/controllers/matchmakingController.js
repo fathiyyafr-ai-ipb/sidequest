@@ -185,12 +185,13 @@ const connectUser = async (req, res) => {
 
           // Kirim notifikasi sukses ke pengirim awal
           await pool.query(`
-            INSERT INTO notifications (user_id, title, message) 
-            VALUES ($1, $2, $3)
+            INSERT INTO notifications (user_id, title, message, applicant_id) 
+            VALUES ($1, $2, $3, $4)
           `, [
             receiverId,
             'Koneksi Diterima',
-            `${senderName} menerima permintaan koneksi Anda! Sekarang Anda dapat berkolaborasi.`
+            `${senderName} menerima permintaan koneksi Anda! Sekarang Anda dapat berkolaborasi.`,
+            userId
           ]);
 
           return res.json({ message: `Anda sekarang terhubung dengan ${receiverName}!` });
@@ -210,12 +211,13 @@ const connectUser = async (req, res) => {
 
         // Kirim notifikasi ke penerima
         await pool.query(`
-          INSERT INTO notifications (user_id, title, message) 
-          VALUES ($1, $2, $3)
+          INSERT INTO notifications (user_id, title, message, applicant_id) 
+          VALUES ($1, $2, $3, $4)
         `, [
           receiverId,
           'Permintaan Koneksi Baru',
-          `${senderName} ingin terhubung dengan Anda di Matchmaker! Cek dashboard untuk mulai berkolaborasi.`
+          `${senderName} ingin terhubung dengan Anda di Matchmaker! Cek dashboard untuk mulai berkolaborasi.`,
+          userId
         ]);
 
         return res.json({ message: `Permintaan koneksi berhasil dikirim ke ${receiverName}!` });
@@ -230,12 +232,13 @@ const connectUser = async (req, res) => {
 
     // Kirim notifikasi ke penerima
     await pool.query(`
-      INSERT INTO notifications (user_id, title, message) 
-      VALUES ($1, $2, $3)
+      INSERT INTO notifications (user_id, title, message, applicant_id) 
+      VALUES ($1, $2, $3, $4)
     `, [
       receiverId,
       'Permintaan Koneksi Baru',
-      `${senderName} ingin terhubung dengan Anda di Matchmaker! Cek dashboard untuk mulai berkolaborasi.`
+      `${senderName} ingin terhubung dengan Anda di Matchmaker! Cek dashboard untuk mulai berkolaborasi.`,
+      userId
     ]);
 
     res.json({ message: `Permintaan koneksi berhasil dikirim ke ${receiverName}!` });
