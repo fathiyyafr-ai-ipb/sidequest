@@ -510,6 +510,7 @@
         const refreshBadge = (b) => b && (b.textContent = n > 99 ? '99+' : n, b.classList.toggle('hidden', n === 0));
         refreshBadge(badgeDesktop);
         refreshBadge(badgeMobile);
+        
         const loadNotifications = async () => {
           list.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>';
           try {
@@ -521,8 +522,9 @@
             }).join('');
           } catch (e) {
             list.innerHTML = '<p class="text-center text-xs text-red-500 py-4">Gagal memuat notifikasi.</p>';
+          }
+        };
 
-        // Togel Handler
         const togglePanel = async (e) => {
           e.stopPropagation();
           const isOpen = !panel.classList.contains('hidden');
@@ -531,7 +533,6 @@
           } else {
             panel.classList.remove('hidden');
             await loadNotifications();
-            // Tandai sudah dibaca secara otomatis
             if (n > 0) {
               await api.notifications.markAllRead();
               await updateNotificationState();
@@ -539,27 +540,24 @@
           }
         };
 
-        // Pasang click handler ke tombol notifikasi desktop & mobile
-        const notifBtnDesktop = document.querySelector('header.hidden button');
-        const notifBtnMobile = document.querySelector('header.lg:hidden button.relative');
+        const notifBtnDesktop = document.getElementById('notif-btn-desktop');
+        const notifBtnMobile = document.getElementById('notif-btn-mobile');
 
         if (notifBtnDesktop) {
-          notifBtnDesktop.id = 'notif-btn-desktop';
           notifBtnDesktop.onclick = togglePanel;
         }
         if (notifBtnMobile) {
-          notifBtnMobile.id = 'notif-btn-mobile';
           notifBtnMobile.onclick = togglePanel;
         }
 
-        // Close panel saat klik di luar
         document.addEventListener('click', (e) => {
-          if (panel && !panel.contains(e.target) && e.target !== notifBtnDesktop && e.target !== notifBtnMobile) {
+          const clickedInsidePanel = panel && panel.contains(e.target);
+          const clickedNotifBtn = e.target.closest('#notif-btn-desktop') || e.target.closest('#notif-btn-mobile');
+          if (!clickedInsidePanel && !clickedNotifBtn) {
             panel.classList.add('hidden');
           }
         });
 
-        // Clear notifications button
         if (clearBtn) {
           clearBtn.onclick = async () => {
             try {
