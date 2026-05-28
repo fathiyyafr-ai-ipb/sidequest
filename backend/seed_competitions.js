@@ -146,16 +146,69 @@ async function seed() {
   await client.query(`ALTER SEQUENCE teams_id_seq RESTART WITH 1`);
 
   await client.query(`
-    INSERT INTO teams (id, name, competition_id, created_by) VALUES 
-    (1, 'team Metaverse', 1, 1)
+    INSERT INTO teams (id, name, competition_id, created_by, description, skills_needed, recruitment_deadline, contact, max_members, urgency, avatar_color, emoji) VALUES 
+    -- 1. team Metaverse (created by user 1, Fathiyya)
+    (1, 'team Metaverse', 1, 1, 'Membangun platform metaverse inovatif.', '["Next.js", "Solidity"]', '2026-05-30', 'wa.me/628111', 4, 'normal', 'bg-primary', '🏆'),
+    
+    -- 2. Tim Nebula (Comp 1, created by user 8, Evan)
+    (2, 'Tim Nebula', 1, 8, 'Tim solid dari UI, sudah punya konsep produk. Butuh frontend dev & designer.', '["Frontend Dev", "UI/UX"]', '2026-05-30', 'wa.me/628111', 5, 'hot', 'bg-primary', '💻'),
+    
+    -- 3. Tim Bisnis Muda (Comp 7, created by user 6, Citra)
+    (3, 'Tim Bisnis Muda', 7, 6, 'Tim dari FEB UGM. Sudah punya ide bisnis yang kuat, butuh analis keuangan.', '["Financial Analyst", "Presenter"]', '2026-06-05', 'discord.gg/bizmuda', 4, 'normal', 'bg-orange-500', '💼'),
+    
+    -- 4. Tim Hult Hijau (Comp 11, created by user 5, Bimo)
+    (4, 'Tim Hult Hijau', 11, 5, 'Tim fokus SDGs poin 13 (iklim). Butuh researcher sosial dan orang yang jago presentasi.', '["Social Researcher", "Presenter"]', '2026-06-01', 'line: hultgreen', 5, 'hot', 'bg-green-500', '🌱'),
+    
+    -- 5. Tim Pixel Perfect (Comp 14, created by user 4, Aurel)
+    (5, 'Tim Pixel Perfect', 14, 4, 'Desainer UX berpengalaman dari Telkom U cari partner UI dan ilustrator untuk challenge ini.', '["UI Designer", "Illustrator"]', '2026-06-20', 'wa.me/628222', 3, 'normal', 'bg-pink-500', '🎨'),
+    
+    -- 6. Tim Quanta (Comp 18, created by user 7, Dimas)
+    (6, 'Tim Quanta', 18, 7, 'Tim olimpiade fisika dari ITB. Cari anggota yang kuat di mekanika dan termodinamika.', '["Fisika", "Matematika"]', '2026-07-01', 'wa.me/628333', 4, 'normal', 'bg-blue-500', '⚛️'),
+    
+    -- 7. Tim DataStorm (Comp 19, created by user 5, Bimo)
+    (7, 'Tim DataStorm', 19, 5, 'Tim ML dari ITS, sudah punya dataset dan baseline model. Butuh data engineer & visualizer.', '["Machine Learning", "Python", "Data Viz"]', '2026-05-25', 'discord.gg/datastorm', 4, 'hot', 'bg-violet-500', '📊'),
+    
+    -- 8. Tim Sociopreneur (Comp 12, created by user 9, Farah)
+    (8, 'Tim Sociopreneur', 12, 9, 'Tim mahasiswa beda kampus yg peduli isu sosial. Butuh tim yang passion di sosial impact.', '["Community Org", "Business Dev", "Social Media"]', '2026-06-15', 'ig: @sociopreneur.id', 5, 'normal', 'bg-teal-500', '🌍'),
+    
+    -- 9. Tim Hackstar (Comp 2, created by user 8, Evan)
+    (9, 'Tim Hackstar', 2, 8, 'Tim hackathon berpengalaman (2x juara). Butuh backend dev yang familiar AWS dan IoT.', '["Backend Dev", "IoT", "Cloud AWS"]', '2026-06-08', 'wa.me/628444', 4, 'hot', 'bg-cyan-600', '🌆')
   `);
-  await client.query(`ALTER SEQUENCE teams_id_seq RESTART WITH 2`);
+  
+  await client.query(`ALTER SEQUENCE teams_id_seq RESTART WITH 10`);
 
   await client.query(`
     INSERT INTO team_members (team_id, user_id, role, status) VALUES 
+    -- 1. team Metaverse
     (1, 1, 'owner', 'joined'),
-    (1, 2, 'member', 'joined')
+    (1, 2, 'member', 'joined'),
+    -- 2. Tim Nebula
+    (2, 8, 'owner', 'joined'),
+    (2, 9, 'member', 'joined'),
+    (2, 7, 'member', 'joined'),
+    -- 3. Tim Bisnis Muda
+    (3, 6, 'owner', 'joined'),
+    (3, 7, 'member', 'joined'),
+    -- 4. Tim Hult Hijau
+    (4, 5, 'owner', 'joined'),
+    (4, 4, 'member', 'joined'),
+    (4, 6, 'member', 'joined'),
+    -- 5. Tim Pixel Perfect
+    (5, 4, 'owner', 'joined'),
+    -- 6. Tim Quanta
+    (6, 7, 'owner', 'joined'),
+    (6, 4, 'member', 'joined'),
+    -- 7. Tim DataStorm
+    (7, 5, 'owner', 'joined'),
+    (7, 7, 'member', 'joined'),
+    -- 8. Tim Sociopreneur
+    (8, 9, 'owner', 'joined'),
+    (8, 6, 'member', 'joined'),
+    -- 9. Tim Hackstar
+    (9, 8, 'owner', 'joined'),
+    (9, 5, 'member', 'joined')
   `);
+  
   console.log('✅ Seeding team data selesai.');
 
   await client.end();

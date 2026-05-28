@@ -141,6 +141,8 @@ export const api = {
     async mine()      { const res=await _get('/teams/me');   return res.data; },
     async candidates(){ const res=await _get('/teams/candidates'); return res.data; },
     async create(p)   { const res=await _post('/teams',p);   return res.data; },
+    async list(cat='all') { const res=await _get(`/teams?cat=${cat}`); return res.data; },
+    async apply(id)   { const res=await _post(`/teams/${id}/apply`); return res; },
     leave(id)         { return _del(`/teams/${id}/leave`); },
     invite(id,userId) { return _post(`/teams/${id}/invite`,{userId}); },
   },

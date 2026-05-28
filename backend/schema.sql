@@ -37,7 +37,15 @@ CREATE TABLE teams (
   name VARCHAR(100) NOT NULL,
   competition_id INT REFERENCES competitions(id) ON DELETE CASCADE,
   created_by INT REFERENCES users(id) ON DELETE CASCADE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  description TEXT,
+  skills_needed JSONB,
+  recruitment_deadline DATE,
+  contact VARCHAR(100),
+  max_members INT DEFAULT 5,
+  urgency VARCHAR(20) DEFAULT 'normal',
+  avatar_color VARCHAR(50) DEFAULT 'bg-primary',
+  emoji VARCHAR(10) DEFAULT '💻'
 );
 
 CREATE TABLE team_members (
@@ -79,11 +87,17 @@ INSERT INTO categories (slug, name) VALUES
 ('data-science', 'Data Science'), 
 ('web-dev', 'Web Development');
 
--- Seed Users (Fathiyya, Aqilah, Gilbran)
+-- Seed Users (Fathiyya, Aqilah, Gilbran, and Matchmaker Candidates)
 INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, role) VALUES 
 ('Fathiyya Fitriani Refananda', 'fathiyya@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Artificial Intelligence', 'bg-blue-500', 'Mahasiswa tingkat akhir', 'peserta'),
 ('Aqilah Callysta Abygail Febyan', 'aqilah@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Software Engineering', 'bg-purple-500', 'Mahasiswa yang tertarik dengan frontend development', 'peserta'),
-('M. Gilbran Firdiansyah', 'gilbran@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Computer Science', 'bg-green-500', 'Mahasiswa backend developer pemula', 'peserta');
+('M. Gilbran Firdiansyah', 'gilbran@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Computer Science', 'bg-green-500', 'Mahasiswa backend developer pemula', 'peserta'),
+('Aurel Salsabila', 'aurel@itb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'ITB Bandung', 'Sistem dan Teknologi Informasi', 'bg-purple-500', 'UI/UX Designer', 'peserta'),
+('Bimo Prasetyo', 'bimo@its.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'ITS Surabaya', 'Teknik Komputer', 'bg-blue-500', 'Backend Developer', 'peserta'),
+('Citra Dewi', 'citra@ugm.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas Gadjah Mada', 'Manajemen', 'bg-green-500', 'Business Developer', 'peserta'),
+('Dimas Arfian', 'dimas@binus.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'BINUS University', 'Computer Science', 'bg-orange-500', 'Machine Learning Engineer', 'peserta'),
+('Evan Wijaya', 'evan@ui.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas UI', 'Ilmu Komputer', 'bg-cyan-500', 'Frontend Developer', 'peserta'),
+('Farah Nadia', 'farah@telkom.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Telkom University', 'Desain Komunikasi Visual', 'bg-pink-500', 'UI/UX Designer', 'peserta');
 
 -- Seed Skills
 INSERT INTO skills (name, tag_class) VALUES 
@@ -92,13 +106,35 @@ INSERT INTO skills (name, tag_class) VALUES
 ('Postgres', 'tag-blue'),
 ('Frontend Dev', 'tag-purple'),
 ('React', 'tag-blue'),
-('Node.js', 'tag-green');
+('Node.js', 'tag-green'),
+('User Research', 'tag-purple'),
+('Backend', 'tag-green'),
+('DevOps', 'tag-blue'),
+('Business Dev', 'tag-orange'),
+('Pitching', 'tag-orange'),
+('Market Research', 'tag-orange'),
+('Machine Learning', 'tag-green'),
+('Python', 'tag-blue'),
+('Data Science', 'tag-green'),
+('React.js', 'tag-blue'),
+('Vue.js', 'tag-blue'),
+('TypeScript', 'tag-purple'),
+('CSS', 'tag-pink'),
+('Ilustrasi', 'tag-pink'),
+('Branding', 'tag-purple');
 
 -- Map User Skills
 INSERT INTO user_skills (user_id, skill_id) VALUES 
-(1, 1), (1, 2), (1, 3), -- Fathiyya: UI/UX, Figma, Postgres
-(2, 4), (2, 5),         -- Aqilah: Frontend Dev, React
-(3, 6), (3, 3);         -- Gilbran: Node.js, Postgres
+(1, 1), (1, 2), (1, 3), -- Fathiyya
+(2, 4), (2, 5),         -- Aqilah
+(3, 6), (3, 3),         -- Gilbran
+(4, 1), (4, 2), (4, 7), -- Aurel
+(5, 8), (5, 6), (5, 3), (5, 9), -- Bimo
+(6, 10), (6, 11), (6, 12), -- Citra
+(7, 13), (7, 14), (7, 15), -- Dimas
+(8, 16), (8, 17), (8, 18), (8, 19), -- Evan
+(9, 2), (9, 20), (9, 21), (9, 1); -- Farah
+
 
 
 

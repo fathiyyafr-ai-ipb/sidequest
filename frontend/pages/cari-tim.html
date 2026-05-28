@@ -1,11 +1,204 @@
 <!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Cari Tim — SideQuest</title><script src="https://cdn.tailwindcss.com"></script><script>tailwind.config={theme:{extend:{colors:{primary:"#6C63FF","primary-dark":"#5A52E0","primary-light":"#EDE9FF",accent:"#FF6B35","accent-light":"#FFF1EB"},fontFamily:{sans:["Plus Jakarta Sans","sans-serif"]},boxShadow:{card:"0 2px 12px rgba(108,99,255,0.10)","card-hover":"0 6px 24px rgba(108,99,255,0.18)",topbar:"0 2px 16px rgba(108,99,255,0.12)"}}}};</script><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/><link rel="stylesheet" href="../css/styles.css"/></head><body class="min-h-screen bg-[#FFF5F5]"><div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()"></div><aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col"><div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100"><a href="dashboard.html" class="text-xl font-extrabold text-primary tracking-tight">SideQuest</a></div><div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100"><div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0" data-sb-init>RA</div><div><p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight" data-sb-name>Rizki Aditya</p><p id="sb-user-role" class="text-xs text-gray-400 mt-0.5" data-sb-role>Teknik Informatika · UI</p></div></div><nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto"><a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer"><span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span><span class="text-sm font-600">Dashboard</span></a><a href="direktori.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer"><span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="text-sm font-600">Direktori Lomba</span></a><a href="matchmaking.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer"><span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="text-sm font-600">Matchmaking</span></a><a href="cari-tim.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer"><span class="nav-icon text-primary w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="text-sm font-600">Cari Tim</span><span class="ml-auto bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-full">8</span></a><a href="profil.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer"><span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></span><span class="text-sm font-600">Profil Saya</span></a><a href="posting-lomba.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-accent-light mt-1"><span class="nav-icon text-accent w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="text-sm font-600 text-accent font-700">Posting Lomba</span></a></nav><div class="px-5 py-4 border-t border-gray-100 space-y-2"><div class="flex items-center gap-2 text-xs text-gray-400"><div class="w-2 h-2 rounded-full bg-green-400 pulse"></div><span>Status: Aktif cari tim</span></div><a href="#" data-logout class="flex items-center gap-2 text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer"><svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Keluar</a></div></aside>
 <header class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white shadow-topbar px-4 py-3 flex items-center justify-between"><button onclick="openSidebar()" class="p-2 rounded-xl hover:bg-gray-100 transition-colors"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/></svg></button><span class="font-extrabold text-primary text-base">SideQuest</span><a href="profil.html" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA</a></header><header class="hidden lg:flex fixed top-0 right-0 left-64 z-20 bg-white/95 backdrop-blur shadow-topbar px-6 py-3.5 items-center justify-between"><div><h2 class="text-base font-800 text-gray-800">Cari Tim</h2><p class="text-xs text-gray-400 mt-0.5">Temukan atau buka rekrutmen anggota tim 🤝</p></div><div class="flex items-center gap-3"><a href="profil.html" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors"><div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs" data-sb-init>RA</div><span class="text-sm font-600 text-gray-700" data-sb-name>Rizki Aditya</span></a></div></header><div class="lg:ml-64"><main class="main-content pt-16 lg:pt-20 pb-20 lg:pb-8 px-4 lg:px-8 max-w-6xl mx-auto"><div class="grad-header rounded-2xl p-5 mt-4 mb-5"><h1 class="text-xl font-800 text-white mb-1">🤝 Cari Tim & Rekrutmen</h1><p class="text-white/70 text-sm mb-4">Tim yang butuh anggota, atau cari tim untuk lomba favoritmu</p><div class="flex gap-2"><button onclick="switchTab(this,'browse')" id="tab-browse" class="tab-active px-4 py-2 rounded-xl text-sm font-700 bg-white text-primary shadow-sm transition-all">🔍 Cari Tim</button><button onclick="switchTab(this,'post')" id="tab-post" class="px-4 py-2 rounded-xl text-sm font-700 bg-white/20 text-white transition-all">➕ Buka Rekrutmen</button></div></div>
-<div id="section-browse"><div class="flex gap-2 overflow-x-auto pb-2 mb-4 no-scrollbar"><button onclick="filterTim(this,'all')" class="tim-chip selected flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-primary bg-primary text-white">Semua</button><button onclick="filterTim(this,'teknologi')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Teknologi</button><button onclick="filterTim(this,'bisnis')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Bisnis</button><button onclick="filterTim(this,'desain')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Desain</button><button onclick="filterTim(this,'sosial')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Social Impact</button><button onclick="filterTim(this,'sains')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sains</button></div><div class="flex items-center justify-between mb-4"><p class="text-xs text-gray-500"><span id="tim-count" class="font-700 text-gray-800">8</span> tim buka rekrutmen</p></div><div id="tim-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div></div><div id="section-post" class="hidden max-w-2xl mx-auto"><form onsubmit="submitTim(event)" class="space-y-4"><div class="bg-white rounded-2xl shadow-card p-5"><h3 class="font-800 text-gray-800 text-sm mb-4 flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-primary-light flex items-center justify-center text-xs">👥</span>Info Tim</h3><div class="space-y-4"><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Tim *</label><input type="text" id="inp-tim-nama" required placeholder="contoh: Tim Garuda Gemastik" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Lomba yang Diikuti *</label><input type="text" id="inp-tim-lomba" required placeholder="contoh: Gemastik XVII — Bidang PPL" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kategori *</label><select id="inp-tim-cat" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700"><option value="">Pilih…</option><option value="teknologi">Teknologi</option><option value="bisnis">Bisnis</option><option value="desain">Desain</option><option value="sosial">Social Impact</option><option value="sains">Sains</option></select></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Slot Tersisa *</label><input type="number" id="inp-tim-slot" required min="1" max="10" placeholder="misal: 2" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div></div></div></div><div class="bg-white rounded-2xl shadow-card p-5"><h3 class="font-800 text-gray-800 text-sm mb-4 flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-green-50 flex items-center justify-center text-xs">🎯</span>Kebutuhan Anggota</h3><div class="space-y-4"><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Skill yang Dibutuhkan</label><input type="text" id="inp-tim-skills" placeholder="contoh: UI/UX Designer, Backend Dev, Data Analyst" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Deskripsi Tim & Kebutuhan</label><textarea id="inp-tim-desc" rows="4" required placeholder="Ceritakan tentang timmu, progress yang sudah dicapai, dan apa yang kamu cari dari anggota baru…" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Deadline Rekrutmen</label><input type="date" id="inp-tim-deadline" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kontak (WA/Line/Discord)</label><input type="text" id="inp-tim-kontak" placeholder="contoh: wa.me/628123456789" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div></div></div><div class="flex gap-3 pb-4"><button type="button" onclick="switchTab(document.getElementById('tab-browse'),'browse')" class="flex-1 py-3.5 rounded-2xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors">Batal</button><button type="submit" class="flex-[2] py-3.5 rounded-2xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">🤝 Buka Rekrutmen</button></div></form></div></main></div>
-<div id="success-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4"><div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl"><div class="text-6xl mb-4">🎉</div><h3 class="text-xl font-800 text-gray-800 mb-2">Rekrutmen Berhasil Dibuka!</h3><p class="text-gray-500 text-sm mb-6">Ribuan mahasiswa sudah bisa melihat timmu dan bergabung.</p><button onclick="document.getElementById('success-modal').classList.add('hidden');switchTab(document.getElementById('tab-browse'),'browse')" class="block w-full py-3 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors">Lihat Semua Tim →</button></div></div><script>const timData=[{id:1,nama:"Tim Nebula",lomba:"Gemastik XVII — PPL",cat:"teknologi",anggota:3,maxAnggota:5,slot:2,skills:["Frontend Dev","UI/UX"],deadline:"2026-05-30",kontak:"wa.me/628111",desc:"Tim solid dari UI, sudah punya konsep produk. Butuh frontend dev & designer.",avatarColor:"bg-primary",emoji:"💻",urgency:"hot"},{id:2,nama:"Tim Bisnis Muda",lomba:"ASEAN Business Plan Competition",cat:"bisnis",anggota:2,maxAnggota:4,slot:2,skills:["Financial Analyst","Presenter"],deadline:"2026-06-05",kontak:"discord.gg/bizmuda",desc:"Tim dari FEB UGM. Sudah punya ide bisnis yang kuat, butuh analis keuangan.",avatarColor:"bg-orange-500",emoji:"💼",urgency:"normal"},{id:3,nama:"Tim Hult Hijau",lomba:"Hult Prize 2026 — Campus Round",cat:"sosial",anggota:3,maxAnggota:5,slot:2,skills:["Social Researcher","Presenter"],deadline:"2026-06-01",kontak:"line: hultgreen",desc:"Tim fokus SDGs poin 13 (iklim). Butuh researcher sosial dan orang yang jago presentasi.",avatarColor:"bg-green-500",emoji:"🌱",urgency:"hot"},{id:4,nama:"Tim Pixel Perfect",lomba:"National UI/UX Design Challenge",cat:"desain",anggota:1,maxAnggota:3,slot:2,skills:["UI Designer","Illustrator"],deadline:"2026-06-20",kontak:"wa.me/628222",desc:"Desainer UX berpengalaman dari Telkom U cari partner UI dan ilustrator untuk challenge ini.",avatarColor:"bg-pink-500",emoji:"🎨",urgency:"normal"},{id:5,nama:"Tim Quanta",lomba:"Physics Olympiad Nasional 2026",cat:"sains",anggota:2,maxAnggota:4,slot:2,skills:["Fisika","Matematika"],deadline:"2026-07-01",kontak:"wa.me/628333",desc:"Tim olimpiade fisika dari ITB. Cari anggota yang kuat di mekanika dan termodinamika.",avatarColor:"bg-blue-500",emoji:"⚛️",urgency:"normal"},{id:6,nama:"Tim DataStorm",lomba:"GEMASTIK XVII — Data Mining",cat:"teknologi",anggota:2,maxAnggota:4,slot:2,skills:["Machine Learning","Python","Data Viz"],deadline:"2026-05-25",kontak:"discord.gg/datastorm",desc:"Tim ML dari ITS, sudah punya dataset dan baseline model. Butuh data engineer & visualizer.",avatarColor:"bg-violet-500",emoji:"📊",urgency:"hot"},{id:7,nama:"Tim Sociopreneur",lomba:"Youth Innovation Challenge UNDP",cat:"sosial",anggota:2,maxAnggota:5,slot:3,skills:["Community Org","Business Dev","Social Media"],deadline:"2026-06-15",kontak:"ig: @sociopreneur.id",desc:"Tim mahasiswa beda kampus yg peduli isu sosial. Butuh tim yang passion di sosial impact.",avatarColor:"bg-teal-500",emoji:"🌍",urgency:"normal"},{id:8,nama:"Tim Hackstar",lomba:"Hackathon Nasional Smart City",cat:"teknologi",anggota:2,maxAnggota:4,slot:2,skills:["Backend Dev","IoT","Cloud AWS"],deadline:"2026-06-08",kontak:"wa.me/628444",desc:"Tim hackathon berpengalaman (2x juara). Butuh backend dev yang familiar AWS dan IoT.",avatarColor:"bg-cyan-600",emoji:"🌆",urgency:"hot"}];let currentCat="all";function renderTim(data){const list=document.getElementById("tim-list");const count=document.getElementById("tim-count");if(count)count.textContent=data.length;if(!list)return;if(data.length===0){list.innerHTML=`<div class="col-span-2 text-center py-16"><p class="text-4xl mb-3">🔍</p><p class="font-700 text-gray-600">Tidak ada tim ditemukan</p><p class="text-sm text-gray-400 mt-1">Coba kategori lain</p></div>`;return;}list.innerHTML=data.map(t=>`<div class="bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-card-hover transition-shadow"><div class="p-4"><div class="flex items-start gap-3 mb-3"><div class="w-12 h-12 rounded-2xl ${t.avatarColor} flex items-center justify-center text-2xl flex-shrink-0 shadow-sm">${t.emoji}</div><div class="flex-1 min-w-0"><div class="flex items-start justify-between gap-2"><div><h3 class="font-800 text-gray-800 text-sm">${t.nama}</h3><p class="text-xs text-primary font-600 mt-0.5 truncate">${t.lomba}</p></div>${t.urgency==="hot"?`<span class="flex-shrink-0 text-xs font-700 bg-red-50 text-red-500 px-2 py-0.5 rounded-full">🔥 Hot</span>`:""}</div></div></div><p class="text-xs text-gray-500 mb-3 leading-relaxed">${t.desc}</p><div class="flex flex-wrap gap-1.5 mb-3">${t.skills.map(s=>`<span class="tag-purple text-xs font-600 px-2 py-0.5 rounded-lg">${s}</span>`).join("")}</div><div class="flex items-center justify-between text-xs text-gray-400 mb-3"><span>👥 ${t.anggota}/${t.maxAnggota} anggota</span><span class="font-700 ${t.slot<=1?"text-red-500":"text-gray-500"}">${t.slot} slot tersisa</span><span>⏰ ${t.deadline}</span></div><div class="flex gap-2"><button onclick="showToast('✅ Permintaan bergabung dikirim ke ${t.nama}!')" class="flex-1 py-2.5 rounded-xl bg-primary text-white text-xs font-700 hover:bg-primary-dark transition-colors">Gabung Tim</button><a href="${t.kontak}" target="_blank" class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center hover:bg-primary group transition-colors"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" class="group-hover:stroke-white transition-colors"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/></svg></a></div></div></div>`).join("");}function filterTim(el,cat){document.querySelectorAll(".tim-chip").forEach(c=>{c.classList.remove("selected","bg-primary","text-white","border-primary");c.classList.add("border-gray-200","text-gray-600");});el.classList.add("selected","bg-primary","text-white","border-primary");el.classList.remove("border-gray-200","text-gray-600");currentCat=cat;const filtered=cat==="all"?timData:timData.filter(t=>t.cat===cat);renderTim(filtered);}function switchTab(el,tab){document.getElementById("section-browse").classList.add("hidden");document.getElementById("section-post").classList.add("hidden");document.getElementById("tab-browse").className="px-4 py-2 rounded-xl text-sm font-700 bg-white/20 text-white transition-all";document.getElementById("tab-post").className="px-4 py-2 rounded-xl text-sm font-700 bg-white/20 text-white transition-all";if(tab==="browse"){document.getElementById("section-browse").classList.remove("hidden");document.getElementById("tab-browse").className="tab-active px-4 py-2 rounded-xl text-sm font-700 bg-white text-primary shadow-sm transition-all";}else{document.getElementById("section-post").classList.remove("hidden");document.getElementById("tab-post").className="tab-active px-4 py-2 rounded-xl text-sm font-700 bg-white text-primary shadow-sm transition-all";}}function submitTim(e){e.preventDefault();const btn=e.target.querySelector("button[type=submit]");btn.textContent="Memuat…";btn.disabled=true;setTimeout(()=>{const nama=document.getElementById("inp-tim-nama").value.trim();const lomba=document.getElementById("inp-tim-lomba").value.trim();const cat=document.getElementById("inp-tim-cat").value.trim();const slot=parseInt(document.getElementById("inp-tim-slot").value)||1;const skillsInput=document.getElementById("inp-tim-skills").value.trim();const desc=document.getElementById("inp-tim-desc").value.trim();const deadlineVal=document.getElementById("inp-tim-deadline").value;const kontak=document.getElementById("inp-tim-kontak").value.trim();const skills=skillsInput?skillsInput.split(",").map(s=>s.trim()):["Anggota"];const deadline=deadlineVal?deadlineVal:new Date().toISOString().split("T")[0];const catColorMap={teknologi:"bg-primary",bisnis:"bg-orange-500",sosial:"bg-green-500",desain:"bg-pink-500",sains:"bg-blue-500"};const catEmojiMap={teknologi:"💻",bisnis:"💼",sosial:"🌱",desain:"🎨",sains:"⚛️"};const newTim={id:timData.length+1,nama:nama,lomba:lomba,cat:cat,anggota:1,maxAnggota:slot+1,slot:slot,skills:skills,deadline:deadline,kontak:kontak?kontak:"#",desc:desc,avatarColor:catColorMap[cat]||"bg-primary",emoji:catEmojiMap[cat]||"💻",urgency:"normal"};timData.unshift(newTim);filterTim(document.querySelector('.tim-chip'),'all');e.target.reset();document.getElementById("success-modal").classList.remove("hidden");btn.textContent="🤝 Buka Rekrutmen";btn.disabled=false;},1000);}function showToast(msg){let t=document.getElementById("toast");if(!t){t=document.createElement("div");t.id="toast";t.className="fixed bottom-24 lg:bottom-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm font-600 px-5 py-3 rounded-2xl shadow-xl z-50 transition-all";document.body.appendChild(t);}t.textContent=msg;t.style.opacity="1";clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity="0";},2500);}document.addEventListener("DOMContentLoaded",()=>{renderTim(timData);});function openSidebar(){document.getElementById("sidebar").classList.add("open");document.getElementById("sidebar-overlay").classList.add("show");}function closeSidebar(){document.getElementById("sidebar").classList.remove("open");document.getElementById("sidebar-overlay").classList.remove("show");}</script><nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100 shadow-topbar flex items-center"><a href="dashboard.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline"><span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span><span class="tab-label text-xs font-600 text-gray-400">Home</span><span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary mt-0.5"></span></a><a href="direktori.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline"><span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="tab-label text-xs font-600 text-gray-400">Lomba</span><span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary mt-0.5"></span></a><a href="matchmaking.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline"><span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="tab-label text-xs font-600 text-gray-400">Match</span><span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary mt-0.5"></span></a><a href="cari-tim.html" class="tab-btn active flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline"><span class="tab-icon text-primary"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="tab-label text-xs font-700 text-primary">Tim</span><span class="tab-dot block w-1.5 h-1.5 rounded-full bg-primary mt-0.5"></span></a><a href="profil.html" class="tab-btn flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline"><span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><span class="tab-label text-xs font-600 text-gray-400">Profil</span><span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary mt-0.5"></span></a></nav>
-  <script type="module">
-    import { initSession } from '../js/auth.js';
-    document.addEventListener('DOMContentLoaded', initSession);
-  </script>
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+<div id="section-browse"><div class="flex gap-2 overflow-x-auto pb-2 mb-4 no-scrollbar"><button onclick="filterTim(this,'all')" class="tim-chip selected flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-primary bg-primary text-white">Semua</button><button onclick="filterTim(this,'teknologi')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Teknologi</button><button onclick="filterTim(this,'bisnis')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Bisnis</button><button onclick="filterTim(this,'desain')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Desain</button><button onclick="filterTim(this,'sosial')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Social Impact</button><button onclick="filterTim(this,'sains')" class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sains</button></div><div class="flex items-center justify-between mb-4"><p class="text-xs text-gray-500"><span id="tim-count" class="font-700 text-gray-800">8</span> tim buka rekrutmen</p></div><div id="tim-list" class="grid grid-cols-1 lg:grid-cols-2 gap-4"></div></div><div id="section-post" class="hidden max-w-2xl mx-auto"><form onsubmit="submitTim(event)" class="space-y-4"><div class="bg-white rounded-2xl shadow-card p-5"><h3 class="font-800 text-gray-800 text-sm mb-4 flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-primary-light flex items-center justify-center text-xs">👥</span>Info Tim</h3><div class="space-y-4"><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Tim *</label><input type="text" id="inp-tim-nama" required placeholder="contoh: Tim Garuda Gemastik" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Lomba yang Diikuti *</label><select id="inp-tim-lomba" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700"><option value="">Memuat daftar lomba…</option></select></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kategori *</label><select id="inp-tim-cat" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700"><option value="">Pilih…</option><option value="teknologi">Teknologi</option><option value="bisnis">Bisnis</option><option value="desain">Desain</option><option value="sosial">Social Impact</option><option value="sains">Sains</option></select></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Slot Tersisa *</label><input type="number" id="inp-tim-slot" required min="1" max="10" placeholder="misal: 2" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div></div></div></div><div class="bg-white rounded-2xl shadow-card p-5"><h3 class="font-800 text-gray-800 text-sm mb-4 flex items-center gap-2"><span class="w-6 h-6 rounded-lg bg-green-50 flex items-center justify-center text-xs">🎯</span>Kebutuhan Anggota</h3><div class="space-y-4"><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Skill yang Dibutuhkan</label><input type="text" id="inp-tim-skills" placeholder="contoh: UI/UX Designer, Backend Dev, Data Analyst" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Deskripsi Tim & Kebutuhan</label><textarea id="inp-tim-desc" rows="4" required placeholder="Ceritakan tentang timmu, progress yang sudah dicapai, dan apa yang kamu cari dari anggota baru…" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Deadline Rekrutmen</label><input type="date" id="inp-tim-deadline" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div><div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kontak (WA/Line/Discord)</label><input type="text" id="inp-tim-kontak" placeholder="contoh: wa.me/628123456789" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div></div></div><div class="flex gap-3 pb-4"><button type="button" onclick="switchTab(document.getElementById('tab-browse'),'browse')" class="flex-1 py-3.5 rounded-2xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors">Batal</button><button type="submit" class="flex-[2] py-3.5 rounded-2xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">🤝 Buka Rekrutmen</button></div></form></div></main></div>
+<div id="success-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4"><div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl"><div class="text-6xl mb-4">🎉</div><h3 class="text-xl font-800 text-gray-800 mb-2">Rekrutmen Berhasil Dibuka!</h3><p class="text-gray-500 text-sm mb-6">Ribuan mahasiswa sudah bisa melihat timmu dan bergabung.</p><button onclick="document.getElementById('success-modal').classList.add('hidden');switchTab(document.getElementById('tab-browse'),'browse')" class="block w-full py-3 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors">Lihat S<script type="module">
+import { api, ui, handleApiError, token } from '../js/api.js';
+import { initSession, bindLogout } from '../js/auth.js';
+
+let currentCat = "all";
+let activeTeams = [];
+
+// Expose functions globally for HTML event attributes (onclick, etc.)
+window.openSidebar = () => {
+  document.getElementById("sidebar").classList.add("open");
+  document.getElementById("sidebar-overlay").classList.add("open");
+};
+
+window.closeSidebar = () => {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("sidebar-overlay").classList.remove("open");
+};
+
+window.switchTab = (el, tab) => {
+  document.getElementById("section-browse").classList.add("hidden");
+  document.getElementById("section-post").classList.add("hidden");
+  document.getElementById("tab-browse").className = "px-4 py-2 rounded-xl text-sm font-700 bg-white/20 text-white transition-all";
+  document.getElementById("tab-post").className = "px-4 py-2 rounded-xl text-sm font-700 bg-white/20 text-white transition-all";
+  
+  if (tab === "browse") {
+    document.getElementById("section-browse").classList.remove("hidden");
+    document.getElementById("tab-browse").className = "tab-active px-4 py-2 rounded-xl text-sm font-700 bg-white text-primary shadow-sm transition-all";
+  } else {
+    document.getElementById("section-post").classList.remove("hidden");
+    document.getElementById("tab-post").className = "tab-active px-4 py-2 rounded-xl text-sm font-700 bg-white text-primary shadow-sm transition-all";
+  }
+};
+
+window.filterTim = async (el, cat) => {
+  document.querySelectorAll(".tim-chip").forEach(c => {
+    c.classList.remove("selected", "bg-primary", "text-white", "border-primary");
+    c.classList.add("border-gray-200", "text-gray-600");
+  });
+  el.classList.add("selected", "bg-primary", "text-white", "border-primary");
+  el.classList.remove("border-gray-200", "text-gray-600");
+  
+  currentCat = cat;
+  ui.loading(true, document.getElementById('tim-list'));
+  try {
+    const data = await api.teams.list(cat);
+    activeTeams = data;
+    renderTim(data);
+  } catch(e) {
+    handleApiError(e, 'Gagal memuat rekrutmen tim');
+  } finally {
+    ui.loading(false);
+  }
+};
+
+window.joinTeam = async (teamId, teamName) => {
+  if (!token.isPresent()) { window.location.href = 'login.html'; return; }
+  ui.loading(true);
+  try {
+    await api.teams.apply(teamId);
+    ui.toast(`✅ Permintaan bergabung dikirim ke ${teamName}!`, 'success');
+  } catch(e) {
+    handleApiError(e, 'Gagal mengajukan gabung tim');
+  } finally {
+    ui.loading(false);
+  }
+};
+
+function renderTim(data) {
+  const list = document.getElementById("tim-list");
+  const count = document.getElementById("tim-count");
+  if (count) count.textContent = data.length;
+  if (!list) return;
+  
+  if (data.length === 0) {
+    list.innerHTML = `<div class="col-span-2 text-center py-16"><p class="text-4xl mb-3">🔍</p><p class="font-700 text-gray-600">Tidak ada tim ditemukan</p><p class="text-sm text-gray-400 mt-1">Coba kategori lain</p></div>`;
+    return;
+  }
+  
+  list.innerHTML = data.map(t => `
+    <div class="bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-card-hover transition-shadow">
+      <div class="p-4">
+        <div class="flex items-start gap-3 mb-3">
+          <div class="w-12 h-12 rounded-2xl ${t.avatarColor} flex items-center justify-center text-2xl flex-shrink-0 shadow-sm">
+            ${t.emoji}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h3 class="font-800 text-gray-800 text-sm">${t.nama}</h3>
+                <p class="text-xs text-primary font-600 mt-0.5 truncate">${t.lomba}</p>
+              </div>
+              ${t.urgency === "hot" ? `<span class="flex-shrink-0 text-xs font-700 bg-red-50 text-red-500 px-2 py-0.5 rounded-full">🔥 Hot</span>` : ""}
+            </div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-500 mb-3 leading-relaxed">${t.desc || 'Belum ada deskripsi singkat.'}</p>
+        <div class="flex flex-wrap gap-1.5 mb-3">
+          ${(t.skills || []).map(s => `<span class="tag-purple text-xs font-600 px-2 py-0.5 rounded-lg">${s}</span>`).join("")}
+        </div>
+        <div class="flex items-center justify-between text-xs text-gray-400 mb-3">
+          <span>👥 ${t.anggota}/${t.maxAnggota} anggota</span>
+          <span class="font-700 ${t.slot <= 1 ? "text-red-500" : "text-gray-500"}">${t.slot} slot tersisa</span>
+          <span>⏰ ${t.deadline}</span>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="joinTeam(${t.id}, '${t.nama}')" class="flex-1 py-2.5 rounded-xl bg-primary text-white text-xs font-700 hover:bg-primary-dark transition-colors">
+            Gabung Tim
+          </button>
+          <a href="${t.kontak && t.kontak.startsWith('http') ? t.kontak : 'https://' + t.kontak}" target="_blank" class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center hover:bg-primary group transition-colors">
+            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" class="group-hover:stroke-white transition-colors">
+              <path d="M21 15a2 2 0 01-2-2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  `).join("");
+}
+
+// Populate competition options dynamically
+async function loadCompetitions() {
+  const select = document.getElementById('inp-tim-lomba');
+  if (!select) return;
+  try {
+    const list = await api.competitions.list({ size: 100 });
+    select.innerHTML = '<option value="">Pilih Kompetisi…</option>' + 
+      list.map(c => `<option value="${c.id}">${c.title} (${c.org})</option>`).join('');
+  } catch(e) {
+    select.innerHTML = '<option value="">Gagal memuat daftar kompetisi</option>';
+  }
+}
+
+// Handle Form Submission
+document.querySelector('form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector("button[type=submit]");
+  btn.textContent = "Memuat…";
+  btn.disabled = true;
+
+  try {
+    const name = document.getElementById("inp-tim-nama").value.trim();
+    const compSelect = document.getElementById("inp-tim-lomba");
+    const competition_id = parseInt(compSelect.value, 10);
+    const category = document.getElementById("inp-tim-cat").value;
+    const slot = parseInt(document.getElementById("inp-tim-slot").value) || 1;
+    const skillsInput = document.getElementById("inp-tim-skills").value.trim();
+    const description = document.getElementById("inp-tim-desc").value.trim();
+    const deadlineVal = document.getElementById("inp-tim-deadline").value;
+    const contact = document.getElementById("inp-tim-kontak").value.trim();
+
+    const skills_needed = skillsInput ? skillsInput.split(",").map(s => s.trim()) : ["Anggota"];
+    const max_members = slot + 1; // 1 owner + slot members
+    const recruitment_deadline = deadlineVal || new Date().toISOString().split("T")[0];
+
+    const payload = {
+      name,
+      competition_id,
+      description,
+      skills_needed,
+      recruitment_deadline,
+      contact,
+      max_members,
+      category
+    };
+
+    await api.teams.create(payload);
+    
+    // Reset form and show success
+    e.target.reset();
+    document.getElementById("success-modal").classList.remove("hidden");
+    
+    // Refresh teams list
+    window.filterTim(document.querySelector('.tim-chip'), 'all');
+  } catch(err) {
+    handleApiError(err, 'Gagal membuat rekrutmen tim');
+  } finally {
+    btn.textContent = "🤝 Buka Rekrutmen";
+    btn.disabled = false;
+  }
+});
+
+// Initialise page
+document.addEventListener('DOMContentLoaded', async () => {
+  await initSession();
+  bindLogout();
+  
+  ui.loading(true, document.getElementById('tim-list'));
+  try {
+    const data = await api.teams.list('all');
+    activeTeams = data;
+    renderTim(data);
+  } catch(e) {
+    handleApiError(e, 'Gagal memuat rekrutmen tim');
+  } finally {
+    ui.loading(false);
+  }
+  
+  loadCompetitions();
+});
+</script>
 </body></html>
