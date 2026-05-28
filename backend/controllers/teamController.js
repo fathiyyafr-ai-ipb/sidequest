@@ -53,7 +53,7 @@ const getMine = async (req, res) => {
          WHERE us.user_id = $1`,
         [member.id]
       );
-      
+
       members.push({
         id: member.id,
         name: member.name,
@@ -86,7 +86,7 @@ const getMine = async (req, res) => {
          WHERE us.user_id = $1`,
         [applicant.id]
       );
-      
+
       applicants.push({
         id: applicant.id,
         name: applicant.name,
@@ -271,13 +271,13 @@ const createTeam = async (req, res) => {
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
       [
-        name, 
-        competition_id, 
-        userId, 
-        description, 
-        JSON.stringify(skills_needed || []), 
-        recruitment_deadline || null, 
-        contact || '', 
+        name,
+        competition_id,
+        userId,
+        description,
+        JSON.stringify(skills_needed || []),
+        recruitment_deadline || null,
+        contact || '',
         max_members || 5,
         color,
         emoji

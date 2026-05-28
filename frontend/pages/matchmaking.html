@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,339 +11,415 @@
       theme: {
         extend: {
           colors: {
-            primary:         '#6C63FF',
-            'primary-dark':  '#5A52E0',
+            primary: '#6C63FF',
+            'primary-dark': '#5A52E0',
             'primary-light': '#EDE9FF',
-            accent:          '#FF6B35',
-            'accent-light':  '#FFF1EB',
+            accent: '#FF6B35',
+            'accent-light': '#FFF1EB',
           },
           fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
           boxShadow: {
-            card:         '0 2px 12px rgba(108,99,255,0.10)',
+            card: '0 2px 12px rgba(108,99,255,0.10)',
             'card-hover': '0 6px 24px rgba(108,99,255,0.18)',
-            topbar:       '0 2px 16px rgba(108,99,255,0.12)',
+            topbar: '0 2px 16px rgba(108,99,255,0.12)',
           },
         },
       },
     };
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
+
 <body class="min-h-screen bg-[#FFF5F5]">
-<!-- ── Sidebar overlay (mobile) ── -->
-<div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden"
-     onclick="closeSidebar()"></div>
-
-<!-- ── Sidebar ── -->
-<aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col">
-  <!-- Logo -->
-  <div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100">
-    <a href="dashboard.html" class="text-xl font-extrabold text-primary tracking-tight">SideQuest</a>
+  <!-- ── Sidebar overlay (mobile) ── -->
+  <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()">
   </div>
 
-  <!-- User mini card -->
-  <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
-    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center
+  <!-- ── Sidebar ── -->
+  <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col">
+    <!-- Logo -->
+    <div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100">
+      <a href="dashboard.html" class="text-xl font-extrabold text-primary tracking-tight">SideQuest</a>
+    </div>
+
+    <!-- User mini card -->
+    <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
+      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center
                 text-white font-bold text-sm flex-shrink-0" data-sb-init>RA</div>
-    <div>
-      <p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight" data-sb-name>Rizki Aditya</p>
-      <p id="sb-user-role" class="text-xs text-gray-400 mt-0.5" data-sb-role>Teknik Informatika · UI</p>
-    </div>
-  </div>
-
-  <!-- Nav links -->
-  <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-    
-    <a href="dashboard.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
-      <span class="text-sm font-600">Dashboard</span>
-      
-    </a>
-    <a href="direktori.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Direktori Lomba</span>
-      <span class="ml-auto bg-accent text-white text-xs font-bold px-1.5 py-0.5 rounded-full">12</span>
-    </a>
-    <a href="matchmaking.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Matchmaking</span>
-      
-    </a>
-    <a href="cari-tim.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Cari Tim</span>
-      <span class="ml-auto bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-full">8</span>
-    </a>
-    <a href="profil.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></span>
-      <span class="text-sm font-600">Profil Saya</span>
-    </a>
-    <a href="posting-lomba.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-accent-light mt-1">
-      <span class="nav-icon text-accent w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600 text-accent font-700">Posting Lomba</span>
-    </a>
-  </nav>
-
-  <!-- Status -->
-  <div class="px-5 py-4 border-t border-gray-100 space-y-2">
-    <div class="flex items-center gap-2 text-xs text-gray-400">
-      <div class="w-2 h-2 rounded-full bg-green-400 pulse"></div>
-      <span>Status: Aktif cari tim</span>
-    </div>
-    <a href="#" data-logout class="flex items-center gap-2 text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer">
-      <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      Keluar
-    </a>
-  </div>
-</aside>
-<!-- ── Mobile topbar ── -->
-<header class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white shadow-topbar px-4 py-3
-               flex items-center justify-between">
-  <button onclick="openSidebar()" class="p-2 rounded-xl hover:bg-gray-100 transition-colors">
-    <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-      <path d="M4 6h16M4 12h16M4 18h16" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
-    </svg>
-  </button>
-  <div class="flex items-center gap-2">
-    <span class="font-extrabold text-primary text-base">SideQuest</span>
-  </div>
-  <div class="flex items-center gap-1.5">
-    <button class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-        <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
-                 C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
-                 A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5
-                 M15 17a3 3 0 11-6 0"
-              stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-accent rounded-full"></span>
-    </button>
-    <a href="profil.html"
-       class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA</a>
-  </div>
-</header>
-
-<!-- ── Desktop topbar ── -->
-<header class="hidden lg:flex fixed top-0 right-0 left-64 z-20 bg-white/95 backdrop-blur
-               shadow-topbar px-6 py-3.5 items-center justify-between">
-  <div>
-    <h2 class="text-base font-800 text-gray-800">Matchmaking</h2>
-    <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, <span data-sb-fname>Rizki</span> 👋</p>
-  </div>
-  <div class="flex items-center gap-3">
-    <button class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-        <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
-                 C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
-                 A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5
-                 M15 17a3 3 0 11-6 0"
-              stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
-      </svg>
-      <span class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border border-white"></span>
-    </button>
-    <a href="profil.html"
-       class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
-      <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs" data-sb-init>RA</div>
-      <span class="text-sm font-600 text-gray-700" data-sb-name>Rizki Aditya</span>
-      <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-        <path d="M6 9l6 6 6-6" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </a>
-  </div>
-</header>
-<div class="lg:ml-64">
-  
-  <main class="main-content pt-16 lg:pt-20 pb-20 lg:pb-8 px-4 lg:px-8 max-w-6xl mx-auto">
-
-    <!-- Header -->
-    <div class="grad-header rounded-2xl p-5 mt-4 mb-5">
-      <h1 class="text-xl font-800 text-white mb-1">Matchmaker</h1>
-      <p class="text-white/70 text-sm mb-3">Temukan rekan tim yang cocok untukmu</p>
-      <div class="flex items-center gap-2 bg-white/15 backdrop-blur rounded-xl px-3 py-2.5 border border-white/20">
-        <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-          <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <span class="text-white/80 text-xs font-500">Filter: Semua skill</span>
-        <svg class="ml-auto" width="12" height="12" fill="none" viewBox="0 0 24 24">
-          <path d="M6 9l6 6 6-6" stroke="white" stroke-width="2" stroke-linecap="round"/>
-        </svg>
+      <div>
+        <p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight" data-sb-name>Rizki Aditya</p>
+        <p id="sb-user-role" class="text-xs text-gray-400 mt-0.5" data-sb-role>Teknik Informatika · UI</p>
       </div>
     </div>
 
-    <!-- Skill chips -->
-    <div class="flex gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar">
-      <button onclick="setMatchChip(this,'all')"           class="match-chip chip selected flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-primary bg-primary text-white">Semua</button>
-      <button onclick="setMatchChip(this,'frontend')"      class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Frontend</button>
-      <button onclick="setMatchChip(this,'backend')"       class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Backend</button>
-      <button onclick="setMatchChip(this,'ui-ux')"         class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">UI/UX</button>
-      <button onclick="setMatchChip(this,'data-science')"  class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Data Science</button>
-      <button onclick="setMatchChip(this,'business')"      class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Business</button>
-      <button onclick="setMatchChip(this,'sosial')"        class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sosial</button>
-      <button onclick="setMatchChip(this,'public-speaking')" class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Public Speaking</button>
-      <button onclick="setMatchChip(this,'sains-riset')"   class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sains & Riset</button>
+    <!-- Nav links -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+
+      <a href="dashboard.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+        <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none"
+            viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+            <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+          </svg></span>
+        <span class="text-sm font-600">Dashboard</span>
+
+      </a>
+      <a href="direktori.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+        <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none"
+            viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+            <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg></span>
+        <span class="text-sm font-600">Direktori Lomba</span>
+        <span class="ml-auto bg-accent text-white text-xs font-bold px-1.5 py-0.5 rounded-full">12</span>
+      </a>
+      <a href="matchmaking.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+        <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none"
+            viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+          </svg></span>
+        <span class="text-sm font-600">Matchmaking</span>
+
+      </a>
+      <a href="cari-tim.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+        <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none"
+            viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+          </svg></span>
+        <span class="text-sm font-600">Cari Tim</span>
+        <span class="ml-auto bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-full">8</span>
+      </a>
+      <a href="profil.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+        <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none"
+            viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" />
+            <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+          </svg></span>
+        <span class="text-sm font-600">Profil Saya</span>
+      </a>
+      <a href="posting-lomba.html"
+        class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-accent-light mt-1">
+        <span class="nav-icon text-accent w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" />
+            <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg></span>
+        <span class="text-sm font-600 text-accent font-700">Posting Lomba</span>
+      </a>
+    </nav>
+
+    <!-- Status -->
+    <div class="px-5 py-4 border-t border-gray-100 space-y-2">
+      <div class="flex items-center gap-2 text-xs text-gray-400">
+        <div class="w-2 h-2 rounded-full bg-green-400 pulse"></div>
+        <span>Status: Aktif cari tim</span>
+      </div>
+      <a href="#" data-logout
+        class="flex items-center gap-2 text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer">
+        <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" />
+        </svg>
+        Keluar
+      </a>
     </div>
-
-    <!-- Toolbar count -->
-    <div class="flex items-center justify-between mb-4">
-      <p class="text-xs text-gray-500">
-        <span id="match-count" class="font-700 text-gray-800">12</span> kandidat ditemukan
-      </p>
+  </aside>
+  <!-- ── Mobile topbar ── -->
+  <header class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white shadow-topbar px-4 py-3
+               flex items-center justify-between">
+    <button onclick="openSidebar()" class="p-2 rounded-xl hover:bg-gray-100 transition-colors">
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+        <path d="M4 6h16M4 12h16M4 18h16" stroke="#6C63FF" stroke-width="2" stroke-linecap="round" />
+      </svg>
+    </button>
+    <div class="flex items-center gap-2">
+      <span class="font-extrabold text-primary text-base">SideQuest</span>
     </div>
+    <div class="flex items-center gap-1.5">
+      <button class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
+                 C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
+                 A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5
+                 M15 17a3 3 0 11-6 0" stroke="#6C63FF" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-accent rounded-full"></span>
+      </button>
+      <a href="profil.html"
+        class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA</a>
+    </div>
+  </header>
 
-    <!-- Match cards (rendered by app.js) -->
-    <div id="match-list" class="space-y-4"></div>
+  <!-- ── Desktop topbar ── -->
+  <header class="hidden lg:flex fixed top-0 right-0 left-64 z-20 bg-white/95 backdrop-blur
+               shadow-topbar px-6 py-3.5 items-center justify-between">
+    <div>
+      <h2 class="text-base font-800 text-gray-800">Matchmaking</h2>
+      <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, <span data-sb-fname>Rizki</span> 👋</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+          <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
+                 C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
+                 A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5
+                 M15 17a3 3 0 11-6 0" stroke="#6C63FF" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border border-white"></span>
+      </button>
+      <a href="profil.html"
+        class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
+        <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs"
+          data-sb-init>RA</div>
+        <span class="text-sm font-600 text-gray-700" data-sb-name>Rizki Aditya</span>
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+          <path d="M6 9l6 6 6-6" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+  </header>
+  <div class="lg:ml-64">
 
-  </main>
-  
-</div>
-<!-- ── Bottom tab bar (mobile only) ── -->
-<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100
+    <main class="main-content pt-16 lg:pt-20 pb-20 lg:pb-8 px-4 lg:px-8 max-w-6xl mx-auto">
+
+      <!-- Header -->
+      <div class="grad-header rounded-2xl p-5 mt-4 mb-5">
+        <h1 class="text-xl font-800 text-white mb-1">Matchmaker</h1>
+        <p class="text-white/70 text-sm mb-3">Temukan rekan tim yang cocok untukmu</p>
+        <div class="flex items-center gap-2 bg-white/15 backdrop-blur rounded-xl px-3 py-2.5 border border-white/20">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+            <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z" stroke="white" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" />
+          </svg>
+          <span class="text-white/80 text-xs font-500">Filter: Semua skill</span>
+          <svg class="ml-auto" width="12" height="12" fill="none" viewBox="0 0 24 24">
+            <path d="M6 9l6 6 6-6" stroke="white" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Skill chips -->
+      <div class="flex gap-2 overflow-x-auto pb-2 mb-5 no-scrollbar">
+        <button onclick="setMatchChip(this,'all')"
+          class="match-chip chip selected flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-primary bg-primary text-white">Semua</button>
+        <button onclick="setMatchChip(this,'frontend')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Frontend</button>
+        <button onclick="setMatchChip(this,'backend')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Backend</button>
+        <button onclick="setMatchChip(this,'ui-ux')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">UI/UX</button>
+        <button onclick="setMatchChip(this,'data-science')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Data
+          Science</button>
+        <button onclick="setMatchChip(this,'business')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Business</button>
+        <button onclick="setMatchChip(this,'sosial')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sosial</button>
+        <button onclick="setMatchChip(this,'public-speaking')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Public
+          Speaking</button>
+        <button onclick="setMatchChip(this,'sains-riset')"
+          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sains
+          & Riset</button>
+      </div>
+
+      <!-- Toolbar count -->
+      <div class="flex items-center justify-between mb-4">
+        <p class="text-xs text-gray-500">
+          <span id="match-count" class="font-700 text-gray-800">12</span> kandidat ditemukan
+        </p>
+      </div>
+
+      <!-- Match cards (rendered by app.js) -->
+      <div id="match-list" class="space-y-4"></div>
+
+    </main>
+
+  </div>
+  <!-- ── Bottom tab bar (mobile only) ── -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100
             shadow-topbar flex items-center">
-  
-    <a href="dashboard.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
+
+    <a href="dashboard.html"
+      class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+          <rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+          <rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+          <rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+          <rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2" />
+        </svg></span>
       <span class="tab-label text-xs font-600 text-gray-400">Home</span>
       <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
     </a>
-    <a href="direktori.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <a href="direktori.html"
+      class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" />
+          <path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg></span>
       <span class="tab-label text-xs font-600 text-gray-400">Lomba</span>
       <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
     </a>
-    <a href="matchmaking.html" class="tab-btn active flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <a href="matchmaking.html"
+      class="tab-btn active flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+          <path
+            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg></span>
       <span class="tab-label text-xs font-600 text-gray-400">Match</span>
       <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
     </a>
-    <a href="cari-tim.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <a href="cari-tim.html"
+      class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" />
+          <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
+          <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" />
+        </svg></span>
       <span class="tab-label text-xs font-600 text-gray-400">Tim</span>
       <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
     </a>
     <a href="profil.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 transition-colors no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" />
+        </svg></span>
       <span class="tab-label text-xs font-600 text-gray-400">Profil</span>
       <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
     </a>
-</nav>
+  </nav>
 
-<script type="module">
-  import { api, ui, handleApiError, token } from '../js/api.js';
-  import { initSession, bindLogout } from '../js/auth.js';
+  <script type="module">
+    import { api, ui, handleApiError, token } from '../js/api.js';
+    import { initSession, bindLogout } from '../js/auth.js';
 
-  let currentCategory = 'all';
+    let currentCategory = 'all';
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    const u = await initSession();
-    bindLogout();
+    document.addEventListener('DOMContentLoaded', async () => {
+      const u = await initSession();
+      bindLogout();
 
-    if (u) {
-      // Muat daftar matchmaking pertama kali
-      await loadMatchmaking('all');
-    }
-  });
-
-  // Togel filter chips
-  window.setMatchChip = async (el, skillCat) => {
-    document.querySelectorAll(".match-chip").forEach(c => {
-      c.classList.remove("selected", "bg-primary", "text-white", "border-primary");
-      c.classList.add("border-gray-200", "text-gray-600");
+      if (u) {
+        // Muat daftar matchmaking pertama kali
+        await loadMatchmaking('all');
+      }
     });
-    el.classList.add("selected", "bg-primary", "text-white", "border-primary");
-    el.classList.remove("border-gray-200", "text-gray-600");
 
-    currentCategory = skillCat;
-    await loadMatchmaking(skillCat);
-  };
+    // Togel filter chips
+    window.setMatchChip = async (el, skillCat) => {
+      document.querySelectorAll(".match-chip").forEach(c => {
+        c.classList.remove("selected", "bg-primary", "text-white", "border-primary");
+        c.classList.add("border-gray-200", "text-gray-600");
+      });
+      el.classList.add("selected", "bg-primary", "text-white", "border-primary");
+      el.classList.remove("border-gray-200", "text-gray-600");
 
-  // Mengirim permintaan koneksi
-  window.sendConnection = async (receiverId, receiverName) => {
-    if (!token.isPresent()) {
-      window.location.href = 'login.html';
-      return;
-    }
-    
-    ui.loading(true);
-    try {
-      await api.matchmaking.connect(receiverId);
-      ui.toast(`✅ Permintaan koneksi terkirim ke ${receiverName}!`, 'success');
-      
-      // Muat ulang matchmaking list untuk memperbarui status tombol menjadi pending secara instan
-      await loadMatchmaking(currentCategory);
-    } catch(e) {
-      handleApiError(e, 'Gagal mengirim permintaan koneksi');
-    } finally {
-      ui.loading(false);
-    }
-  };
+      currentCategory = skillCat;
+      await loadMatchmaking(skillCat);
+    };
 
-  // Fungsi memuat matchmaking
-  async function loadMatchmaking(skillCat = 'all') {
-    const list = document.getElementById('match-list');
-    const countEl = document.getElementById('match-count');
-    if (!list) return;
+    // Mengirim permintaan koneksi
+    window.sendConnection = async (receiverId, receiverName) => {
+      if (!token.isPresent()) {
+        window.location.href = 'login.html';
+        return;
+      }
 
-    ui.loading(true, list);
-    try {
-      const res = await api.matchmaking.get(skillCat);
-      
-      if (countEl) countEl.textContent = res.length;
+      ui.loading(true);
+      try {
+        await api.matchmaking.connect(receiverId);
+        ui.toast(`✅ Permintaan koneksi terkirim ke ${receiverName}!`, 'success');
 
-      if (res.length === 0) {
-        list.innerHTML = `
+        // Muat ulang matchmaking list untuk memperbarui status tombol menjadi pending secara instan
+        await loadMatchmaking(currentCategory);
+      } catch (e) {
+        handleApiError(e, 'Gagal mengirim permintaan koneksi');
+      } finally {
+        ui.loading(false);
+      }
+    };
+
+    // Fungsi memuat matchmaking
+    async function loadMatchmaking(skillCat = 'all') {
+      const list = document.getElementById('match-list');
+      const countEl = document.getElementById('match-count');
+      if (!list) return;
+
+      ui.loading(true, list);
+      try {
+        const res = await api.matchmaking.get(skillCat);
+
+        if (countEl) countEl.textContent = res.length;
+
+        if (res.length === 0) {
+          list.innerHTML = `
           <div class="text-center py-16 bg-white rounded-3xl shadow-card border border-gray-100">
             <p class="text-4xl mb-3">🔍</p>
             <p class="font-700 text-gray-600">Tidak ada kandidat ditemukan</p>
             <p class="text-sm text-gray-400 mt-1">Coba filter skill yang lain</p>
           </div>
         `;
-        return;
-      }
+          return;
+        }
 
-      list.innerHTML = res.map(m => {
-        // Tentukan gradient warna berdasarkan kecocokan
-        const gradColor = m.compat >= 85 ? 'from-green-400 to-emerald-500' :
-                          m.compat >= 70 ? 'from-blue-400 to-indigo-500' : 'from-orange-400 to-accent';
-        const barColor = m.compat >= 85 ? 'bg-green-500' :
-                         m.compat >= 70 ? 'bg-blue-500' : 'bg-orange-500';
+        list.innerHTML = res.map(m => {
+          // Tentukan gradient warna berdasarkan kecocokan
+          const gradColor = m.compat >= 85 ? 'from-green-400 to-emerald-500' :
+            m.compat >= 70 ? 'from-blue-400 to-indigo-500' : 'from-orange-400 to-accent';
+          const barColor = m.compat >= 85 ? 'bg-green-500' :
+            m.compat >= 70 ? 'bg-blue-500' : 'bg-orange-500';
 
-        // Tentukan style tombol koneksi berdasarkan status di database
-        let connectBtnHtml = '';
-        if (m.connectionStatus === 'connected') {
-          connectBtnHtml = `
+          // Tentukan style tombol koneksi berdasarkan status di database
+          let connectBtnHtml = '';
+          if (m.connectionStatus === 'connected') {
+            connectBtnHtml = `
             <button class="flex-1 py-2.5 rounded-xl bg-green-50 text-green-700 text-sm font-700 border-0 flex items-center justify-center gap-1.5 cursor-not-allowed" disabled>
               <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
               Connected
             </button>
           `;
-        } else if (m.connectionStatus === 'sent') {
-          connectBtnHtml = `
+          } else if (m.connectionStatus === 'sent') {
+            connectBtnHtml = `
             <button class="flex-1 py-2.5 rounded-xl bg-gray-50 text-gray-400 text-sm font-700 border border-gray-200 cursor-not-allowed" disabled>
               Request Sent
             </button>
           `;
-        } else if (m.connectionStatus === 'received') {
-          connectBtnHtml = `
+          } else if (m.connectionStatus === 'received') {
+            connectBtnHtml = `
             <button onclick="sendConnection(${m.id}, '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-accent text-white text-sm font-700 hover:bg-accent-dark transition-colors shadow-sm cursor-pointer border-0">
               Accept Request
             </button>
           `;
-        } else {
-          connectBtnHtml = `
+          } else {
+            connectBtnHtml = `
             <button onclick="sendConnection(${m.id}, '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-sm cursor-pointer border-0">
               Connect
             </button>
           `;
-        }
+          }
 
-        return `
+          return `
           <div class="match-card bg-white rounded-3xl shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300 border border-gray-100/50">
             <!-- Header -->
             <div class="p-5 flex items-start gap-4">
               <div class="relative flex-shrink-0">
                 <div class="w-14 h-14 rounded-full ${m.avatarColor || 'bg-primary'} flex items-center justify-center text-white font-bold text-base shadow-md border-2 border-white">
-                  ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+                  ${m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
                 </div>
                 ${m.online ? `<span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-white animate-pulse"></span>` : ''}
               </div>
@@ -399,14 +476,15 @@
             </div>
           </div>
         `;
-      }).join('');
+        }).join('');
 
-    } catch(e) {
-      handleApiError(e, 'Gagal memuat kandidat matchmaking');
-    } finally {
-      ui.loading(false);
+      } catch (e) {
+        handleApiError(e, 'Gagal memuat kandidat matchmaking');
+      } finally {
+        ui.loading(false);
+      }
     }
-  }
-</script>
+  </script>
 </body>
+
 </html>
