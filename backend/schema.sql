@@ -99,7 +99,9 @@ CREATE TABLE notifications (
   title VARCHAR(200) NOT NULL,
   message TEXT NOT NULL,
   is_read BOOLEAN DEFAULT false,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  team_id INT REFERENCES teams(id) ON DELETE SET NULL,
+  applicant_id INT REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- Seed Data Awal
