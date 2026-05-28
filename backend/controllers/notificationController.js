@@ -7,7 +7,13 @@ const getNotifications = async (req, res) => {
   try {
     const userId = req.userId;
     const result = await pool.query(
-      'SELECT id, title, message, is_read as "isRead", created_at as "createdAt" FROM notifications WHERE user_id = $1 ORDER BY created_at DESC LIMIT 50',
+      `SELECT n.id, n.title, n.message, n.is_read as "isRead", n.created_at as "createdAt", 
+              n.team_id as "teamId", n.applicant_id as "applicantId",
+              (SELECT status FROM team_members tm WHERE tm.team_id = n.team_id AND tm.user_id = n.applicant_id) as "memberStatus"
+       FROM notifications n 
+       WHERE n.user_id = $1 
+       ORDER BY n.created_at DESC 
+       LIMIT 50`,
       [userId]
     );
     res.json({ data: result.rows });
@@ -18,13 +24,20 @@ const getNotifications = async (req, res) => {
 };
 
 /**
- * Mendapatkan jumlah notifikasi belum dibaca
+ * Mendapatkan jumlah notifikasi belum dibaca / belum di-respond
  */
 const getUnreadCount = async (req, res) => {
   try {
     const userId = req.userId;
     const result = await pool.query(
-      'SELECT COUNT(*) FROM notifications WHERE user_id = $1 AND is_read = false',
+      `SELECT COUNT(*) FROM notifications n
+       WHERE n.user_id = $1 
+         AND (
+           (n.team_id IS NOT NULL AND n.applicant_id IS NOT NULL AND 
+            EXISTS (SELECT 1 FROM team_members tm WHERE tm.team_id = n.team_id AND tm.user_id = n.applicant_id AND tm.status = 'applied'))
+           OR 
+           ((n.team_id IS NULL OR n.applicant_id IS NULL) AND n.is_read = false)
+         )`,
       [userId]
     );
     const unread = parseInt(result.rows[0].count, 10) || 0;

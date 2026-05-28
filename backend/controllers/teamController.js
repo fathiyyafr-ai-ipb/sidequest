@@ -7,102 +7,102 @@ const getMine = async (req, res) => {
   try {
     const userId = req.userId;
 
-    // 1. Cari apakah user tergabung dalam sebuah tim
+    // 1. Cari seluruh tim aktif yang diikuti oleh user
     const memberCheck = await pool.query(
       `SELECT team_id, role, status FROM team_members WHERE user_id = $1 AND status = 'joined'`,
       [userId]
     );
 
     if (memberCheck.rows.length === 0) {
-      return res.json({ data: null }); // Aman: Belum punya tim
+      return res.json({ data: [] }); // Kembalikan array kosong jika belum punya tim
     }
 
-    const { team_id, role, status } = memberCheck.rows[0];
+    const teams = [];
 
-    // 2. Ambil informasi detail tim dan kompetisinya
-    const teamRes = await pool.query(
-      `SELECT t.id, t.name, t.competition_id, c.title as competition_title, c.organizer as competition_organizer, c.emoji as competition_emoji
-       FROM teams t
-       LEFT JOIN competitions c ON t.competition_id = c.id
-       WHERE t.id = $1`,
-      [team_id]
-    );
+    for (const memberRow of memberCheck.rows) {
+      const { team_id, role } = memberRow;
 
-    if (teamRes.rows.length === 0) {
-      return res.status(404).json({ message: 'Tim tidak ditemukan' });
-    }
-
-    const team = teamRes.rows[0];
-
-    // 3. Ambil seluruh anggota dari tim tersebut
-    const membersRes = await pool.query(
-      `SELECT u.id, u.name, u.email, u.university, u.prodi, u.avatar_color, tm.role as team_role
-       FROM team_members tm
-       JOIN users u ON tm.user_id = u.id
-       WHERE tm.team_id = $1 AND tm.status = 'joined'`,
-      [team_id]
-    );
-
-    // 4. Ambil skills untuk masing-masing anggota tim
-    const members = [];
-    for (const member of membersRes.rows) {
-      const skillsRes = await pool.query(
-        `SELECT s.name as label, s.tag_class as cls
-         FROM skills s
-         JOIN user_skills us ON s.id = us.skill_id
-         WHERE us.user_id = $1`,
-        [member.id]
+      // 2. Ambil informasi detail tim dan kompetisinya
+      const teamRes = await pool.query(
+        `SELECT t.id, t.name, t.competition_id, c.title as competition_title, c.organizer as competition_organizer, c.emoji as competition_emoji
+         FROM teams t
+         LEFT JOIN competitions c ON t.competition_id = c.id
+         WHERE t.id = $1`,
+        [team_id]
       );
 
-      members.push({
-        id: member.id,
-        name: member.name,
-        fullName: member.name,
-        email: member.email,
-        university: member.university,
-        uni: member.university,
-        prodi: member.prodi,
-        avatarColor: member.avatar_color || 'bg-blue-500',
-        teamRole: member.team_role,
-        skills: skillsRes.rows.map(s => s.label)
-      });
-    }
+      if (teamRes.rows.length === 0) continue;
 
-    // 5. Ambil calon anggota (applicants) yang berstatus 'applied'
-    const applicantsRes = await pool.query(
-      `SELECT u.id, u.name, u.email, u.university, u.prodi, u.avatar_color, u.bio
-       FROM team_members tm
-       JOIN users u ON tm.user_id = u.id
-       WHERE tm.team_id = $1 AND tm.status = 'applied'`,
-      [team_id]
-    );
+      const team = teamRes.rows[0];
 
-    const applicants = [];
-    for (const applicant of applicantsRes.rows) {
-      const skillsRes = await pool.query(
-        `SELECT s.name as label, s.tag_class as cls
-         FROM skills s
-         JOIN user_skills us ON s.id = us.skill_id
-         WHERE us.user_id = $1`,
-        [applicant.id]
+      // 3. Ambil seluruh anggota dari tim tersebut
+      const membersRes = await pool.query(
+        `SELECT u.id, u.name, u.email, u.university, u.prodi, u.avatar_color, tm.role as team_role
+         FROM team_members tm
+         JOIN users u ON tm.user_id = u.id
+         WHERE tm.team_id = $1 AND tm.status = 'joined'`,
+        [team_id]
       );
 
-      applicants.push({
-        id: applicant.id,
-        name: applicant.name,
-        fullName: applicant.name,
-        email: applicant.email,
-        university: applicant.university,
-        uni: applicant.university,
-        prodi: applicant.prodi,
-        avatarColor: applicant.avatar_color || 'bg-blue-500',
-        bio: applicant.bio || 'Siap berkolaborasi!',
-        skills: skillsRes.rows.map(s => s.label)
-      });
-    }
+      // 4. Ambil skills untuk masing-masing anggota tim
+      const members = [];
+      for (const member of membersRes.rows) {
+        const skillsRes = await pool.query(
+          `SELECT s.name as label, s.tag_class as cls
+           FROM skills s
+           JOIN user_skills us ON s.id = us.skill_id
+           WHERE us.user_id = $1`,
+          [member.id]
+        );
+        
+        members.push({
+          id: member.id,
+          name: member.name,
+          fullName: member.name,
+          email: member.email,
+          university: member.university,
+          uni: member.university,
+          prodi: member.prodi,
+          avatarColor: member.avatar_color || 'bg-blue-500',
+          teamRole: member.team_role,
+          skills: skillsRes.rows.map(s => s.label)
+        });
+      }
 
-    res.json({
-      data: {
+      // 5. Ambil calon anggota (applicants) yang berstatus 'applied'
+      const applicantsRes = await pool.query(
+        `SELECT u.id, u.name, u.email, u.university, u.prodi, u.avatar_color, u.bio
+         FROM team_members tm
+         JOIN users u ON tm.user_id = u.id
+         WHERE tm.team_id = $1 AND tm.status = 'applied'`,
+        [team_id]
+      );
+
+      const applicants = [];
+      for (const applicant of applicantsRes.rows) {
+        const skillsRes = await pool.query(
+          `SELECT s.name as label, s.tag_class as cls
+           FROM skills s
+           JOIN user_skills us ON s.id = us.skill_id
+           WHERE us.user_id = $1`,
+          [applicant.id]
+        );
+        
+        applicants.push({
+          id: applicant.id,
+          name: applicant.name,
+          fullName: applicant.name,
+          email: applicant.email,
+          university: applicant.university,
+          uni: applicant.university,
+          prodi: applicant.prodi,
+          avatarColor: applicant.avatar_color || 'bg-blue-500',
+          bio: applicant.bio || 'Siap berkolaborasi!',
+          skills: skillsRes.rows.map(s => s.label)
+        });
+      }
+
+      teams.push({
         id: team.id,
         name: team.name,
         role: role, // 'owner' atau 'member'
@@ -114,8 +114,10 @@ const getMine = async (req, res) => {
         },
         members,
         applicants
-      }
-    });
+      });
+    }
+
+    res.json({ data: teams });
 
   } catch (err) {
     console.error('[teamController.getMine]', err);
@@ -356,11 +358,13 @@ const applyTeam = async (req, res) => {
 
     for (const member of membersToNotify.rows) {
       await pool.query(
-        `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+        `INSERT INTO notifications (user_id, title, message, team_id, applicant_id) VALUES ($1, $2, $3, $4, $5)`,
         [
           member.user_id,
           'Permohonan Bergabung Baru',
-          `${applicantName} mengajukan permohonan untuk bergabung dengan tim Anda, ${teamName}!`
+          `${applicantName} mengajukan permohonan untuk bergabung dengan tim Anda, ${teamName}!`,
+          teamId,
+          userId
         ]
       );
     }
