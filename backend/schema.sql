@@ -18,7 +18,12 @@ CREATE TABLE competitions (
   is_free BOOLEAN DEFAULT true,
   prize VARCHAR(100),
   description TEXT,
-  status VARCHAR(20) DEFAULT 'published'
+  status VARCHAR(20) DEFAULT 'published',
+  organizer_id INT,
+  min_members INT DEFAULT 1,
+  max_members INT DEFAULT 5,
+  registration_model VARCHAR(50) DEFAULT 'hosted',
+  winner_announcement DATE
 );
 
 CREATE TABLE users (
@@ -33,7 +38,15 @@ CREATE TABLE users (
   role VARCHAR(20) DEFAULT 'peserta',
   experience JSONB,
   achievements JSONB,
-  online BOOLEAN DEFAULT false
+  online BOOLEAN DEFAULT false,
+  is_verified BOOLEAN DEFAULT false,
+  is_approved BOOLEAN DEFAULT true,
+  is_active BOOLEAN DEFAULT true,
+  verification_token VARCHAR(255),
+  university_city VARCHAR(100),
+  university_province VARCHAR(100),
+  office_address VARCHAR(200),
+  phone_number VARCHAR(50)
 );
 
 CREATE TABLE teams (
@@ -105,6 +118,15 @@ CREATE TABLE notifications (
   applicant_id INT REFERENCES users(id) ON DELETE SET NULL
 );
 
+ALTER TABLE competitions ADD CONSTRAINT fk_competitions_organizer FOREIGN KEY (organizer_id) REFERENCES users(id) ON DELETE SET NULL;
+
+CREATE TABLE platform_settings (
+  key VARCHAR(100) PRIMARY KEY,
+  value VARCHAR(255) NOT NULL
+);
+
+INSERT INTO platform_settings (key, value) VALUES ('maintenance_mode', 'false');
+
 -- Seed Data Awal
 INSERT INTO categories (slug, name) VALUES 
 ('ui-ux', 'UI/UX Design'), 
@@ -136,7 +158,30 @@ INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, 
 ('Raka Santanu', 'raka@binus.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas Bina Nusantara', 'Marketing Communication', 'bg-orange-600', 'Presenter bisnis & Pitching consultant.', 'peserta', '["Startup Pitch Competition — Juara 1", "Marketing Hackathon 2025 Finalist"]', '["Best Pitch", "Top Presenter"]', true),
 ('Sinta Larasati', 'sinta@ipb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'IPB University', 'Biokimia', 'bg-green-700', 'Riset Biokimia & Penulisan Ilmiah.', 'peserta', '["LKTIN ITS 2025 — Juara 2", "Riset BRIN Bidang Biokimia"]', '["Best Research Paper", "Young Scientist Award"]', false),
 ('Taufik Hidayat', 'taufik@itb.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'ITB Bandung', 'Kimia', 'bg-cyan-700', 'Riset Kimia Analitik & Penulisan Ilmiah.', 'peserta', '["Juara 1 Lomba Kimia Nasional 2025", "Publikasi Jurnal Scopus 2024"]', '["Olimpiade Gold", "Scopus Author"]', true),
-('Ulfah Mardiyah', 'ulfah@undip.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas Diponegoro', 'Fisika', 'bg-blue-700', 'Fisika Komputasi & Simulasi Numerik.', 'peserta', '["Physics Olympiad Nasional — Juara 3", "IEEE Student Branch Project"]', '["Physics Award", "IEEE Member"]', false);
+('Ulfah Mardiyah', 'ulfah@undip.ac.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', 'Universitas Diponegoro', 'Fisika', 'bg-blue-700', 'Fisika Komputasi & Simulasi Numerik.', 'peserta', '["Physics Olympiad Nasional — Juara 3", "IEEE Student Branch Project"]', '["Physics Award", "IEEE Member"]', false),
+('Fasilkom UI', 'fasilkom-ui@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Fasilkom UI', 'organizer', NULL, NULL, false),
+('Microsoft', 'microsoft@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Microsoft', 'organizer', NULL, NULL, false),
+('Indonesia Youth Renewable Energy Forum', 'indonesia-youth-renewable-energy-forum@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Indonesia Youth Renewable Energy Forum', 'organizer', NULL, NULL, false),
+('Kemendikbud Ristek RI', 'kemendikbud-ristek-ri@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Kemendikbud Ristek RI', 'organizer', NULL, NULL, false),
+('Red Dot GmbH & Co. KG', 'red-dot-gmbh-co-kg@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Red Dot GmbH & Co. KG', 'organizer', NULL, NULL, false),
+('Google Developer Student Clubs', 'google-developer-student-clubs@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Google Developer Student Clubs', 'organizer', NULL, NULL, false),
+('Amazon Web Services', 'amazon-web-services@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Amazon Web Services', 'organizer', NULL, NULL, false),
+('HIPMI', 'hipmi@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk HIPMI', 'organizer', NULL, NULL, false),
+('Kemenparekraf', 'kemenparekraf@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Kemenparekraf', 'organizer', NULL, NULL, false),
+('Kemenkominfo', 'kemenkominfo@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Kemenkominfo', 'organizer', NULL, NULL, false),
+('Tokopedia × Google DSC', 'tokopedia-google-dsc@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Tokopedia × Google DSC', 'organizer', NULL, NULL, false),
+('Hult International Business School', 'hult-international-business-school@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Hult International Business School', 'organizer', NULL, NULL, false),
+('Kemendikbud', 'kemendikbud@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Kemendikbud', 'organizer', NULL, NULL, false),
+('HFI (Himpunan Fisika Indonesia)', 'hfi-himpunan-fisika-indonesia@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk HFI (Himpunan Fisika Indonesia)', 'organizer', NULL, NULL, false),
+('BRIN (Badan Riset dan Inovasi Nasional)', 'brin-badan-riset-dan-inovasi-nasional@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk BRIN (Badan Riset dan Inovasi Nasional)', 'organizer', NULL, NULL, false),
+('Techstars × ANGIN', 'techstars-angin@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk Techstars × ANGIN', 'organizer', NULL, NULL, false),
+('UNDP Indonesia', 'undp-indonesia@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk UNDP Indonesia', 'organizer', NULL, NULL, false),
+('ACM International Collegiate Programming Contest', 'acm-international-collegiate-programming-contest@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk ACM International Collegiate Programming Contest', 'organizer', NULL, NULL, false),
+('ITS Surabaya', 'its-surabaya@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk ITS Surabaya', 'organizer', NULL, NULL, false),
+('ASEAN Youth Council', 'asean-youth-council@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-indigo-600', 'Akun Penyelenggara Resmi untuk ASEAN Youth Council', 'organizer', NULL, NULL, false),
+('Moderator Satu', 'mod1@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-red-500', 'Akun Staff Resmi SideQuest (moderator)', 'moderator', NULL, NULL, false),
+('Moderator Dua', 'mod2@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-rose-500', 'Akun Staff Resmi SideQuest (moderator)', 'moderator', NULL, NULL, false),
+('Superadmin', 'admin@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-purple-600', 'Akun Staff Resmi SideQuest (superadmin)', 'superadmin', NULL, NULL, false);
 
 -- Seed Skills
 INSERT INTO skills (id, name, tag_class) VALUES 

@@ -209,6 +209,25 @@ async function seed() {
     (9, 5, 'member', 'joined')
   `);
   
+  // Post-seed updates: Map organizer_id and default values for competitions
+  console.log('Post-seed: Mapping organizer_id to competitions...');
+  await client.query(`
+    UPDATE competitions c
+    SET organizer_id = u.id
+    FROM users u
+    WHERE TRIM(c.organizer) = TRIM(u.name) AND u.role = 'organizer'
+  `);
+
+  await client.query(`
+    UPDATE competitions 
+    SET min_members = COALESCE(min_members, 1),
+        max_members = COALESCE(max_members, 5),
+        registration_model = COALESCE(registration_model, 'hosted'),
+        winner_announcement = COALESCE(winner_announcement, deadline + INTERVAL '7 days')
+    WHERE min_members IS NULL OR max_members IS NULL OR registration_model IS NULL OR winner_announcement IS NULL
+  `);
+  console.log('✅ Post-seed mapping completed successfully.');
+
   console.log('✅ Seeding team data selesai.');
 
   await client.end();
