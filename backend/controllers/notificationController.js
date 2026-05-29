@@ -9,9 +9,20 @@ const getNotifications = async (req, res) => {
     const result = await pool.query(
       `SELECT n.id, n.title, n.message, n.is_read as "isRead", n.created_at as "createdAt", 
               n.team_id as "teamId", n.applicant_id as "applicantId",
-              (SELECT status FROM team_members tm WHERE tm.team_id = n.team_id AND tm.user_id = n.applicant_id) as "memberStatus"
+              (SELECT status FROM team_members tm WHERE tm.team_id = n.team_id AND tm.user_id = n.applicant_id) as "memberStatus",
+              (SELECT status FROM connections c WHERE c.sender_id = n.applicant_id AND c.receiver_id = n.user_id) as "connectionStatus"
        FROM notifications n 
        WHERE n.user_id = $1 
+         -- Hilangkan join request yang sudah tidak 'applied' (sudah direspond)
+         AND (
+           n.team_id IS NULL OR n.applicant_id IS NULL OR
+           (SELECT status FROM team_members tm WHERE tm.team_id = n.team_id AND tm.user_id = n.applicant_id) = 'applied'
+         )
+         -- Hilangkan connection request yang sudah tidak 'pending' (sudah direspond)
+         AND (
+           n.team_id IS NOT NULL OR n.applicant_id IS NULL OR n.title != 'Permintaan Koneksi Baru' OR
+           (SELECT status FROM connections c WHERE c.sender_id = n.applicant_id AND c.receiver_id = n.user_id) = 'pending'
+         )
        ORDER BY n.created_at DESC 
        LIMIT 50`,
       [userId]
@@ -33,10 +44,19 @@ const getUnreadCount = async (req, res) => {
       `SELECT COUNT(*) FROM notifications n
        WHERE n.user_id = $1 
          AND (
+           -- Notifikasi join request yang masih pending
            (n.team_id IS NOT NULL AND n.applicant_id IS NOT NULL AND 
             EXISTS (SELECT 1 FROM team_members tm WHERE tm.team_id = n.team_id AND tm.user_id = n.applicant_id AND tm.status = 'applied'))
+           OR
+           -- Notifikasi connection request yang masih pending
+           (n.team_id IS NULL AND n.applicant_id IS NOT NULL AND n.title = 'Permintaan Koneksi Baru' AND
+            EXISTS (SELECT 1 FROM connections c WHERE c.sender_id = n.applicant_id AND c.receiver_id = n.user_id AND c.status = 'pending'))
            OR 
-           ((n.team_id IS NULL OR n.applicant_id IS NULL) AND n.is_read = false)
+           -- Notifikasi reguler lain yang belum dibaca
+           (
+             (n.team_id IS NULL OR n.applicant_id IS NULL OR n.title != 'Permintaan Koneksi Baru') AND 
+             n.is_read = false
+           )
          )`,
       [userId]
     );

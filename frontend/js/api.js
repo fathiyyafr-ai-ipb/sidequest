@@ -56,6 +56,12 @@ async function http(method, path, body = null, opts = {}) {
     res = await fetch(url, { ...cfg, headers });
   }
 
+  if (res.status === 503 && !window.location.pathname.includes('maintenance.html')) {
+    const isRoot = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || (window.location.pathname.includes('/sidequest/') && !window.location.pathname.includes('/pages/'));
+    window.location.href = isRoot ? 'pages/maintenance.html' : 'maintenance.html';
+    return;
+  }
+
   const ct = res.headers.get('content-type') || '';
   const data = ct.includes('application/json') ? await res.json() : await res.text();
   if (!res.ok) {
@@ -81,7 +87,10 @@ export const api = {
     },
     async register(payload) {
       const res = await _post('/auth/register', payload, { skipAuth: true, skipRefresh: true });
-      _store(res.data); return res.data;
+      return res; // returns { message, isLocalhost, verificationToken, data: { user } }
+    },
+    async forgotPassword(email) {
+      return await _post('/auth/forgot-password', { email }, { skipAuth: true, skipRefresh: true });
     },
     logout() { token.clear(); window.location.href = '../pages/login.html'; },
     isLoggedIn() { return token.isPresent(); },
@@ -108,8 +117,16 @@ export const api = {
     save(id) { return _post(`/competitions/${id}/save`); },
     unsave(id) { return _del(`/competitions/${id}/save`); },
     async getSaved() { const res = await _get('/competitions/saved'); return res.data; },
-    register(id) { return _post(`/competitions/${id}/register`); },
+    register(id, payload = null) { return _post(`/competitions/${id}/register`, payload); },
     async getRegistrationStatus(id) { const res = await _get(`/competitions/${id}/registration-status`); return res.data; },
+    // Organizer extensions
+    async getOrganizerCompetitions() { const res = await _get('/competitions/organizer/mine'); return res.data; },
+    create(payload) { return _post('/competitions/organizer/create', payload); },
+    update(id, payload) { return _put(`/competitions/organizer/${id}`, payload); },
+    publish(id) { return _patch(`/competitions/organizer/${id}/publish`); },
+    announce(id, announcement) { return _patch(`/competitions/organizer/${id}/announce`, { announcement }); },
+    async getApplicants(id) { const res = await _get(`/competitions/organizer/${id}/applicants`); return res.data; },
+    respondApplicant(id, userId, action) { return _patch(`/competitions/organizer/${id}/applicants/${userId}`, { action }); },
   },
 
   users: {
@@ -142,6 +159,12 @@ export const api = {
     async connect(receiverId) { const res = await _post('/matchmaking/connect', { receiverId }); return res; }
   },
 
+  sidekick: {
+    async chat(message) {
+      return await _post('/sidekick/chat', { message });
+    }
+  },
+
   teams: {
     async mine() { const res = await _get('/teams/me'); return res.data; },
     async candidates() { const res = await _get('/teams/candidates'); return res.data; },
@@ -151,6 +174,17 @@ export const api = {
     async respond(id, applicantId, action) { const res = await _post(`/teams/${id}/respond`, { applicantId, action }); return res; },
     leave(id) { return _del(`/teams/${id}/leave`); },
     invite(id, userId) { return _post(`/teams/${id}/invite`, { userId }); },
+  },
+
+  admin: {
+    async getStats() { const res = await _get('/admin/stats'); return res.data; },
+    async getData() { const res = await _get('/admin/data'); return res.data; },
+    toggleActive(type, id) { return _patch(`/admin/toggle/${type}/${id}`); },
+    async scrape(url) { const res = await _post('/admin/scrape', { url }); return res.data; },
+    toggleModerator(id) { return _patch(`/admin/super/moderator/${id}/toggle`); },
+    updateFeatures(featureKey, activeValue) { return _patch('/admin/super/features', { featureKey, activeValue }); },
+    updateMaintenance(enabled) { return _patch('/admin/super/maintenance', { enabled }); },
+    approveOrganizer(id) { return _patch(`/admin/approve-organizer/${id}`); },
   },
 };
 
@@ -235,6 +269,13 @@ export const ui = {
       document.querySelectorAll('[href*="posting-lomba.html"]').forEach(el => {
         el.style.display = '';
       });
+    }
+
+    // Auto-inject SideKick chatbot bubble for logged-in participants (not on maintenance)
+    if (role === 'peserta' && !window.location.pathname.includes('maintenance.html')) {
+      import('./sidekick.js')
+        .then(m => m.initSideKick())
+        .catch(err => console.warn('SideKick failed to load:', err));
     }
   },
 

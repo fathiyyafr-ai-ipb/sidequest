@@ -28,102 +28,92 @@
   <link rel="stylesheet" href="../css/styles.css"/>
 </head>
 <body class="min-h-screen bg-[#FFF5F5] font-sans">
-<div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()"></div>
-<aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col">
+<div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden hidden" onclick="closeSidebar()"></div>
+
+<!-- ── Sidebar ── -->
+<aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0">
   <div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100">
-    <a href="dashboard.html" class="text-xl font-extrabold text-primary tracking-tight">SideQuest</a>
+    <a href="organizer-dashboard.html" class="flex items-center gap-2">
+      <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none';" />
+      <span class="text-xl font-extrabold text-primary tracking-tight">SideQuest</span>
+    </a>
+    <span class="bg-primary-light text-primary text-[9px] font-800 px-2 py-0.5 rounded-md uppercase tracking-wider">Organizer</span>
   </div>
   <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">
-    <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0" data-sb-init>RA</div>
+    <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm flex-shrink-0">O</div>
     <div>
-      <p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight" data-sb-name>Rizki Aditya</p>
-      <p id="sb-user-role" class="text-xs text-gray-400 mt-0.5" data-sb-role>Teknik Informatika · UI</p>
+      <p id="sb-user-name" class="text-sm font-700 text-gray-800 leading-tight">Penyelenggara</p>
+      <p id="sb-user-role" class="text-[10px] text-gray-400 mt-0.5">Event Organizer Partner</p>
     </div>
   </div>
   <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-    <a href="dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+    <a href="organizer-dashboard.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
-      <span class="text-sm font-600">Dashboard</span>
+      <span class="text-sm font-600">Dashboard Saya</span>
     </a>
-    <a href="direktori.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
+    <a href="posting-lomba.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary-light/50 text-primary mt-1">
+      <span class="nav-icon text-primary w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+      <span class="text-sm font-700">Buat Lomba Baru</span>
+    </a>
+    <div class="h-px bg-gray-100 my-4 mx-3"></div>
+    <a href="direktori.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-50 transition-colors">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Direktori Lomba</span><span class="ml-auto bg-accent text-white text-xs font-bold px-1.5 py-0.5 rounded-full">12</span>
-    </a>
-    <a href="matchmaking.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Matchmaking</span>
-    </a>
-    <a href="cari-tim.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Cari Tim</span><span class="ml-auto bg-primary text-white text-xs font-bold px-1.5 py-0.5 rounded-full">8</span>
-    </a>
-    <a href="profil.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
-      <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></span>
-      <span class="text-sm font-600">Profil Saya</span>
-    </a>
-    <a href="posting-lomba.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer bg-accent-light mt-1">
-      <span class="nav-icon text-accent w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600 text-accent font-700">Posting Lomba</span>
+      <span class="text-sm font-600">Lihat Direktori Lomba</span>
     </a>
   </nav>
   <div class="px-5 py-4 border-t border-gray-100 space-y-2">
-    <div class="flex items-center gap-2 text-xs text-gray-400">
-      <div class="w-2 h-2 rounded-full bg-green-400 pulse"></div>
-      <span>Status: Aktif cari tim</span>
-    </div>
-    <a href="#" data-logout class="flex items-center gap-2 text-xs text-red-400 hover:text-red-600 transition-colors cursor-pointer">
-      <svg width="12" height="12" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    <a href="#" data-logout class="flex items-center gap-2 text-xs text-red-500 hover:text-red-700 transition-colors cursor-pointer">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
       Keluar
     </a>
   </div>
 </aside>
+
+<!-- ── Mobile Header ── -->
 <header class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white shadow-topbar px-4 py-3 flex items-center justify-between">
   <button onclick="openSidebar()" class="p-2 rounded-xl hover:bg-gray-100 transition-colors">
     <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/></svg>
   </button>
   <div class="flex items-center gap-2">
-    <span class="font-extrabold text-primary text-base">SideQuest</span>
+    <img src="../assets/logo.png" alt="SideQuest Logo" class="h-6 w-auto object-contain" onerror="this.style.display='none';" /><span class="font-extrabold text-primary text-base">SideQuest</span>
   </div>
   <div class="flex items-center gap-1.5">
-    <button class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5M15 17a3 3 0 11-6 0" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/></svg>
-      <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-accent rounded-full"></span>
-    </button>
-    <a href="profil.html" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">RA</a>
-  </div>
-</header>
-<header class="hidden lg:flex fixed top-0 right-0 left-64 z-20 bg-white/95 backdrop-blur shadow-topbar px-6 py-3.5 items-center justify-between">
-  <div>
-    <h2 class="text-base font-800 text-gray-800">Posting Lomba</h2>
-    <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, <span data-sb-fname>Rizki</span> 👋</p>
-  </div>
-  <div class="flex items-center gap-3">
-    <button class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
-      <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135A6.978 6.978 0 006 11v3.869A1.003 1.003 0 015.405 15.595L4 17h5M15 17a3 3 0 11-6 0" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/></svg>
-      <span class="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border border-white"></span>
-    </button>
-    <a href="profil.html" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
-      <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs" data-sb-init>RA</div>
-      <span class="text-sm font-600 text-gray-700" data-sb-name>Rizki Aditya</span>
+    <a href="#" data-logout class="p-2 rounded-xl hover:bg-red-50 text-red-500 transition-colors">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
     </a>
   </div>
 </header>
+
+<!-- ── Desktop Header ── -->
+<header class="hidden lg:flex fixed top-0 right-0 left-64 z-20 bg-white/95 backdrop-blur shadow-topbar px-6 py-3.5 items-center justify-between">
+  <div>
+    <h2 id="page-header-title" class="text-base font-800 text-gray-800">Posting Lomba Baru</h2>
+    <p id="page-header-subtitle" class="text-xs text-gray-400 mt-0.5">Bagikan info lomba ke komunitas SideQuest</p>
+  </div>
+  <div class="flex items-center gap-3">
+    <a href="organizer-dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
+      <div id="desktop-avatar" class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">O</div>
+      <span id="desktop-user-name" class="text-sm font-700 text-gray-700">Penyelenggara</span>
+    </a>
+  </div>
+</header>
+
 <div class="lg:ml-64">
 <main class="main-content pt-16 lg:pt-20 pb-20 lg:pb-8 px-4 lg:px-8 max-w-6xl mx-auto">
 
 <div class="mt-4 max-w-2xl mx-auto">
-  <!-- Header -->
+  <!-- Back Header -->
   <div class="flex items-center gap-3 mb-5">
-    <a href="direktori.html" class="w-9 h-9 rounded-xl bg-white shadow-card flex items-center justify-center hover:bg-primary-light transition-colors">
+    <a href="organizer-dashboard.html" class="w-9 h-9 rounded-xl bg-white shadow-card flex items-center justify-center hover:bg-primary-light transition-colors">
       <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/></svg>
     </a>
     <div>
-      <h1 class="text-lg font-800 text-gray-800">Posting Lomba Baru</h1>
-      <p class="text-xs text-gray-400">Bagikan info lomba ke komunitas SideQuest</p>
+      <h1 id="form-header-title" class="text-lg font-800 text-gray-800">Posting Lomba Baru</h1>
+      <p id="form-header-subtitle" class="text-xs text-gray-400">Isi formulir lengkap mengenai detail pendaftaran</p>
     </div>
   </div>
 
-  <form onsubmit="submitLomba(event)" class="space-y-4">
+  <form id="lomba-form" onsubmit="window.submitLombaForm(event)" class="space-y-4">
     <!-- Section: Info Dasar -->
     <div class="bg-white rounded-2xl shadow-card p-5">
       <h3 class="font-800 text-gray-800 text-sm mb-4 flex items-center gap-2">
@@ -133,79 +123,79 @@
       <div class="space-y-4">
         <div>
           <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Lomba *</label>
-          <input type="text" required placeholder="contoh: Gemastik XVII — Bidang PPL" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="text" id="inp-title" required placeholder="contoh: Gemastik XVII — Bidang PPL" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
         <div>
           <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Penyelenggara *</label>
-          <input type="text" required placeholder="contoh: Kemendikbud Ristek" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="text" id="inp-organizer" required placeholder="contoh: Kemendikbud Ristek" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
         <div class="grid grid-cols-2 gap-3">
           <div>
-            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kategori *</label>
-            <select required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kategori Lomba *</label>
+            <select id="inp-category" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
               <option value="">Pilih…</option>
-              <option>Teknologi</option><option>Bisnis</option><option>Social Impact</option>
-              <option>Sains</option><option>Desain</option><option>Hackathon</option><option>Lainnya</option>
+              <option value="web-dev">Web Development / Teknologi</option>
+              <option value="ui-ux">UI/UX Design / Desain</option>
+              <option value="data-science">Data Science / Statistika</option>
             </select>
           </div>
           <div>
             <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Lingkup</label>
-            <select class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
-              <option>Nasional</option><option>Internasional</option><option>Regional</option><option>Kampus</option>
+            <select id="inp-scope" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
+              <option value="Nasional">Nasional</option>
+              <option value="Internasional">Internasional</option>
+              <option value="Regional">Regional</option>
+              <option value="Kampus">Kampus</option>
             </select>
           </div>
         </div>
         <div>
           <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Deskripsi Singkat *</label>
-          <textarea rows="3" required placeholder="Jelaskan tentang lomba ini…" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
+          <textarea id="inp-desc" rows="3" required placeholder="Jelaskan tentang lomba ini…" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
         </div>
       </div>
     </div>
 
-    <!-- Section: Waktu & Biaya -->
+    <!-- Section: Waktu, Biaya & Model Registrasi -->
     <div class="bg-white rounded-2xl shadow-card p-5">
       <h3 class="font-800 text-gray-800 text-sm mb-4 flex items-center gap-2">
         <span class="w-6 h-6 rounded-lg bg-accent-light flex items-center justify-center text-xs">📅</span>
-        Waktu &amp; Biaya
+        Registrasi &amp; Ketentuan Anggota
       </h3>
       <div class="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Buka Pendaftaran</label>
-          <input type="date" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Model Pendaftaran *</label>
+          <select id="inp-reg-model" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
+            <option value="hosted">Hosted (Form Terpadu di SideQuest)</option>
+            <option value="non-hosted">Non-Hosted (Redirect Link Eksternal)</option>
+          </select>
         </div>
         <div>
           <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Deadline Daftar *</label>
-          <input type="date" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="date" id="inp-deadline" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
       </div>
       <div class="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Tanggal Final</label>
-          <input type="date" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Biaya Daftar (Rp)</label>
+          <input type="number" id="inp-price" min="0" placeholder="0 = Gratis" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
         <div>
-          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Biaya Daftar</label>
-          <div class="relative">
-            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">Rp</span>
-            <input type="number" min="0" placeholder="0 = Gratis" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 pl-9 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Ukuran Kelompok / Tim</label>
+          <div class="flex gap-2 flex-wrap mt-1">
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 hover:border-primary transition-all">
+              <input type="radio" name="team-size" value="solo" class="accent-primary"/> Solo
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 hover:border-primary transition-all">
+              <input type="radio" name="team-size" value="2-3" class="accent-primary"/> 2–3 orang
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 hover:border-primary transition-all">
+              <input type="radio" name="team-size" value="3-5" checked class="accent-primary"/> 3–5 orang
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer text-xs text-gray-700 bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 hover:border-primary transition-all">
+              <input type="radio" name="team-size" value="bebas" class="accent-primary"/> Bebas
+            </label>
           </div>
-        </div>
-      </div>
-      <div>
-        <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Ukuran Tim</label>
-        <div class="flex gap-2 flex-wrap">
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 hover:border-primary transition-all">
-            <input type="radio" name="team-size" value="solo" class="accent-primary"/> Solo
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 hover:border-primary transition-all">
-            <input type="radio" name="team-size" value="2-3" class="accent-primary"/> 2–3 orang
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 hover:border-primary transition-all">
-            <input type="radio" name="team-size" value="3-5" checked class="accent-primary"/> 3–5 orang
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 hover:border-primary transition-all">
-            <input type="radio" name="team-size" value="bebas" class="accent-primary"/> Bebas
-          </label>
         </div>
       </div>
     </div>
@@ -216,18 +206,18 @@
         <span class="w-6 h-6 rounded-lg bg-yellow-50 flex items-center justify-center text-xs">🏆</span>
         Hadiah &amp; Benefit
       </h3>
-      <div class="space-y-3" id="prize-list">
+      <div class="space-y-3">
         <div class="flex gap-2">
           <div class="w-9 h-9 rounded-xl bg-yellow-50 flex items-center justify-center flex-shrink-0 text-lg">🥇</div>
-          <input type="text" placeholder="Hadiah Juara 1 (contoh: Rp 25.000.000)" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="text" id="inp-prize1" placeholder="Juara 1 (contoh: Rp 15.000.000 + Tropi)" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
         <div class="flex gap-2">
           <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 text-lg">🥈</div>
-          <input type="text" placeholder="Hadiah Juara 2" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="text" id="inp-prize2" placeholder="Juara 2 (contoh: Rp 10.000.000)" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
         <div class="flex gap-2">
           <div class="w-9 h-9 rounded-xl bg-gray-50 flex items-center justify-center flex-shrink-0 text-lg">🥉</div>
-          <input type="text" placeholder="Hadiah Juara 3" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="text" id="inp-prize3" placeholder="Juara 3" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
       </div>
     </div>
@@ -236,87 +226,216 @@
     <div class="bg-white rounded-2xl shadow-card p-5">
       <h3 class="font-800 text-gray-800 text-sm mb-4 flex items-center gap-2">
         <span class="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center text-xs">🔗</span>
-        Link &amp; Kontak
+        Tautan &amp; Informasi Tambahan
       </h3>
       <div class="space-y-3">
         <div>
           <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Website / Portal Resmi</label>
-          <input type="url" placeholder="https://gemastik.kemdikbud.go.id" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="url" id="inp-website" placeholder="https://gemastik.kemdikbud.go.id" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
         <div>
           <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kontak Penyelenggara</label>
-          <input type="text" placeholder="Email / WhatsApp / Instagram" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          <input type="text" id="inp-contact" placeholder="Email / WhatsApp / Instagram" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
         </div>
       </div>
     </div>
 
-    <!-- Submit -->
+    <!-- Form Submit Actions -->
     <div class="flex gap-3 pb-4">
-      <button type="button" onclick="history.back()" class="flex-1 py-3.5 rounded-2xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors">
+      <button type="button" onclick="history.back()" class="flex-1 py-3.5 rounded-2xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors cursor-pointer">
         Batal
       </button>
-      <button type="submit" class="flex-[2] py-3.5 rounded-2xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">
-        🚀 Publikasikan Lomba
+      <button type="submit" id="btn-submit" class="flex-[2] py-3.5 rounded-2xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md border-0 cursor-pointer">
+        💾 Simpan Lomba sebagai Draft
       </button>
     </div>
   </form>
 </div>
 
+<!-- ── Success Feedback Modal ── -->
 <div id="success-modal" class="hidden fixed inset-0 bg-black/40 z-50 flex items-center justify-center px-4">
   <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
     <div class="text-6xl mb-4">🎉</div>
-    <h3 class="text-xl font-800 text-gray-800 mb-2">Lomba Berhasil Dipublikasikan!</h3>
-    <p class="text-gray-500 text-sm mb-6">Info lomba kamu sudah bisa dilihat oleh ribuan mahasiswa.</p>
-    <a href="direktori.html" class="block w-full py-3 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors">
-      Lihat di Direktori →
+    <h3 class="text-xl font-800 text-gray-800 mb-2" id="modal-success-title">Lomba Berhasil Disimpan!</h3>
+    <p class="text-gray-500 text-sm mb-6" id="modal-success-msg">Informasi lomba kini tersimpan sebagai Draf dan dapat Anda tinjau kembali.</p>
+    <a href="organizer-dashboard.html" class="block w-full py-3 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors no-underline">
+      Kembali ke Dashboard →
     </a>
   </div>
 </div>
 
-<script>
-function submitLomba(e) {
-  e.preventDefault();
-  const btn = e.target.querySelector('button[type=submit]');
-  btn.textContent = 'Memuat…'; btn.disabled = true;
-  setTimeout(() => {
-    document.getElementById('success-modal').classList.remove('hidden');
-  }, 1500);
-}
-</script>
-
 </main>
-<nav class="lg:hidden fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-gray-100 shadow-topbar flex items-center">
-    <a href="dashboard.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Home</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="direktori.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/><path d="m21 21-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Lomba</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="matchmaking.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Match</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="cari-tim.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Tim</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a>
-    <a href="profil.html" class="tab-btn  flex-1 flex flex-col items-center gap-1 py-3 no-underline">
-      <span class="tab-icon text-gray-400"><svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="tab-label text-xs font-600 text-gray-400">Profil</span>
-      <span class="tab-dot hidden w-1.5 h-1.5 rounded-full bg-primary"></span>
-    </a></nav>
 </div>
-  <script type="module">
-    import { initSession } from '../js/auth.js';
-    document.addEventListener('DOMContentLoaded', initSession);
-  </script>
-  <script src="../js/data.js"></script>
-  <script src="../js/app.js"></script>
+
+<!-- ── Javascript Page Logic (ES Module) ── -->
+<script type="module">
+  import { api, currentUser, ui, handleApiError } from '../js/api.js';
+  import { requireAuth, initSession } from '../js/auth.js';
+
+  let editMode = false;
+  let compId = null;
+
+  // Sidebar Controls
+  window.openSidebar = () => {
+    document.getElementById('sidebar').classList.remove('-translate-x-full');
+    document.getElementById('sidebar-overlay').classList.remove('hidden');
+  };
+  window.closeSidebar = () => {
+    document.getElementById('sidebar').classList.add('-translate-x-full');
+    document.getElementById('sidebar-overlay').classList.add('hidden');
+  };
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!requireAuth()) return;
+    const profile = await initSession();
+    
+    if (!profile || profile.role !== 'organizer') {
+      window.location.href = 'dashboard.html';
+      return;
+    }
+
+    // Set user values
+    const initial = profile.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase();
+    document.getElementById('sidebar-avatar').textContent = initial;
+    document.getElementById('desktop-avatar').textContent = initial;
+    document.getElementById('sb-user-name').textContent = profile.name;
+    document.getElementById('desktop-user-name').textContent = profile.name;
+    document.getElementById('sb-user-role').textContent = profile.prodi || 'Event Organizer';
+
+    // Check if Edit Mode via URL Parameter (?edit=id)
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('edit')) {
+      editMode = true;
+      compId = parseInt(params.get('edit'), 10);
+      
+      // Update form header
+      document.getElementById('page-header-title').textContent = 'Edit Informasi Lomba';
+      document.getElementById('page-header-subtitle').textContent = 'Perbarui informasi detail kompetisi';
+      document.getElementById('form-header-title').textContent = 'Edit Informasi Lomba';
+      document.getElementById('form-header-subtitle').textContent = 'Perbarui detail data dan model registrasi';
+      document.getElementById('btn-submit').textContent = '💾 Simpan Perubahan';
+
+      await loadEditData(compId);
+    }
+  });
+
+  // Pre-populate form if in edit mode
+  async function loadEditData(id) {
+    try {
+      const comp = await api.competitions.getById(id);
+      
+      document.getElementById('inp-title').value = comp.title;
+      document.getElementById('inp-organizer').value = comp.org || comp.organizer;
+      document.getElementById('inp-category').value = comp.cat; // maps to web-dev, ui-ux, etc.
+      document.getElementById('inp-desc').value = comp.desc || comp.description;
+      document.getElementById('inp-reg-model').value = comp.registrationModel || 'hosted';
+      
+      // Populate deadline format: YYYY-MM-DD
+      if (comp.registrationClose) {
+        const d = new Date(comp.registrationClose);
+        const yyyy = d.getFullYear();
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
+        document.getElementById('inp-deadline').value = `${yyyy}-${mm}-${dd}`;
+      }
+
+      // Populate prize and limits
+      document.getElementById('inp-prize1').value = comp.prize || '';
+      
+      // Map team sizes to radio
+      const min = comp.minMembers || 1;
+      const max = comp.maxMembers || 5;
+      
+      let radioVal = '3-5';
+      if (min === 1 && max === 1) radioVal = 'solo';
+      else if (min === 2 && max === 3) radioVal = '2-3';
+      else if (min === 3 && max === 5) radioVal = '3-5';
+      else if (max > 5) radioVal = 'bebas';
+
+      const radio = document.querySelector(`input[name="team-size"][value="${radioVal}"]`);
+      if (radio) radio.checked = true;
+
+    } catch(e) {
+      handleApiError(e, 'Gagal memuat detail lomba untuk pengeditan');
+    }
+  }
+
+  // Handle Form Submit (Insert Draft or Update)
+  window.submitLombaForm = async (e) => {
+    e.preventDefault();
+
+    const title = document.getElementById('inp-title').value.trim();
+    const organizer = document.getElementById('inp-organizer').value.trim();
+    const categorySlug = document.getElementById('inp-category').value;
+    const scope = document.getElementById('inp-scope').value;
+    const description = document.getElementById('inp-desc').value.trim();
+    const registrationModel = document.getElementById('inp-reg-model').value;
+    const deadline = document.getElementById('inp-deadline').value;
+    const priceVal = document.getElementById('inp-price').value;
+    const isFree = !priceVal || parseInt(priceVal, 10) === 0;
+
+    // Concatenate prizes text
+    const p1 = document.getElementById('inp-prize1').value.trim();
+    const p2 = document.getElementById('inp-prize2').value.trim();
+    const p3 = document.getElementById('inp-prize3').value.trim();
+    
+    let prize = p1 || 'Sertifikat & Tropy';
+    if (p2 || p3) {
+      prize = `Juara 1: ${p1 || '-'}, Juara 2: ${p2 || '-'}, Juara 3: ${p3 || '-'}`;
+    }
+
+    // Get team size limits from radios
+    const sizeVal = document.querySelector('input[name="team-size"]:checked').value;
+    let minMembers = 1, maxMembers = 5;
+    if (sizeVal === 'solo') { minMembers = 1; maxMembers = 1; }
+    else if (sizeVal === '2-3') { minMembers = 2; maxMembers = 3; }
+    else if (sizeVal === '3-5') { minMembers = 3; maxMembers = 5; }
+    else if (sizeVal === 'bebas') { minMembers = 1; maxMembers = 10; }
+
+    const tags = [
+      categorySlug === 'web-dev' ? 'Teknologi' : categorySlug === 'ui-ux' ? 'Desain' : 'Sains',
+      scope
+    ];
+
+    const payload = {
+      title,
+      organizer,
+      categorySlug,
+      deadline,
+      tags,
+      description,
+      minMembers,
+      maxMembers,
+      registrationModel,
+      isFree,
+      prize
+    };
+
+    const btn = document.getElementById('btn-submit');
+    btn.textContent = 'Menyimpan…';
+    btn.disabled = true;
+
+    try {
+      if (editMode) {
+        await api.competitions.update(compId, payload);
+        
+        document.getElementById('modal-success-title').textContent = 'Lomba Berhasil Diperbarui!';
+        document.getElementById('modal-success-msg').textContent = 'Informasi detail kompetisi Anda telah sukses diupdate ke sistem.';
+      } else {
+        await api.competitions.create(payload);
+        
+        document.getElementById('modal-success-title').textContent = 'Lomba Berhasil Disimpan!';
+        document.getElementById('modal-success-msg').textContent = 'Info lomba Anda tersimpan aman sebagai Draf. Anda dapat mempublikasikannya kapan saja.';
+      }
+
+      document.getElementById('success-modal').classList.remove('hidden');
+
+    } catch(err) {
+      handleApiError(err, 'Gagal menyimpan kompetisi');
+      btn.textContent = editMode ? '💾 Simpan Perubahan' : '💾 Simpan Lomba sebagai Draft';
+      btn.disabled = false;
+    }
+  };
+</script>
 </body>
 </html>

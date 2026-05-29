@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Daftar — SideQuest</title>
+  <title>Daftar Akun — SideQuest</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -29,60 +29,336 @@
 </head>
 <body class="min-h-screen bg-[#FFF5F5] font-sans">
 <div class="min-h-screen flex lg:grid lg:grid-cols-2">
+  
+  <!-- Left Column Banner -->
   <div class="hidden lg:flex flex-col justify-between bg-gradient-to-br from-primary via-purple-500 to-primary-dark p-12 relative overflow-hidden">
     <div class="absolute -right-20 -top-20 w-72 h-72 bg-white/10 rounded-full"></div>
     <div class="flex items-center gap-3 relative z-10">
-      <span class="text-2xl font-extrabold text-white tracking-tight">SideQuest</span>
+      <a href="../index.html" class="flex items-center gap-2">
+        <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none';" />
+        <span class="text-2xl font-extrabold text-white tracking-tight">SideQuest</span>
+      </a>
     </div>
     <div class="relative z-10 space-y-5">
-      <div><h1 class="text-4xl font-800 text-white leading-tight mb-3">Mulai Perjalananmu Bersama Kami</h1><p class="text-white/70 text-base leading-relaxed">Bergabung dengan ribuan mahasiswa yang sudah menemukan tim dan memenangkan kompetisi.</p></div>
+      <div>
+        <h1 class="text-4xl font-800 text-white leading-tight mb-3">Mulai Perjalananmu Bersama Kami</h1>
+        <p class="text-white/70 text-base leading-relaxed">Bergabung dengan ribuan mahasiswa dan puluhan event organizer terbaik di seluruh Indonesia.</p>
+      </div>
       <div class="space-y-3">
-        <div class="flex items-center gap-3 bg-white/10 rounded-xl p-3"><div class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-800 text-sm flex-shrink-0">1</div><p class="text-white text-sm">Buat akun & isi profil</p></div>
-        <div class="flex items-center gap-3 bg-white/10 rounded-xl p-3"><div class="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center text-white font-800 text-sm flex-shrink-0">2</div><p class="text-white text-sm">Tambahkan skill & pengalaman</p></div>
-        <div class="flex items-center gap-3 bg-white/10 rounded-xl p-3"><div class="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center text-white font-800 text-sm flex-shrink-0">3</div><p class="text-white text-sm">Temukan tim & daftar lomba</p></div>
+        <div class="flex items-center gap-3 bg-white/10 rounded-xl p-3">
+          <div class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white font-800 text-sm flex-shrink-0">1</div>
+          <p class="text-white text-sm">Buat akun & pilih peran Anda</p>
+        </div>
+        <div class="flex items-center gap-3 bg-white/10 rounded-xl p-3">
+          <div class="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center text-white font-800 text-sm flex-shrink-0">2</div>
+          <p class="text-white text-sm">Validasi instansi atau lengkapi minat profil</p>
+        </div>
+        <div class="flex items-center gap-3 bg-white/10 rounded-xl p-3">
+          <div class="w-8 h-8 rounded-full bg-white/30 flex items-center justify-center text-white font-800 text-sm flex-shrink-0">3</div>
+          <p class="text-white text-sm">Kelola turnamen atau bentuk tim pemenang</p>
+        </div>
       </div>
     </div>
     <p class="text-white/40 text-xs relative z-10">© 2026 SideQuest.</p>
   </div>
+  
+  <!-- Right Column Signup Form -->
   <div class="flex flex-col justify-center px-6 py-10 lg:px-16 bg-[#FFF5F5] lg:bg-white overflow-y-auto">
-    <div class="flex items-center gap-2 mb-6 lg:hidden"><span class="text-xl font-extrabold text-primary">SideQuest</span></div>
-    <div class="max-w-sm w-full mx-auto lg:mx-0">
+    <div class="flex items-center gap-2 mb-6 lg:hidden">
+      <a href="../index.html" class="flex items-center gap-2">
+        <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none';" />
+        <span class="text-xl font-extrabold text-primary tracking-tight">SideQuest</span>
+      </a>
+    </div>
+    <div class="max-w-md w-full mx-auto lg:mx-0">
       <h2 class="text-2xl font-800 text-gray-800 mb-1">Buat akun baru 🚀</h2>
-      <p class="text-gray-500 text-sm mb-6">Gratis selamanya untuk mahasiswa.</p>
-      <button onclick="setTimeout(()=>location.href='onboarding.html',1500)" class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-2xl border-2 border-gray-200 bg-white hover:border-primary hover:bg-primary-light transition-all duration-200 shadow-sm mb-5 group">
+      <p class="text-gray-500 text-sm mb-6">Mulai kolaborasi hebat Anda di SideQuest.</p>
+      
+      <!-- Dynamic Role Toggle Tabs -->
+      <div class="flex bg-gray-100 lg:bg-gray-100/80 p-1.5 rounded-2xl mb-6 gap-1">
+        <button id="tab-peserta" type="button" class="flex-1 py-3 px-4 rounded-xl text-xs font-700 transition-all bg-primary text-white shadow-md">
+          Peserta Lomba 🚀
+        </button>
+        <button id="tab-organizer" type="button" class="flex-1 py-3 px-4 rounded-xl text-xs font-700 transition-all text-gray-500 hover:text-gray-700">
+          Penyelenggara Lomba 💼
+        </button>
+      </div>
+
+      <button id="btn-google" class="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-2xl border-2 border-gray-200 bg-white hover:border-primary hover:bg-primary-light transition-all duration-200 shadow-sm mb-5 group">
         <svg width="20" height="20" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
         <span class="font-700 text-gray-700 group-hover:text-primary text-sm">Daftar dengan Google</span>
       </button>
-      <div class="flex items-center gap-3 mb-5"><div class="flex-1 h-px bg-gray-200"></div><span class="text-xs text-gray-400 font-500">atau isi form</span><div class="flex-1 h-px bg-gray-200"></div></div>
+      
+      <div class="flex items-center gap-3 mb-5">
+        <div class="flex-1 h-px bg-gray-200"></div>
+        <span class="text-xs text-gray-400 font-500">atau isi form secara manual</span>
+        <div class="flex-1 h-px bg-gray-200"></div>
+      </div>
+      
       <div id="err-banner" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-600 font-500"></div>
+      
       <form id="reg-form" class="space-y-4">
+        
+        <!-- Shared: Name Fields -->
         <div class="grid grid-cols-2 gap-3">
-          <div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Depan</label><input type="text" id="inp-fname" placeholder="Rizki" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div>
-          <div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Belakang</label><input type="text" id="inp-lname" placeholder="Aditya" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Depan</label>
+            <input type="text" id="inp-fname" placeholder="Rizki" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Belakang</label>
+            <input type="text" id="inp-lname" placeholder="Aditya" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
         </div>
-        <div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Email Kampus</label><input type="email" id="inp-email" placeholder="rizki@ui.ac.id" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div>
-        <div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Universitas</label><select id="inp-uni" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700"><option value="">Pilih universitas…</option><option>Universitas Indonesia</option><option>ITB Bandung</option><option>ITS Surabaya</option><option>UGM Yogyakarta</option><option>BINUS University</option><option>Lainnya…</option></select></div>
-        <div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Program Studi</label><input type="text" id="inp-prodi" placeholder="Teknik Informatika" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div>
-        <div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Semester</label><input id="inp-sem" type="number" min="1" max="14" value="1" placeholder="6" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div>
-        <div><label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Password</label><input type="password" id="inp-pw" placeholder="Minimal 8 karakter" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/></div>
-        <label class="flex items-start gap-2.5 cursor-pointer"><input type="checkbox" required class="mt-1 accent-primary flex-shrink-0"/><span class="text-xs text-gray-500">Saya setuju dengan <a href="#" class="text-primary font-600 hover:underline">Syarat & Ketentuan</a> SideQuest.</span></label>
-        <button type="submit" class="w-full py-3.5 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors shadow-md">Buat Akun →</button>
+        
+        <!-- Shared: Email Field -->
+        <div>
+          <label id="lbl-email" class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Email Kampus</label>
+          <input type="email" id="inp-email" placeholder="rizki@ui.ac.id" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+        </div>
+        
+        <!-- DYNAMIC CONTAINER 1: Student Fields -->
+        <div id="student-fields" class="space-y-4">
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Universitas / Perguruan Tinggi</label>
+            <select id="inp-uni" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
+              <option value="">Pilih universitas…</option>
+              <option>Universitas Indonesia</option>
+              <option>ITB Bandung</option>
+              <option>ITS Surabaya</option>
+              <option>UGM Yogyakarta</option>
+              <option>Institut Pertanian Bogor (IPB)</option>
+              <option>BINUS University</option>
+              <option>Lainnya…</option>
+            </select>
+          </div>
+          
+          <!-- Additional dynamic fields if university is "Lainnya…" -->
+          <div id="uni-other-fields" class="hidden space-y-4">
+            <div>
+              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Universitas Baru</label>
+              <input type="text" id="inp-uni-other" placeholder="Masukkan nama universitas Anda" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kota Lokasi Kampus</label>
+                <input type="text" id="inp-uni-city" placeholder="Kota Bogor" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+              </div>
+              <div>
+                <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Provinsi Lokasi Kampus</label>
+                <input type="text" id="inp-uni-prov" placeholder="Jawa Barat" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Program Studi</label>
+            <input type="text" id="inp-prodi" placeholder="Teknik Informatika" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Semester</label>
+            <input id="inp-sem" type="number" min="1" max="14" value="1" placeholder="6" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+        </div>
+
+        <!-- DYNAMIC CONTAINER 2: Organizer Fields -->
+        <div id="organizer-fields" class="hidden space-y-4">
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Instansi / Institusi Penyelenggara</label>
+            <input type="text" id="inp-instansi" placeholder="Kemendikbud Ristek, Himpunan Mahasiswa Ilmu Komputer, dll" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Alamat Lengkap Kantor</label>
+            <textarea id="inp-office-address" rows="2" placeholder="Jl. Raya Pajajaran No. 1, Kota Bogor, Jawa Barat" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nomor HP Pengguna</label>
+            <input type="text" id="inp-phone" placeholder="0812XXXXXXXX" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+        </div>
+
+        <!-- Shared: Password & Confirm Password Fields -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Password</label>
+            <input type="password" id="inp-pw" placeholder="Minimal 8 karakter" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Konfirmasi Password</label>
+            <input type="password" id="inp-pw-confirm" placeholder="Ulangi password" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+        </div>
+
+        <!-- Captcha Puzzle Field -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Verifikasi Keamanan (Captcha)</label>
+          <div class="flex items-center gap-3">
+            <div id="captcha-box" class="py-2.5 px-5 rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 font-extrabold text-lg text-primary tracking-widest select-none text-center min-w-[100px] flex items-center justify-center bg-gradient-to-r from-primary/5 to-purple-500/5">
+              --
+            </div>
+            <button id="btn-refresh-captcha" type="button" class="p-2.5 rounded-xl border border-gray-200 hover:border-primary hover:text-primary transition-all text-gray-400">
+              🔄
+            </button>
+            <input type="text" id="inp-captcha" placeholder="Jawab matematika captcha" required class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+        </div>
+        
+        <label class="flex items-start gap-2.5 cursor-pointer">
+          <input type="checkbox" required class="mt-1 accent-primary flex-shrink-0"/>
+          <span class="text-xs text-gray-500 font-500">Saya setuju dengan <a href="terms.html" class="text-primary font-600 hover:underline">Syarat & Ketentuan</a> & <a href="privacy.html" class="text-primary font-600 hover:underline">Kebijakan Privasi</a> SideQuest.</span>
+        </label>
+        
+        <button type="submit" class="w-full py-3.5 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors shadow-md">
+          Buat Akun →
+        </button>
       </form>
+      
       <p class="text-center text-sm text-gray-500 mt-5">Sudah punya akun? <a href="login.html" class="text-primary font-700 hover:underline">Masuk di sini</a></p>
     </div>
   </div>
 </div>
+
 <script type="module">
-import { api, ui, handleApiError } from '../js/api.js';
+import { api, ui } from '../js/api.js';
 import { requireGuest } from '../js/auth.js';
 
 requireGuest();
 
-// Google button → show toast (OAuth not yet connected)
-document.querySelector('[onclick*="onboarding"]').removeAttribute('onclick');
-document.querySelector('[onclick*="onboarding"]')?.addEventListener('click', () => {
-  ui.toast('Google OAuth belum tersambung — gunakan form email di bawah', 'warning', 4000);
+let activeRole = 'peserta'; // default
+let captchaExpectedValue = 0;
+
+// Elements
+const tabPeserta = document.getElementById('tab-peserta');
+const tabOrganizer = document.getElementById('tab-organizer');
+const studentFields = document.getElementById('student-fields');
+const organizerFields = document.getElementById('organizer-fields');
+const lblEmail = document.getElementById('lbl-email');
+const inpEmail = document.getElementById('inp-email');
+const inpProdi = document.getElementById('inp-prodi');
+const inpInstansi = document.getElementById('inp-instansi');
+const inpOfficeAddress = document.getElementById('inp-office-address');
+const inpPhone = document.getElementById('inp-phone');
+
+const inpUni = document.getElementById('inp-uni');
+const uniOtherFields = document.getElementById('uni-other-fields');
+const inpUniOther = document.getElementById('inp-uni-other');
+const inpUniCity = document.getElementById('inp-uni-city');
+const inpUniProv = document.getElementById('inp-uni-prov');
+
+const inpPw = document.getElementById('inp-pw');
+const inpPwConfirm = document.getElementById('inp-pw-confirm');
+const inpCaptcha = document.getElementById('inp-captcha');
+const btnRefreshCaptcha = document.getElementById('btn-refresh-captcha');
+
+// Captcha Generator
+function generateCaptcha() {
+  const num1 = Math.floor(Math.random() * 9) + 1;
+  const num2 = Math.floor(Math.random() * 9) + 1;
+  const operators = ['+', '-'];
+  const op = operators[Math.floor(Math.random() * operators.length)];
+  if (op === '+') {
+    captchaExpectedValue = num1 + num2;
+  } else {
+    captchaExpectedValue = num1 - num2;
+  }
+  document.getElementById('captcha-box').textContent = `${num1} ${op} ${num2}`;
+  inpCaptcha.value = '';
+}
+
+// Initial captcha load
+generateCaptcha();
+btnRefreshCaptcha.addEventListener('click', generateCaptcha);
+
+// Dynamic University "Lainnya" Toggle
+inpUni.addEventListener('change', () => {
+  if (inpUni.value === 'Lainnya…') {
+    uniOtherFields.classList.remove('hidden');
+    inpUniOther.setAttribute('required', 'true');
+    inpUniCity.setAttribute('required', 'true');
+    inpUniProv.setAttribute('required', 'true');
+  } else {
+    uniOtherFields.classList.add('hidden');
+    inpUniOther.removeAttribute('required');
+    inpUniCity.removeAttribute('required');
+    inpUniProv.removeAttribute('required');
+    inpUniOther.value = '';
+    inpUniCity.value = '';
+    inpUniProv.value = '';
+  }
 });
+
+// Remove original inline onclick mapping
+const googleBtn = document.getElementById('btn-google');
+googleBtn.addEventListener('click', () => {
+  ui.toast('Google OAuth belum tersambung — gunakan form email secara manual', 'warning', 4000);
+});
+
+// Function to switch roles
+function switchRole(role) {
+  activeRole = role;
+  if (role === 'organizer') {
+    // Styling tabs
+    tabOrganizer.className = "flex-1 py-3 px-4 rounded-xl text-xs font-700 transition-all bg-primary text-white shadow-md";
+    tabPeserta.className = "flex-1 py-3 px-4 rounded-xl text-xs font-700 transition-all text-gray-500 hover:text-gray-700";
+    
+    // Visibility
+    studentFields.classList.add('hidden');
+    organizerFields.classList.remove('hidden');
+    
+    // Labels & Placeholders
+    lblEmail.textContent = 'Email Resmi / Email Instansi';
+    inpEmail.placeholder = 'lomba@kemendikbud.go.id atau instansi@domain.com';
+    
+    // Required attributes logic
+    inpProdi.removeAttribute('required');
+    inpInstansi.setAttribute('required', 'true');
+    inpOfficeAddress.setAttribute('required', 'true');
+    inpPhone.setAttribute('required', 'true');
+    
+    // Reset university "Lainnya" required state when hidden
+    inpUni.removeAttribute('required');
+    inpUniOther.removeAttribute('required');
+    inpUniCity.removeAttribute('required');
+    inpUniProv.removeAttribute('required');
+  } else {
+    // Styling tabs
+    tabPeserta.className = "flex-1 py-3 px-4 rounded-xl text-xs font-700 transition-all bg-primary text-white shadow-md";
+    tabOrganizer.className = "flex-1 py-3 px-4 rounded-xl text-xs font-700 transition-all text-gray-500 hover:text-gray-700";
+    
+    // Visibility
+    studentFields.classList.remove('hidden');
+    organizerFields.classList.add('hidden');
+    
+    // Labels & Placeholders
+    lblEmail.textContent = 'Email Kampus';
+    inpEmail.placeholder = 'rizki@ui.ac.id';
+    
+    // Required attributes logic
+    inpProdi.setAttribute('required', 'true');
+    inpInstansi.removeAttribute('required');
+    inpOfficeAddress.removeAttribute('required');
+    inpPhone.removeAttribute('required');
+    inpUni.setAttribute('required', 'true');
+    if (inpUni.value === 'Lainnya…') {
+      inpUniOther.setAttribute('required', 'true');
+      inpUniCity.setAttribute('required', 'true');
+      inpUniProv.setAttribute('required', 'true');
+    }
+  }
+}
+
+// Click events for tabs
+tabPeserta.addEventListener('click', () => switchRole('peserta'));
+tabOrganizer.addEventListener('click', () => switchRole('organizer'));
+
+// Parse role from URL query param on init
+const urlParams = new URLSearchParams(window.location.search);
+const initialRole = urlParams.get('role');
+if (initialRole === 'organizer') {
+  switchRole('organizer');
+} else {
+  switchRole('peserta');
+}
 
 // Form submit → POST /api/auth/register
 document.getElementById('reg-form').addEventListener('submit', async (e) => {
@@ -92,29 +368,81 @@ document.getElementById('reg-form').addEventListener('submit', async (e) => {
 
   const fname = document.getElementById('inp-fname').value.trim();
   const lname = document.getElementById('inp-lname').value.trim();
+  
+  // Validation: Password Confirm
+  if (inpPw.value !== inpPwConfirm.value) {
+    err.textContent = 'Password dan konfirmasi password tidak cocok!';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  // Validation: Captcha
+  const captchaAnswer = inpCaptcha.value.trim();
+  if (parseInt(captchaAnswer, 10) !== captchaExpectedValue) {
+    err.textContent = 'Jawaban captcha salah. Silakan coba lagi!';
+    err.classList.remove('hidden');
+    generateCaptcha();
+    return;
+  }
+
   const payload = {
-    email:        document.getElementById('inp-email').value.trim(),
-    password:     document.getElementById('inp-pw').value,
-    fullName:     (fname + ' ' + lname).trim(),
-    university:   document.getElementById('inp-uni').value.trim(),
-    studyProgram: document.getElementById('inp-prodi').value.trim(),
-    semester:     parseInt(document.getElementById('inp-sem').value) || 1,
+    email:    inpEmail.value.trim(),
+    password: inpPw.value,
+    confirmPassword: inpPwConfirm.value,
+    captchaAnswer: parseInt(captchaAnswer, 10),
+    captchaExpected: captchaExpectedValue,
+    fullName: (fname + ' ' + lname).trim(),
+    role:     activeRole,
   };
+
+  if (activeRole === 'peserta') {
+    if (inpUni.value === 'Lainnya…') {
+      payload.university = inpUniOther.value.trim();
+      payload.universityCity = inpUniCity.value.trim();
+      payload.universityProvince = inpUniProv.value.trim();
+    } else {
+      payload.university = inpUni.value.trim();
+      payload.universityCity = null;
+      payload.universityProvince = null;
+    }
+    payload.studyProgram = inpProdi.value.trim();
+    payload.semester = parseInt(document.getElementById('inp-sem').value) || 1;
+    
+    payload.officeAddress = null;
+    payload.phoneNumber = null;
+  } else {
+    payload.university = inpInstansi.value.trim();
+    payload.studyProgram = null;
+    payload.semester = null;
+    
+    payload.officeAddress = inpOfficeAddress.value.trim();
+    payload.phoneNumber = inpPhone.value.trim();
+    payload.universityCity = null;
+    payload.universityProvince = null;
+  }
 
   btn.textContent = 'Membuat akun…';
   btn.disabled = true;
   err.classList.add('hidden');
 
   try {
-    await api.auth.register(payload);
-    ui.toast('✅ Akun berhasil dibuat!', 'success');
-    setTimeout(() => window.location.href = 'onboarding.html', 900);
+    const res = await api.auth.register(payload);
+    ui.toast('✅ Registrasi berhasil!', 'success');
+    
+    setTimeout(() => {
+      const emailEnc = encodeURIComponent(payload.email);
+      const token = res.verificationToken || '';
+      const isLocal = res.isLocalhost ? '1' : '0';
+      window.location.href = `onboarding.html?role=${activeRole}&email=${emailEnc}&token=${token}&localhost=${isLocal}`;
+    }, 900);
   } catch (ex) {
     err.textContent = ex.message || 'Terjadi kesalahan. Coba lagi.';
     err.classList.remove('hidden');
     btn.textContent = 'Buat Akun →';
     btn.disabled = false;
+    generateCaptcha();
   }
 });
 </script>
-</body></html>
+</body>
+</html>

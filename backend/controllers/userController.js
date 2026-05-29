@@ -150,6 +150,30 @@ const getProfile = async (req, res) => {
       return { title: p, sub: '' };
     });
 
+    let connectionStatus = 'none';
+    let connectionId = null;
+    const loggedInId = req.userId; // user who made this API request
+    if (loggedInId && req.params.id && parseInt(req.params.id, 10) !== loggedInId) {
+      const connRes = await pool.query(`
+        SELECT id, status, sender_id 
+        FROM connections 
+        WHERE (sender_id = $1 AND receiver_id = $2) 
+           OR (sender_id = $2 AND receiver_id = $1)
+      `, [loggedInId, req.params.id]);
+
+      if (connRes.rows.length > 0) {
+        const conn = connRes.rows[0];
+        connectionId = conn.id;
+        if (conn.status === 'accepted') {
+          connectionStatus = 'connected';
+        } else if (conn.status === 'pending') {
+          connectionStatus = parseInt(conn.sender_id, 10) === loggedInId ? 'sent' : 'received';
+        } else if (conn.status === 'rejected') {
+          connectionStatus = 'rejected';
+        }
+      }
+    }
+
     const userData = {
       id: user.id,
       name: user.name,
@@ -166,7 +190,9 @@ const getProfile = async (req, res) => {
       stats: { lombaIkuti, timAktif, undangan, matchRate },
       riwayat: mergedRiwayat,
       prestasi,
-      deadlines
+      deadlines,
+      connectionStatus,
+      connectionId
     };
     res.json({ data: userData });
   } catch (err) {

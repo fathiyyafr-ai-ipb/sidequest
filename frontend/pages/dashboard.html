@@ -34,14 +34,16 @@
 
 <body class="min-h-screen bg-[#FFF5F5]">
   <!-- ── Sidebar overlay (mobile) ── -->
-  <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()">
-  </div>
+  <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()"></div>
 
   <!-- ── Sidebar ── -->
   <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col">
     <!-- Logo -->
     <div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100">
-      <a href="dashboard.html" class="text-xl font-extrabold text-primary tracking-tight">SideQuest</a>
+      <a href="dashboard.html" class="flex items-center gap-2">
+        <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none';" />
+        <span class="text-xl font-extrabold text-primary tracking-tight">SideQuest</span>
+      </a>
     </div>
 
     <!-- User mini card -->
@@ -107,7 +109,8 @@
     </svg>
   </button>
   <div class="flex items-center gap-2">
-    <span class="font-extrabold text-primary text-base">SideQuest</span>
+    <img src="../assets/logo.png" alt="SideQuest Logo" class="h-6 w-auto object-contain" onerror="this.style.display='none';" />
+    <img src="../assets/logo.png" alt="SideQuest Logo" class="h-6 w-auto object-contain" onerror="this.style.display='none';" /><span class="font-extrabold text-primary text-base">SideQuest</span>
   </div>
   <div class="flex items-center gap-1.5">
     <button id="notif-btn-mobile" class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
@@ -229,8 +232,7 @@
                 class="text-xs font-700 px-2.5 py-1 rounded-full bg-white/20 text-white border border-white/30">Teknologi</span>
             </div>
             <div class="p-4">
-              <h3 class="font-700 text-gray-800 text-sm leading-snug mb-1">Gemastik XVII — Pengembangan Perangkat Lunak
-              </h3>
+              <h3 class="font-700 text-gray-800 text-sm leading-snug mb-1">Gemastik XVII — Pengembangan Perangkat Lunak</h3>
               <p class="text-xs text-gray-400 mb-3">Kementerian Dikbud</p>
               <div class="flex items-center justify-between">
                 <span class="text-xs text-accent font-600">⏰ 2 hari lagi</span>
@@ -442,7 +444,8 @@
         const prestasiHtml = (m.prestasi || []).length === 0 ? '<p class="text-xs text-gray-400">Belum menambahkan prestasi.</p>' : (m.prestasi || []).map(p => `<div class="p-2.5 rounded-xl border border-gray-100"><p class="text-[11px] font-700 text-gray-800 mb-0.5">${p.title}</p><p class="text-[10px] text-gray-400">${p.sub}</p></div>`).join('');
 
         let actionHtml = '';
-        if (teamId) {
+        const isTeamRequest = teamId && teamId !== 'null' && teamId !== 'undefined';
+        if (isTeamRequest) {
           const myTeams = await api.teams.mine();
           const activeTeam = Array.isArray(myTeams) ? myTeams.find(t => t.id === parseInt(teamId, 10)) : (myTeams && myTeams.id === parseInt(teamId, 10) ? myTeams : null);
           if (activeTeam && activeTeam.role === 'owner') {
@@ -450,6 +453,19 @@
             if (applicantPending) {
               actionHtml = `<div class="flex gap-3 pt-4 mt-4 border-t border-gray-100"><button onclick="respondJoinRequest(${teamId}, ${applicantId}, 'approve', '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-700 transition-all shadow-sm cursor-pointer border-0">Setuju Bergabung</button><button onclick="respondJoinRequest(${teamId}, ${applicantId}, 'reject', '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-xs font-700 transition-all cursor-pointer border-0">Tolak Permohonan</button></div>`;
             }
+          }
+        } else {
+          if (m.connectionStatus === 'received' && m.connectionId) {
+            actionHtml = `
+              <div class="flex gap-3 pt-4 mt-4 border-t border-gray-100">
+                <button onclick="respondConnectionRequest(${m.connectionId}, 'approve', '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-700 transition-all shadow-sm cursor-pointer border-0">
+                  Terima Koneksi
+                </button>
+                <button onclick="respondConnectionRequest(${m.connectionId}, 'reject', '${m.name}')" class="flex-1 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-xs font-700 transition-all cursor-pointer border-0">
+                  Tolak Koneksi
+                </button>
+              </div>
+            `;
           }
         }
 
@@ -468,10 +484,25 @@
       try {
         await api.teams.respond(teamId, applicantId, action);
         ui.toast(`✅ Permohonan ${applicantName} berhasil ${action === 'approve' ? 'diterima masuk tim!' : 'ditolak.'}`, 'success');
+        window.closeProfileModal();
         await loadMyTeamWidget();
         await updateNotificationState();
       } catch (e) {
         handleApiError(e, 'Gagal memproses permohonan bergabung');
+      } finally {
+        ui.loading(false);
+      }
+    };
+
+    window.respondConnectionRequest = async (connectionId, action, senderName) => {
+      ui.loading(true);
+      try {
+        await api.connections.respond(connectionId, action === 'approve' ? 'accepted' : 'rejected');
+        ui.toast(`✅ Koneksi dengan ${senderName} berhasil ${action === 'approve' ? 'diterima!' : 'ditolak.'}`, 'success');
+        window.closeProfileModal();
+        await updateNotificationState();
+      } catch(e) {
+        handleApiError(e, 'Gagal memproses permohonan koneksi');
       } finally {
         ui.loading(false);
       }
@@ -490,7 +521,7 @@
         let html = '<div class="space-y-6">';
         for (const team of teamList) {
           const isOwner = team.role === 'owner';
-          html += `<div class="bg-white rounded-3xl p-5 lg:p-6 shadow-card border border-gray-100/50 relative overflow-hidden"><div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-50 pb-4 mb-4"><div><span class="text-[10px] font-800 text-primary bg-primary-light px-2.5 py-1 rounded-full uppercase tracking-wider">${team.competition.organizer || 'Penyelenggara Lomba'}</span><h3 class="font-800 text-gray-800 text-base mt-1.5 flex items-center gap-2"><span>👥 ${team.name}</span><span class="text-[10px] font-700 px-2 py-0.5 rounded-lg ${isOwner ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} uppercase">${isOwner ? 'Owner / Leader' : 'Anggota Tim'}</span></h3><p class="text-xs text-gray-400 mt-1">Kompetisi: <strong class="text-gray-600">${team.competition.title}</strong></p></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Anggota Terdaftar (${team.members.length})</h4><div class="space-y-3">${team.members.map(m => `<div class="flex items-center gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100/30"><div class="w-9 h-9 rounded-full ${m.avatarColor || 'bg-blue-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">${m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</div><div class="flex-1 min-w-0"><p class="text-xs font-700 text-gray-800 truncate">${m.name}</p><p class="text-[10px] text-gray-400 truncate">${m.prodi} · ${m.university}</p></div><span class="text-[9px] font-700 ${m.teamRole === 'owner' ? 'text-orange-600 bg-orange-50' : 'text-primary bg-primary-light'} px-2 py-0.5 rounded-md uppercase flex-shrink-0">${m.teamRole === 'owner' ? 'Owner' : 'Member'}</span></div>`).join('')}</div></div><div><h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Permohonan Bergabung (${team.applicants.length})</h4>${team.applicants.length === 0 ? `<div class="p-6 text-center text-xs text-gray-400 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">Belum ada permohonan bergabung baru.</div>` : `<div class="space-y-3">${team.applicants.map(a => `<div class="p-3.5 rounded-2xl bg-primary-light/20 border border-primary-light/50"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full ${a.avatarColor || 'bg-purple-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">${a.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</div><div class="flex-1 min-w-0"><p class="text-xs font-700 text-gray-800 truncate">${a.name}</p><p class="text-[10px] text-gray-400 truncate">${a.prodi} · ${a.uni}</p></div></div><div class="flex gap-2"><button onclick="viewApplicantProfile(${a.id}, ${team.id})" class="flex-1 py-1.5 rounded-xl border border-primary text-primary text-[10px] font-700 hover:bg-primary hover:text-white transition-all bg-white cursor-pointer">Lihat Profil</button>${isOwner ? `<button onclick="respondJoinRequest(${team.id}, ${a.id}, 'approve', '${a.name}')" class="flex-1 py-1.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[10px] font-700 transition-all shadow-sm cursor-pointer border-0">Setuju</button><button onclick="respondJoinRequest(${team.id}, ${a.id}, 'reject', '${a.name}')" class="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-[10px] font-700 transition-all cursor-pointer border-0">Tolak</button>` : ''}</div></div>`).join('')}</div>`}</div></div></div>`;
+          html += `<div class="bg-white rounded-3xl p-5 lg:p-6 shadow-card border border-gray-100/50 relative overflow-hidden"><div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-50 pb-4 mb-4"><div><span class="text-[10px] font-800 text-primary bg-primary-light px-2.5 py-1 rounded-full uppercase tracking-wider">${team.competition.organizer || 'Penyelenggara Lomba'}</span><h3 class="font-800 text-gray-800 text-base mt-1.5 flex items-center gap-2"><span>👥 ${team.name}</span><span class="text-[10px] font-700 px-2 py-0.5 rounded-lg ${isOwner ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} uppercase">${isOwner ? 'Owner / Leader' : 'Anggota Tim'}</span></h3><p class="text-xs text-gray-400 mt-1">Kompetisi: <strong class="text-gray-600">${team.competition.title}</strong></p></div></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Anggota Terdaftar (${team.members.length})</h4><div class="space-y-3">${team.members.map(m => `<div class="flex items-center gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100/30"><div class="w-9 h-9 rounded-full ${m.avatarColor || 'bg-blue-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">${m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</div><div class="flex-1 min-w-0"><p class="text-xs font-700 text-gray-800 truncate">${m.name}</p><p class="text-[10px] text-gray-400 truncate">${m.prodi} · ${m.university}</p></div><span class="text-[9px] font-700 ${m.teamRole === 'owner' ? 'text-orange-600 bg-orange-50' : 'text-primary bg-primary-light'} px-2 py-0.5 rounded-md uppercase flex-shrink-0">${m.teamRole === 'owner' ? 'Owner' : 'Member'}</span></div>`).join('')}</div></div><div><h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Permohonan Bergabung (${team.applicants.length})</h4>${team.applicants.length === 0 ? `<div class="p-6 text-center text-xs text-gray-400 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">Belum ada permohonan bergabung baru.</div>" : `<div class="space-y-3">${team.applicants.map(a => `<div class="p-3.5 rounded-2xl bg-primary-light/20 border border-primary-light/50"><div class="flex items-center gap-3 mb-3"><div class="w-9 h-9 rounded-full ${a.avatarColor || 'bg-purple-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">${a.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}</div><div class="flex-1 min-w-0"><p class="text-xs font-700 text-gray-800 truncate">${a.name}</p><p class="text-[10px] text-gray-400 truncate">${a.prodi} · ${a.uni}</p></div></div><div class="flex gap-2"><button onclick="viewApplicantProfile(${a.id}, ${team.id})" class="flex-1 py-1.5 rounded-xl border border-primary text-primary text-[10px] font-700 hover:bg-primary hover:text-white transition-all bg-white cursor-pointer">Lihat Profil</button>${isOwner ? `<button onclick="respondJoinRequest(${team.id}, ${a.id}, 'approve', '${a.name}')" class="flex-1 py-1.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[10px] font-700 transition-all shadow-sm cursor-pointer border-0">Setuju</button><button onclick="respondJoinRequest(${team.id}, ${a.id}, 'reject', '${a.name}')" class="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-[10px] font-700 transition-all cursor-pointer border-0">Tolak</button>` : ''}</div></div>`).join('')}</div>`}</div></div></div>`;
         }
         html += '</div>';
         container.innerHTML = html;
@@ -513,68 +544,326 @@
         
         const loadNotifications = async () => {
           list.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>';
-          try {
-            const res = await api.notifications.list();
-            if (res.length === 0) return (list.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">Tidak ada notifikasi baru.</p>');
-            list.innerHTML = res.map(notif => {
-              const isJoinRequest = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
-              return `<div ${isJoinRequest ? `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId})"` : ''} class="p-2.5 rounded-xl ${notif.isRead ? 'bg-gray-50/50' : 'bg-primary-light/10 border-l-4 border-primary'} ${isJoinRequest ? 'cursor-pointer hover:bg-primary-light/20' : ''} flex flex-col gap-1 transition-all"><div class="flex items-center justify-between gap-2"><p class="text-xs font-700 text-gray-800 leading-snug">${notif.title}</p>${isJoinRequest ? '<span class="bg-orange-100 text-orange-700 text-[9px] font-700 px-1.5 py-0.5 rounded-md uppercase flex-shrink-0">Pending</span>' : ''}</div><p class="text-[10px] text-gray-500 mt-0.5 leading-relaxed">${notif.message}</p><span class="text-[8px] text-gray-400 mt-1 block">${ui.formatDate(notif.createdAt)}</span></div>`;
-            }).join('');
-          } catch (e) {
-            list.innerHTML = '<p class="text-center text-xs text-red-500 py-4">Gagal memuat notifikasi.</p>';
-          }
-        };
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Keahlian / Skills</h4>
+            <div class="flex flex-wrap gap-1.5">${skillsHtml || '<p class="text-xs text-gray-400">Belum menambahkan skill.</p>'}</div>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Riwayat Lomba</h4>
+            <div class="space-y-2">${riwayatHtml}</div>
+          </div>
+          
+          <div>
+            <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-2">Prestasi</h4>
+            <div class="grid grid-cols-2 gap-2">${prestasiHtml}</div>
+          </div>
 
-        const togglePanel = async (e) => {
-          e.stopPropagation();
-          const isOpen = !panel.classList.contains('hidden');
-          if (isOpen) {
-            panel.classList.add('hidden');
-          } else {
-            panel.classList.remove('hidden');
-            await loadNotifications();
-            if (n > 0) {
-              await api.notifications.markAllRead();
-              await updateNotificationState();
-            }
-          }
-        };
-
-        const notifBtnDesktop = document.getElementById('notif-btn-desktop');
-        const notifBtnMobile = document.getElementById('notif-btn-mobile');
-
-        if (notifBtnDesktop) {
-          notifBtnDesktop.onclick = togglePanel;
-        }
-        if (notifBtnMobile) {
-          notifBtnMobile.onclick = togglePanel;
-        }
-
-        document.addEventListener('click', (e) => {
-          const clickedInsidePanel = panel && panel.contains(e.target);
-          const clickedNotifBtn = e.target.closest('#notif-btn-desktop') || e.target.closest('#notif-btn-mobile');
-          if (!clickedInsidePanel && !clickedNotifBtn) {
-            panel.classList.add('hidden');
-          }
-        });
-
-        if (clearBtn) {
-          clearBtn.onclick = async () => {
-            try {
-              await api.notifications.markAllRead();
-              ui.toast('✅ Semua notifikasi ditandai telah dibaca', 'success');
-              await loadNotifications();
-              await updateNotificationState();
-            } catch (e) {
-              handleApiError(e);
-            }
-          };
-        }
-
-      } catch (e) {
-        console.warn('Gagal memuat notifikasi:', e.message);
-      }
+          ${actionHtml}
+        </div>
+      `;
+    } catch(e) {
+      handleApiError(e, 'Gagal mengambil profil detail');
+      modal.classList.add('hidden');
     }
+  };
+
+  window.closeProfileModal = () => {
+    document.getElementById('profile-modal').classList.add('hidden');
+  };
+
+  document.getElementById('close-profile-modal-btn').addEventListener('click', window.closeProfileModal);
+
+  // Proses Aksi Approve / Reject
+  window.respondJoinRequest = async (teamId, applicantId, action, applicantName) => {
+    ui.loading(true);
+    try {
+      await api.teams.respond(teamId, applicantId, action);
+      const actionMsg = action === 'approve' ? 'diterima masuk tim!' : 'ditolak.';
+      ui.toast(`✅ Permohonan ${applicantName} berhasil ${actionMsg}`, 'success');
+      
+      window.closeProfileModal();
+      // Muat ulang widget tim & notifikasi
+      await loadMyTeamWidget();
+      await updateNotificationState();
+    } catch(e) {
+      handleApiError(e, 'Gagal memproses permohonan bergabung');
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  // Proses Aksi Terima / Tolak Koneksi
+  window.respondConnectionRequest = async (connectionId, action, senderName) => {
+    ui.loading(true);
+    try {
+      await api.connections.respond(connectionId, action === 'approve' ? 'accepted' : 'rejected');
+      const actionMsg = action === 'approve' ? 'diterima!' : 'ditolak.';
+      ui.toast(`✅ Koneksi dengan ${senderName} berhasil ${actionMsg}`, 'success');
+      
+      window.closeProfileModal();
+      await updateNotificationState();
+      if (typeof loadMatchmaking === 'function') {
+        await loadMatchmaking(currentCategory);
+      }
+    } catch(e) {
+      handleApiError(e, 'Gagal memproses permohonan koneksi');
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  // Muat Widget Tim
+  async function loadMyTeamWidget() {
+    const container = document.getElementById('widget-my-team');
+    if (!container) return;
+
+    try {
+      const teams = await api.teams.mine();
+      
+      // Jika pengguna belum tergabung dalam tim manapun
+      if (!teams || (Array.isArray(teams) && teams.length === 0)) {
+        // Tampilkan Banner Empty State
+        container.innerHTML = `
+          <div class="bg-gradient-to-r from-primary-light to-white rounded-3xl p-5 lg:p-6 shadow-card border border-primary/10 relative overflow-hidden flex flex-col sm:flex-row items-center gap-4">
+            <div class="text-4xl flex-shrink-0 animate-bounce">🤝</div>
+            <div class="flex-1 text-center sm:text-left">
+              <h3 class="font-800 text-gray-800 text-sm">Belum memiliki tim aktif?</h3>
+              <p class="text-xs text-gray-500 mt-1 max-w-md">Cari rekrutmen tim untuk lomba pilihanmu atau buka rekrutmen tim baru sekarang dan mulailah berkolaborasi!</p>
+            </div>
+            <div class="flex gap-2 flex-shrink-0 w-full sm:w-auto justify-center">
+              <a href="cari-tim.html" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-700 transition-colors shadow-sm text-center no-underline">
+                Cari Tim
+              </a>
+              <a href="cari-tim.html?tab=post" class="px-4 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-xl text-xs font-700 transition-colors text-center no-underline">
+                Buka Rekrutmen
+              </a>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Pastikan teams adalah array untuk konsistensi rendering
+      const teamList = Array.isArray(teams) ? teams : [teams];
+      
+      let html = '<div class="space-y-6">';
+
+      for (const team of teamList) {
+        const isOwner = team.role === 'owner';
+        html += `
+          <div class="bg-white rounded-3xl p-5 lg:p-6 shadow-card border border-gray-100/50 relative overflow-hidden">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-b border-gray-50 pb-4 mb-4">
+              <div>
+                <span class="text-[10px] font-800 text-primary bg-primary-light px-2.5 py-1 rounded-full uppercase tracking-wider">
+                  ${team.competition.organizer || 'Penyelenggara Lomba'}
+                </span>
+                <h3 class="font-800 text-gray-800 text-base mt-1.5 flex items-center gap-2">
+                  <span>👥 ${team.name}</span>
+                  <span class="text-[10px] font-700 px-2 py-0.5 rounded-lg ${isOwner ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'} uppercase">
+                    ${isOwner ? 'Owner / Leader' : 'Anggota Tim'}
+                  </span>
+                </h3>
+                <p class="text-xs text-gray-400 mt-1">Kompetisi: <strong class="text-gray-600">${team.competition.title}</strong></p>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <!-- Kolom Anggota Tim -->
+              <div>
+                <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Anggota Terdaftar (${team.members.length})</h4>
+                <div class="space-y-3">
+                  ${team.members.map(m => `
+                    <div class="flex items-center gap-3 p-3 rounded-2xl bg-gray-50/50 border border-gray-100/30">
+                      <div class="w-9 h-9 rounded-full ${m.avatarColor || 'bg-blue-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                        ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+                      </div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs font-700 text-gray-800 truncate">${m.name}</p>
+                        <p class="text-[10px] text-gray-400 truncate">${m.prodi} · ${m.university}</p>
+                      </div>
+                      <span class="text-[9px] font-700 ${m.teamRole === 'owner' ? 'text-orange-600 bg-orange-50' : 'text-primary bg-primary-light'} px-2 py-0.5 rounded-md uppercase flex-shrink-0">
+                        ${m.teamRole === 'owner' ? 'Owner' : 'Member'}
+                      </span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+              
+              <!-- Kolom Calon Anggota (Permohonan Bergabung) -->
+              <div>
+                <h4 class="font-800 text-xs text-gray-700 uppercase tracking-wide mb-3">Permohonan Bergabung (${team.applicants.length})</h4>
+                ${team.applicants.length === 0 ? `
+                  <div class="p-6 text-center text-xs text-gray-400 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+                    Belum ada permohonan bergabung baru.
+                  </div>
+                ` : `
+                  <div class="space-y-3">
+                    ${team.applicants.map(a => `
+                      <div class="p-3.5 rounded-2xl bg-primary-light/20 border border-primary-light/50">
+                        <div class="flex items-center gap-3 mb-3">
+                          <div class="w-9 h-9 rounded-full ${a.avatarColor || 'bg-purple-500'} flex items-center justify-center text-white font-bold text-xs flex-shrink-0">
+                            ${a.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-xs font-700 text-gray-800 truncate">${a.name}</p>
+                            <p class="text-[10px] text-gray-400 truncate">${a.prodi} · ${a.uni}</p>
+                          </div>
+                        </div>
+                        <div class="flex gap-2">
+                          <button onclick="viewApplicantProfile(${a.id}, ${team.id})" class="flex-1 py-1.5 rounded-xl border border-primary text-primary text-[10px] font-700 hover:bg-primary hover:text-white transition-all bg-white cursor-pointer">
+                            Lihat Profil
+                          </button>
+                          ${isOwner ? `
+                            <button onclick="respondJoinRequest(${team.id}, ${a.id}, 'approve', '${a.name}')" class="flex-1 py-1.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-[10px] font-700 transition-all shadow-sm cursor-pointer border-0">
+                              Setuju
+                            </button>
+                            <button onclick="respondJoinRequest(${team.id}, ${a.id}, 'reject', '${a.name}')" class="px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-[10px] font-700 transition-all cursor-pointer border-0">
+                              Tolak
+                            </button>
+                          ` : ''}
+                        </div>
+                      </div>
+                    `).join('')}
+                  </div>
+                `}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      html += '</div>';
+      container.innerHTML = html;
+
+    } catch(e) {
+      console.error('Gagal memuat widget tim:', e);
+    }
+  }
+
+  // Notifikasi Toggle Panel & Status
+  async function updateNotificationState() {
+    const badgeDesktop = document.getElementById('notif-badge-desktop');
+    const badgeMobile = document.getElementById('notif-badge-mobile');
+    const panel = document.getElementById('notification-panel');
+    const list = document.getElementById('notification-list');
+    const clearBtn = document.getElementById('mark-all-read-btn');
+
+    try {
+      const countData = await api.notifications.unreadCount();
+      const n = countData;
+      
+      // Update badge desktop & mobile secara sinkron
+      const refreshBadge = (badge) => {
+        if (badge) {
+          if (n > 0) {
+            badge.classList.remove('hidden');
+            badge.textContent = n > 99 ? '99+' : n;
+          } else {
+            badge.classList.add('hidden');
+            badge.textContent = '';
+          }
+        }
+      };
+
+      refreshBadge(badgeDesktop);
+      refreshBadge(badgeMobile);
+
+      // Tampilkan Notifikasi di Dropdown
+      const loadNotifications = async () => {
+        list.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>';
+        try {
+          const res = await api.notifications.list();
+          if (res.length === 0) {
+            list.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">Tidak ada notifikasi baru.</p>';
+            return;
+          }
+          list.innerHTML = res.map(notif => {
+            const isClickableProfile = !!notif.applicantId;
+            const clickHandler = isClickableProfile 
+              ? `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId || 'null'})"` 
+              : '';
+            const cursorClass = isClickableProfile ? 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]' : '';
+            
+            const isPendingJoin = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
+            const isPendingConnection = !notif.teamId && notif.applicantId && notif.connectionStatus === 'pending';
+            const isPending = isPendingJoin || isPendingConnection;
+            const pendingBadge = isPending 
+              ? `<span class="bg-orange-100 text-orange-700 text-[9px] font-700 px-1.5 py-0.5 rounded-md uppercase flex-shrink-0">Pending</span>` 
+              : '';
+
+            return `
+              <div ${clickHandler} class="p-2.5 rounded-xl ${notif.isRead ? 'bg-gray-50/50' : 'bg-primary-light/10 border-l-4 border-primary'} ${cursorClass} flex flex-col gap-1 transition-all">
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-xs font-700 text-gray-800 leading-snug">${notif.title}</p>
+                  ${pendingBadge}
+                </div>
+                <p class="text-[10px] text-gray-500 mt-0.5 leading-relaxed">${notif.message}</p>
+                <span class="text-[8px] text-gray-400 mt-1 block">${ui.formatDate(notif.createdAt)}</span>
+              </div>
+            `;
+          }).join('');
+        } catch(err) {
+          list.innerHTML = '<p class="text-center text-xs text-red-500 py-4">Gagal memuat notifikasi.</p>';
+        }
+      };
+
+      // Togel Handler
+      const togglePanel = async (e) => {
+        e.stopPropagation();
+        const isOpen = !panel.classList.contains('hidden');
+        if (isOpen) {
+          panel.classList.add('hidden');
+        } else {
+          panel.classList.remove('hidden');
+          await loadNotifications();
+          // Tandai sudah dibaca secara otomatis
+          if (n > 0) {
+            await api.notifications.markAllRead();
+            await updateNotificationState();
+          }
+        }
+      };
+
+      // Pasang click handler ke tombol notifikasi desktop & mobile
+      const notifBtnDesktop = document.getElementById('notif-btn-desktop');
+      const notifBtnMobile = document.getElementById('notif-btn-mobile');
+
+      if (notifBtnDesktop) {
+        notifBtnDesktop.onclick = togglePanel;
+      }
+      if (notifBtnMobile) {
+        notifBtnMobile.onclick = togglePanel;
+      }
+
+      // Close panel saat klik di luar
+      document.addEventListener('click', (e) => {
+        const clickedInsidePanel = panel && panel.contains(e.target);
+        const clickedNotifBtn = e.target.closest('#notif-btn-desktop') || e.target.closest('#notif-btn-mobile');
+        if (!clickedInsidePanel && !clickedNotifBtn) {
+          panel.classList.add('hidden');
+        }
+      });
+
+      // Clear notifications button
+      if (clearBtn) {
+        clearBtn.onclick = async () => {
+          try {
+            await api.notifications.markAllRead();
+            ui.toast('✅ Semua notifikasi ditandai telah dibaca', 'success');
+            await loadNotifications();
+            await updateNotificationState();
+          } catch (e) {
+            handleApiError(e);
+          }
+        };
+      }
+    } catch (e) {
+      console.warn('Gagal memuat notifikasi:', e.message);
+    }
+  }
   </script>
   <script src="../js/data.js"></script>
   <script src="../js/app.js"></script>

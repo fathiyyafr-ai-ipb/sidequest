@@ -14,7 +14,14 @@ export function requireAuth() {
 
 export function requireGuest() {
   if (token.isPresent()) {
-    window.location.href = '../pages/dashboard.html';
+    const user = currentUser.get();
+    if (user && (user.role === 'moderator' || user.role === 'superadmin')) {
+      window.location.href = '../pages/admin-dashboard.html';
+    } else if (user && user.role === 'organizer') {
+      window.location.href = '../pages/organizer-dashboard.html';
+    } else {
+      window.location.href = '../pages/dashboard.html';
+    }
     return false;
   }
   return true;
@@ -22,11 +29,43 @@ export function requireGuest() {
 
 export async function initSession() {
   if (!requireAuth()) return null;
+  
+  // Auto redirect administrator/moderator from standard participant pages
+  const user = currentUser.get();
+  if (user && (user.role === 'moderator' || user.role === 'superadmin') && 
+      !window.location.pathname.includes('admin-dashboard.html')) {
+    window.location.href = '../pages/admin-dashboard.html';
+    return null;
+  }
+  
+  // Auto redirect organizer from standard participant pages
+  if (user && user.role === 'organizer' && 
+      !window.location.pathname.includes('organizer-dashboard.html') && 
+      !window.location.pathname.includes('posting-lomba.html')) {
+    window.location.href = '../pages/organizer-dashboard.html';
+    return null;
+  }
+  
   ui.fillSidebarUser();          // immediate from cache
   ui.updateNotifBadge();         // badge in background
   bindLogout();
   try {
     const profile = await api.users.me();
+    
+    // Double check with latest profile role
+    if (profile && (profile.role === 'moderator' || profile.role === 'superadmin') && 
+        !window.location.pathname.includes('admin-dashboard.html')) {
+      window.location.href = '../pages/admin-dashboard.html';
+      return null;
+    }
+    
+    if (profile && profile.role === 'organizer' && 
+        !window.location.pathname.includes('organizer-dashboard.html') && 
+        !window.location.pathname.includes('posting-lomba.html')) {
+      window.location.href = '../pages/organizer-dashboard.html';
+      return null;
+    }
+    
     ui.fillSidebarUser();        // refresh with latest
     return profile;
   } catch(err) {

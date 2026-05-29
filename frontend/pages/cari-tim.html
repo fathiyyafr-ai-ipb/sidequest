@@ -16,6 +16,28 @@
   <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()">
   </div>
   <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col">
+    <div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100">
+      <a href="dashboard.html" class="flex items-center gap-2">
+        <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none';" />
+        <span class="text-xl font-extrabold text-primary tracking-tight">SideQuest</span>
+      </a>
+    </div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Cari Tim — SideQuest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { colors: { primary: "#6C63FF", "primary-dark": "#5A52E0", "primary-light": "#EDE9FF", accent: "#FF6B35", "accent-light": "#FFF1EB" }, fontFamily: { sans: ["Plus Jakarta Sans", "sans-serif"] }, boxShadow: { card: "0 2px 12px rgba(108,99,255,0.10)", "card-hover": "0 6px 24px rgba(108,99,255,0.18)", topbar: "0 2px 16px rgba(108,99,255,0.12)" } } } };</script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+
+<body class="min-h-screen bg-[#FFF5F5]">
+  <div id="sidebar-overlay" class="sidebar-overlay fixed inset-0 bg-black/30 z-30 lg:hidden" onclick="closeSidebar()">
+  </div>
+  <aside id="sidebar" class="sidebar fixed left-0 top-0 h-full w-64 bg-white shadow-topbar z-40 flex flex-col">
     <div class="flex items-center gap-3 px-5 pt-6 pb-5 border-b border-gray-100"><a href="dashboard.html"
         class="text-xl font-extrabold text-primary tracking-tight">SideQuest</a></div>
     <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-100">

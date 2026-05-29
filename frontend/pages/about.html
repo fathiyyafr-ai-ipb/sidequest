@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tentang Pengembang — SideQuest</title>
+  <meta name="description" content="Kenali tim berbakat di balik pengembangan platform matchmaking tim kompetisi SideQuest." />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6C63FF',
+            'primary-dark': '#5A52E0',
+            'primary-light': '#EDE9FF',
+            accent: '#FF6B35',
+            'accent-light': '#FFF1EB',
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="min-h-screen bg-[#FFF5F5] font-sans flex flex-col justify-between selection:bg-primary/20">
+
+  <!-- Transparent / Blurred Glass Header -->
+  <header class="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-md border-b border-gray-100/80 transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="flex items-center gap-2">
+          <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';" />
+          <span id="logo-fallback" class="hidden text-2xl font-extrabold text-primary tracking-tight">SideQuest</span>
+          <span class="text-2xl font-extrabold text-primary tracking-tight" id="logo-text">SideQuest</span>
+        </a>
+      </div>
+      
+      <!-- Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-600 text-gray-600">
+        <a href="dashboard.html" class="hover:text-primary transition-colors">Eksplorasi Lomba</a>
+        <a href="about.html" class="text-primary font-700 hover:text-primary transition-colors">Tentang Kami</a>
+        <a href="faq.html" class="hover:text-primary transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Auth State CTA -->
+      <div id="nav-auth-cta" class="flex items-center gap-4">
+        <a href="login.html" class="text-sm font-700 text-gray-700 hover:text-primary transition-colors px-4 py-2">Masuk</a>
+        <a href="register.html" class="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-700 shadow-md transition-all">Daftar Akun</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 px-6 text-center max-w-4xl mx-auto space-y-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-light text-accent text-xs font-700 uppercase tracking-wide">
+      💻 Di Balik Layar SideQuest
+    </div>
+    <h1 class="text-3xl md:text-5xl font-800 text-gray-800 tracking-tight leading-tight">
+      Bertemu Tim Kreatif & Pengembang Kami
+    </h1>
+    <p class="text-gray-500 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+      Tiga mahasiswa berdedikasi tinggi yang bersinergi dalam membangun ekosistem kolaborasi prestasi mahasiswa terbaik di Indonesia.
+    </p>
+  </section>
+
+  <!-- Developer Profile Cards Grid -->
+  <main class="max-w-7xl mx-auto px-6 pb-24 w-full">
+    <div class="grid md:grid-cols-3 gap-8">
+      
+      <!-- Member 1: Fathiyya -->
+      <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between items-center text-center space-y-6 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-24 h-24 bg-purple-500/10 rounded-full"></div>
+        
+        <!-- Avatar Initials -->
+        <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center text-white text-3xl font-800 shadow-md border-4 border-white">
+          FF
+        </div>
+        
+        <!-- Details -->
+        <div class="space-y-2">
+          <h2 class="text-xl font-800 text-gray-800">Fathiyya Fitriani R.</h2>
+          <p class="text-xs font-700 text-primary uppercase tracking-wider">AI Engineer & Lead Architect</p>
+          <p class="text-gray-500 text-xs md:text-sm leading-relaxed pt-2">
+            Mengepalai arsitektur sistem, merancang algoritma matchmaking tim cerdas, serta memformulasikan logika integrasi kecerdasan buatan pada SideQuest.
+          </p>
+        </div>
+
+        <!-- Skills -->
+        <div class="flex flex-wrap justify-center gap-2 pt-2">
+          <span class="px-2.5 py-1 rounded-lg bg-primary-light text-primary text-[10px] font-700 uppercase">AI Modeling</span>
+          <span class="px-2.5 py-1 rounded-lg bg-primary-light text-primary text-[10px] font-700 uppercase">System Design</span>
+          <span class="px-2.5 py-1 rounded-lg bg-primary-light text-primary text-[10px] font-700 uppercase">PostgreSQL</span>
+        </div>
+      </div>
+
+      <!-- Member 2: Aqilah -->
+      <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between items-center text-center space-y-6 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-24 h-24 bg-accent/10 rounded-full"></div>
+
+        <!-- Avatar Initials -->
+        <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-accent to-pink-500 flex items-center justify-center text-white text-3xl font-800 shadow-md border-4 border-white">
+          AC
+        </div>
+        
+        <!-- Details -->
+        <div class="space-y-2">
+          <h2 class="text-xl font-800 text-gray-800">Aqilah Callysta A. F.</h2>
+          <p class="text-xs font-700 text-accent uppercase tracking-wider">Frontend Developer & UI Specialist</p>
+          <p class="text-gray-500 text-xs md:text-sm leading-relaxed pt-2">
+            Merancang antarmuka pengguna premium, mengoptimalkan interaksi responsif, serta memastikan setiap transisi visual dan detail halaman terasa nyaman dan memukau.
+          </p>
+        </div>
+
+        <!-- Skills -->
+        <div class="flex flex-wrap justify-center gap-2 pt-2">
+          <span class="px-2.5 py-1 rounded-lg bg-accent-light text-accent text-[10px] font-700 uppercase">Tailwind CSS</span>
+          <span class="px-2.5 py-1 rounded-lg bg-accent-light text-accent text-[10px] font-700 uppercase">JS ES Modules</span>
+          <span class="px-2.5 py-1 rounded-lg bg-accent-light text-accent text-[10px] font-700 uppercase">UX Design</span>
+        </div>
+      </div>
+
+      <!-- Member 3: Gilbran -->
+      <div class="bg-white rounded-3xl p-8 border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between items-center text-center space-y-6 relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-24 h-24 bg-blue-500/10 rounded-full"></div>
+
+        <!-- Avatar Initials -->
+        <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-500 flex items-center justify-center text-white text-3xl font-800 shadow-md border-4 border-white">
+          MF
+        </div>
+        
+        <!-- Details -->
+        <div class="space-y-2">
+          <h2 class="text-xl font-800 text-gray-800">M. Gilbran Firdiansyah</h2>
+          <p class="text-xs font-700 text-blue-600 uppercase tracking-wider">Backend Developer & Systems Engineer</p>
+          <p class="text-gray-500 text-xs md:text-sm leading-relaxed pt-2">
+            Membangun REST API solid, mengelola migrasi relasional basis data, mengawal autentikasi token JWT, dan menangani ketahanan server di balik konsol SideQuest.
+          </p>
+        </div>
+
+        <!-- Skills -->
+        <div class="flex flex-wrap justify-center gap-2 pt-2">
+          <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 text-[10px] font-700 uppercase">NodeJS</span>
+          <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 text-[10px] font-700 uppercase">Express API</span>
+          <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-600 text-[10px] font-700 uppercase">Database Admin</span>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 border-b border-gray-800 pb-8">
+      <div class="flex items-center gap-2">
+        <span class="text-xl font-extrabold text-white tracking-tight">SideQuest</span>
+        <span class="text-xs bg-primary/20 text-primary border border-primary/30 px-2.5 py-0.5 rounded-full font-700">v1.2</span>
+      </div>
+      <div class="flex flex-wrap justify-center gap-8 text-sm">
+        <a href="dashboard.html" class="hover:text-white transition-colors">Eksplorasi Lomba</a>
+        <a href="about.html" class="hover:text-white transition-colors">Tentang Kami</a>
+        <a href="faq.html" class="hover:text-white transition-colors">FAQ</a>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+      <p>© 2026 SideQuest. Dibuat dengan 💜 oleh Aqilah, Fathiyya & Gilbran.</p>
+      <div class="flex gap-4">
+        <span>Syarat & Ketentuan</span>
+        <span>Kebijakan Privasi</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script Module to Load States -->
+  <script type="module">
+    import { currentUser, token } from '../js/api.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const navAuthCta = document.getElementById('nav-auth-cta');
+      if (token.isPresent()) {
+        const user = currentUser.get();
+        const role = user?.role || 'peserta';
+        const dashboardUrl = role === 'organizer' ? 'organizer-dashboard.html' : 'dashboard.html';
+        
+        navAuthCta.innerHTML = `
+          <a href="${dashboardUrl}" class="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-700 shadow-md transition-all flex items-center gap-2">
+            Ke Dasbor Anda ✨
+          </a>
+        `;
+      }
+    });
+  </script>
+
+</body>
+</html>
