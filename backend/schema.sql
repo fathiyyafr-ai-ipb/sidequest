@@ -183,6 +183,9 @@ INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, 
 ('Moderator Dua', 'mod2@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-rose-500', 'Akun Staff Resmi SideQuest (moderator)', 'moderator', NULL, NULL, false),
 ('Superadmin', 'admin@sidequest.id', '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS', NULL, NULL, 'bg-purple-600', 'Akun Staff Resmi SideQuest (superadmin)', 'superadmin', NULL, NULL, false);
 
+-- Mark all seeded users as verified by default for local development & testing
+UPDATE users SET is_verified = true;
+
 -- Seed Skills
 INSERT INTO skills (id, name, tag_class) VALUES 
 (1, 'UI/UX', 'tag-purple'),
