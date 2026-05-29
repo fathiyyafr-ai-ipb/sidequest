@@ -89,6 +89,9 @@ export const api = {
       const res = await _post('/auth/register',payload,{skipAuth:true,skipRefresh:true});
       _store(res.data); return res.data;
     },
+    async forgotPassword(email) {
+      return await _post('/auth/forgot-password',{email},{skipAuth:true,skipRefresh:true});
+    },
     logout() { token.clear(); window.location.href='../pages/login.html'; },
     isLoggedIn() { return token.isPresent(); },
   },
@@ -154,6 +157,12 @@ export const api = {
   matchmaking: {
     async get(skill = 'all') { const res = await _get(`/matchmaking?skill=${skill}`); return res.data; },
     async connect(receiverId) { const res = await _post('/matchmaking/connect', { receiverId }); return res; }
+  },
+
+  sidekick: {
+    async chat(message) {
+      return await _post('/sidekick/chat', { message });
+    }
   },
 
   teams: {
@@ -257,6 +266,13 @@ export const ui = {
       document.querySelectorAll('[href*="posting-lomba.html"]').forEach(el => {
         el.style.display = '';
       });
+    }
+
+    // Auto-inject SideKick chatbot bubble for logged-in participants (not on maintenance)
+    if (role === 'peserta' && !window.location.pathname.includes('maintenance.html')) {
+      import('./sidekick.js')
+        .then(m => m.initSideKick())
+        .catch(err => console.warn('SideKick failed to load:', err));
     }
   },
 

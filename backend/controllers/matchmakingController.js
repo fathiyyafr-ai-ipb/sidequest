@@ -17,9 +17,10 @@ const getMatchmaking = async (req, res) => {
     );
     const mySkills = mySkillsRes.rows.map(s => s.name);
 
-    // Ambil info universitas user login
-    const myUserRes = await pool.query('SELECT university FROM users WHERE id = $1', [userId]);
+    // Ambil info universitas & prodi user login
+    const myUserRes = await pool.query('SELECT name, university, prodi FROM users WHERE id = $1', [userId]);
     const myUni = myUserRes.rows.length > 0 ? myUserRes.rows[0].university : '';
+    const myUserProdi = myUserRes.rows.length > 0 ? myUserRes.rows[0].prodi || '' : '';
 
     // 2. Ambil seluruh user lain dengan role 'peserta'
     const result = await pool.query(`
@@ -43,6 +44,29 @@ const getMatchmaking = async (req, res) => {
       'sains-riset': ['Lab Research', 'Biologi Molekuler', 'Academic Writing', 'SPSS', 'Kimia Analitik', 'Lab Work', 'Data Sains Eksperimen', 'Scientific Writing', 'Fisika Komputasi', 'Simulasi Numerik']
     };
 
+    // Helper untuk mengelompokkan prodi/major ke dalam ranah sinergi
+    const getMajorGroup = (prodi) => {
+      if (!prodi) return 'Other';
+      const p = prodi.toLowerCase();
+      if (p.includes('informatika') || p.includes('software') || p.includes('komputer') || p.includes('sistem') || p.includes('teknologi') || p.includes('data') || p.includes('artificial') || p === 'ai' || p.includes(' ai ') || p.startsWith('ai ') || p.endsWith(' ai')) {
+        return 'Tech';
+      }
+      if (p.includes('desain') || p.includes('dkv') || p.includes('visual') || p.includes('seni') || p.includes('ilustrasi') || p.includes('multimedia') || p.includes('ui/ux') || p.includes('user research')) {
+        return 'Design';
+      }
+      if (p.includes('manajemen') || p.includes('bisnis') || p.includes('ekonomi') || p.includes('akuntansi') || p.includes('pemasaran') || p.includes('administrasi')) {
+        return 'Business';
+      }
+      if (p.includes('biologi') || p.includes('kimia') || p.includes('fisika') || p.includes('matematika') || p.includes('sains') || p.includes('statistika') || p.includes('biokimia')) {
+        return 'Science';
+      }
+      if (p.includes('sosiologi') || p.includes('komunikasi') || p.includes('hukum') || p.includes('sosial') || p.includes('sastra') || p.includes('hubungan')) {
+        return 'Social';
+      }
+      return 'Other';
+    };
+
+    const myGroup = getMajorGroup(myUserProdi);
     const filterSkill = req.query.skill;
 
     for (const row of result.rows) {
@@ -65,21 +89,78 @@ const getMatchmaking = async (req, res) => {
         }
       }
 
-      // 4. Hitung kecocokan (compat) secara dinamis & stabil
-      let compat = 70 + ((row.id * 7) % 20); // base deterministik (70 - 90%)
+      // 4. Hitung kecocokan (compat) secara cerdas (Multi-Dimensional AI Scoring)
+      let score = 50; // Base score
       
-      // Bonus jika satu universitas
-      if (myUni && row.uni && myUni.toLowerCase() === row.uni.toLowerCase()) {
-        compat += 5;
-      }
-      
-      // Bonus jika memiliki skill yang saling melengkapi (overlap atau irisan)
-      const sharedSkills = skills.filter(s => mySkills.includes(s));
-      if (sharedSkills.length > 0) {
-        compat += 3;
+      // A. Skill Gap Analysis: Cari skill kandidat yang tidak dimiliki oleh user login
+      const complementarySkills = skills.filter(s => !mySkills.includes(s));
+      if (complementarySkills.length === 1) {
+        score += 10;
+      } else if (complementarySkills.length >= 2) {
+        score += 20;
       }
 
-      compat = Math.min(95, Math.max(60, compat)); // batas: 60% - 95%
+      // B. Cross-Functional Synergy (Prodi)
+      const candGroup = getMajorGroup(row.prodi);
+      let hasSynergy = false;
+      let synergyText = '';
+      let synergyPairName = '';
+      
+      if (myGroup !== 'Other' && candGroup !== 'Other' && myGroup !== candGroup) {
+        score += 15;
+        hasSynergy = true;
+        
+        // Pasangan sinergi lintas disiplin
+        const pair = [myGroup, candGroup].sort().join(' + ');
+        synergyPairName = pair;
+        if (pair === 'Design + Tech') {
+          synergyText = `Sinergi Teknis & Kreatif: Kolaborasi ideal antara keahlian UI/UX visual dengan pemrograman fungsional untuk membangun aplikasi siap saji.`;
+        } else if (pair === 'Business + Tech') {
+          synergyText = `Sinergi Bisnis & Teknologi: Gabungan kuat untuk hackathon/business plan guna melahirkan purwarupa produk dengan validasi bisnis matang.`;
+        } else if (pair === 'Science + Tech' || pair === 'Science + Social') {
+          synergyText = `Sinergi Riset & Analitik: Kolaborasi metodologis dan analisis data tingkat tinggi untuk keunggulan presentasi riset ilmiah/PKM.`;
+        } else {
+          synergyText = `Sinergi Lintas Fungsi: Perpaduan keahlian antardisiplin ilmu (${myGroup} & ${candGroup}) untuk memberikan sudut pandang solusi yang holistik.`;
+        }
+      } else if (myGroup === candGroup && myGroup !== 'Other') {
+        score += 5; // Same domain solid connection
+        synergyText = `Rekan Seprofesi: Kemitraan sesama ahli ${myGroup} yang kuat untuk berbagi beban kerja pengembangan teknis secara intensif.`;
+      }
+
+      // C. Shared interest / Category overlap bonus
+      const categoryOverlap = skills.filter(s => mySkills.includes(s));
+      if (categoryOverlap.length > 0) {
+        score += 8;
+      }
+
+      // D. University proximity bonus
+      if (myUni && row.uni && myUni.toLowerCase() === row.uni.toLowerCase()) {
+        score += 5;
+      }
+
+      const compat = Math.min(99, Math.max(60, score));
+
+      // E. Generate AI Insight Reasoning
+      let reasoning = '';
+      const fnameCand = row.name.split(' ')[0];
+      
+      if (complementarySkills.length > 0) {
+        reasoning += `${fnameCand} dapat melengkapi tim Anda dengan membawa skill penting yang belum Anda miliki: ${complementarySkills.slice(0, 2).join(' & ')}. `;
+      } else {
+        reasoning += `Memiliki basis keahlian ${skills.slice(0, 2).join(' & ')} yang selaras dengan profil Anda. `;
+      }
+      
+      if (synergyText) {
+        reasoning += synergyText;
+      } else {
+        reasoning += `Kompetensi kandidat siap mendukung kelancaran proyek dan pencapaian target prestasi tim Anda.`;
+      }
+
+      const aiInsight = {
+        synergyGroup: hasSynergy ? `Sinergi ${synergyPairName}` : (myGroup === candGroup && myGroup !== 'Other' ? `Kemitraan Spesialis ${myGroup}` : 'Aliansi Strategis'),
+        reasoning,
+        complementarySkills: complementarySkills.slice(0, 3)
+      };
 
       // 5. Cek status koneksi antara user login dengan kandidat
       const connRes = await pool.query(`
@@ -119,7 +200,8 @@ const getMatchmaking = async (req, res) => {
         skills,
         exp,
         prestasi,
-        connectionStatus
+        connectionStatus,
+        aiInsight
       });
     }
 

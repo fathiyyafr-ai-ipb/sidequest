@@ -44,6 +44,8 @@ const teamRoutes = require('./routes/teamRoutes');
 app.use('/api/teams', teamRoutes);
 const connectionRoutes = require('./routes/connectionRoutes');
 app.use('/api/connections', connectionRoutes);
+const sidekickRoutes = require('./routes/sidekickRoutes');
+app.use('/api/sidekick', sidekickRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

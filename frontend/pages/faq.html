@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frequently Asked Questions — SideQuest</title>
+  <meta name="description" content="Pertanyaan umum yang sering ditanyakan mengenai platform kolaborasi prestasi mahasiswa SideQuest." />
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6C63FF',
+            'primary-dark': '#5A52E0',
+            'primary-light': '#EDE9FF',
+            accent: '#FF6B35',
+            'accent-light': '#FFF1EB',
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  
+  <style>
+    /* Premium smooth accordion transition */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease-out;
+      opacity: 0;
+    }
+    .accordion-item.active .accordion-content {
+      opacity: 1;
+    }
+    .accordion-icon {
+      transition: transform 0.3s ease;
+    }
+    .accordion-item.active .accordion-icon {
+      transform: rotate(45deg);
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#FFF5F5] font-sans flex flex-col justify-between selection:bg-primary/20">
+
+  <!-- Transparent / Blurred Glass Header -->
+  <header class="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-md border-b border-gray-100/80 transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="flex items-center gap-2">
+          <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';" />
+          <span id="logo-fallback" class="hidden text-2xl font-extrabold text-primary tracking-tight">SideQuest</span>
+          <span class="text-2xl font-extrabold text-primary tracking-tight" id="logo-text">SideQuest</span>
+        </a>
+      </div>
+      
+      <!-- Nav Links -->
+      <nav class="hidden md:flex items-center gap-8 text-sm font-600 text-gray-600">
+        <a href="dashboard.html" class="hover:text-primary transition-colors">Eksplorasi Lomba</a>
+        <a href="about.html" class="hover:text-primary transition-colors">Tentang Kami</a>
+        <a href="faq.html" class="text-primary font-700 hover:text-primary transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Auth State CTA -->
+      <div id="nav-auth-cta" class="flex items-center gap-4">
+        <a href="login.html" class="text-sm font-700 text-gray-700 hover:text-primary transition-colors px-4 py-2">Masuk</a>
+        <a href="register.html" class="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-700 shadow-md transition-all">Daftar Akun</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="py-16 px-6 text-center max-w-4xl mx-auto space-y-4">
+    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-light text-primary text-xs font-700 uppercase tracking-wide">
+      🙋 Hub Pusat Bantuan
+    </div>
+    <h1 class="text-3xl md:text-5xl font-800 text-gray-800 tracking-tight leading-tight">
+      Pertanyaan yang Sering Diajukan
+    </h1>
+    <p class="text-gray-500 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+      Punya pertanyaan mengenai SideQuest? Temukan semua jawaban yang Anda butuhkan di sini secara instan.
+    </p>
+  </section>
+
+  <!-- FAQ Accordion Layout -->
+  <main class="max-w-3xl mx-auto px-6 pb-24 w-full space-y-4">
+    
+    <!-- Item 1 -->
+    <div class="accordion-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200">
+      <button class="w-full text-left p-6 md:p-7 flex items-center justify-between gap-4 font-700 text-gray-800 hover:text-primary transition-colors focus:outline-none">
+        <span>Bagaimana cara kerja SideQuest dalam mencarikan rekan tim?</span>
+        <svg class="accordion-icon w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+        </svg>
+      </button>
+      <div class="accordion-content">
+        <div class="px-6 pb-6 md:px-7 md:pb-7 text-xs md:text-sm text-gray-500 leading-relaxed border-t border-gray-50/50 pt-4">
+          SideQuest menganalisis profil keahlian Anda, asal program studi, tingkat semester, dan minat bidang lomba. Sistem matchmaking cerdas kami akan merekomendasikan profil mahasiswa dengan keahlian yang komplementer agar tim Anda tangguh dan seimbang secara akademis dan teknis.
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="accordion-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200">
+      <button class="w-full text-left p-6 md:p-7 flex items-center justify-between gap-4 font-700 text-gray-800 hover:text-primary transition-colors focus:outline-none">
+        <span>Apakah platform ini gratis bagi penyelenggara kompetisi?</span>
+        <svg class="accordion-icon w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+        </svg>
+      </button>
+      <div class="accordion-content">
+        <div class="px-6 pb-6 md:px-7 md:pb-7 text-xs md:text-sm text-gray-500 leading-relaxed border-t border-gray-50/50 pt-4">
+          Ya, 100% gratis! Seluruh fitur publikasi kompetisi, pengumpulan berkas calon peserta, manajemen verifikasi pengumuman, hingga validasi jumlah anggota tim pendaftar dapat diakses sepenuhnya tanpa biaya oleh penyelenggara event (EO).
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="accordion-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200">
+      <button class="w-full text-left p-6 md:p-7 flex items-center justify-between gap-4 font-700 text-gray-800 hover:text-primary transition-colors focus:outline-none">
+        <span>Bagaimana validasi kuota tim dilakukan saat mendaftar lomba kelompok?</span>
+        <svg class="accordion-icon w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+        </svg>
+      </button>
+      <div class="accordion-content">
+        <div class="px-6 pb-6 md:px-7 md:pb-7 text-xs md:text-sm text-gray-500 leading-relaxed border-t border-gray-50/50 pt-4">
+          Saat pemilik tim mendaftarkan timnya ke sebuah kompetisi kelompok di SideQuest, sistem backend kami secara otomatis menghitung jumlah anggota terdaftar di tim tersebut. Pendaftaran akan ditolak dengan notifikasi deskriptif apabila jumlah anggota belum memenuhi batas minimum atau melebihi batas kapasitas maksimal lomba yang disyaratkan oleh EO.
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="accordion-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200">
+      <button class="w-full text-left p-6 md:p-7 flex items-center justify-between gap-4 font-700 text-gray-800 hover:text-primary transition-colors focus:outline-none">
+        <span>Apakah saya bisa mendaftar sebagai penyelenggara sekaligus peserta?</span>
+        <svg class="accordion-icon w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+        </svg>
+      </button>
+      <div class="accordion-content">
+        <div class="px-6 pb-6 md:px-7 md:pb-7 text-xs md:text-sm text-gray-500 leading-relaxed border-t border-gray-50/50 pt-4">
+          Untuk menjaga pemisahan fitur yang aman dan menghindari bias peran, satu email hanya dapat memilih satu jenis peran (Peserta atau Penyelenggara) saja pada saat pendaftaran awal. Jika Anda ingin berpartisipasi dalam kedua peran tersebut, silakan mendaftar dengan menggunakan dua email terpisah.
+        </div>
+      </div>
+    </div>
+
+    <!-- Item 5 -->
+    <div class="accordion-item bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden transition-all duration-200">
+      <button class="w-full text-left p-6 md:p-7 flex items-center justify-between gap-4 font-700 text-gray-800 hover:text-primary transition-colors focus:outline-none">
+        <span>Bagaimana cara menghubungi calon rekan tim yang direkomendasikan?</span>
+        <svg class="accordion-icon w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path>
+        </svg>
+      </button>
+      <div class="accordion-content">
+        <div class="px-6 pb-6 md:px-7 md:pb-7 text-xs md:text-sm text-gray-500 leading-relaxed border-t border-gray-50/50 pt-4">
+          Anda dapat mengirimkan Permintaan Koneksi (Connection Request) langsung melalui profil kandidat yang Anda temukan di menu Matchmaking. Setelah permintaan tersebut disetujui, Anda dapat saling berkomunikasi melalui fitur pengiriman pesan, serta mengundang mereka ke tim bentukan Anda.
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 border-b border-gray-800 pb-8">
+      <div class="flex items-center gap-2">
+        <span class="text-xl font-extrabold text-white tracking-tight">SideQuest</span>
+        <span class="text-xs bg-primary/20 text-primary border border-primary/30 px-2.5 py-0.5 rounded-full font-700">v1.2</span>
+      </div>
+      <div class="flex flex-wrap justify-center gap-8 text-sm">
+        <a href="dashboard.html" class="hover:text-white transition-colors">Eksplorasi Lomba</a>
+        <a href="about.html" class="hover:text-white transition-colors">Tentang Kami</a>
+        <a href="faq.html" class="hover:text-white transition-colors">FAQ</a>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+      <p>© 2026 SideQuest. Dibuat dengan 💜 oleh Aqilah, Fathiyya & Gilbran.</p>
+      <div class="flex gap-4">
+        <span>Syarat & Ketentuan</span>
+        <span>Kebijakan Privasi</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Accordion Controller Script -->
+  <script type="module">
+    import { currentUser, token } from '../js/api.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Dynamic User Header state
+      const navAuthCta = document.getElementById('nav-auth-cta');
+      if (token.isPresent()) {
+        const user = currentUser.get();
+        const role = user?.role || 'peserta';
+        const dashboardUrl = role === 'organizer' ? 'organizer-dashboard.html' : 'dashboard.html';
+        
+        navAuthCta.innerHTML = `
+          <a href="${dashboardUrl}" class="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-700 shadow-md transition-all flex items-center gap-2">
+            Ke Dasbor Anda ✨
+          </a>
+        `;
+      }
+
+      // 2. Accordion dynamic show/hide controller
+      const accordionItems = document.querySelectorAll('.accordion-item');
+      
+      accordionItems.forEach(item => {
+        const button = item.querySelector('button');
+        const content = item.querySelector('.accordion-content');
+        
+        button.addEventListener('click', () => {
+          const isActive = item.classList.contains('active');
+          
+          // Close all items
+          accordionItems.forEach(otherItem => {
+            otherItem.classList.remove('active');
+            otherItem.querySelector('.accordion-content').style.maxHeight = '0px';
+          });
+          
+          // Toggle active item
+          if (!isActive) {
+            item.classList.add('active');
+            // Dynamically calculate and set exact height for fluid animation
+            content.style.maxHeight = content.scrollHeight + 'px';
+          }
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>
