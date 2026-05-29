@@ -134,9 +134,9 @@
             <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kategori Lomba *</label>
             <select id="inp-category" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
               <option value="">Pilih…</option>
-              <option value="web-dev">Web Development / Teknologi</option>
-              <option value="ui-ux">UI/UX Design / Desain</option>
-              <option value="data-science">Data Science / Statistika</option>
+              <option value="teknologi">Web Development / Teknologi</option>
+              <option value="desain">UI/UX Design / Desain</option>
+              <option value="sains">Data Science / Statistika</option>
             </select>
           </div>
           <div>
@@ -393,7 +393,7 @@
     else if (sizeVal === 'bebas') { minMembers = 1; maxMembers = 10; }
 
     const tags = [
-      categorySlug === 'web-dev' ? 'Teknologi' : categorySlug === 'ui-ux' ? 'Desain' : 'Sains',
+      categorySlug === 'teknologi' ? 'Teknologi' : categorySlug === 'desain' ? 'Desain' : 'Sains',
       scope
     ];
 

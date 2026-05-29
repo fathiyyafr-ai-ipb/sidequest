@@ -303,7 +303,7 @@
 
           // 2. Hero Content
           const emoji = ui.catEmoji(comp.cat.toUpperCase());
-          const catName = comp.cat.toUpperCase() === 'WEB-DEV' ? 'Teknologi' : comp.cat.toUpperCase() === 'UI-UX' ? 'Desain' : 'Sains';
+          const catName = (comp.cat.toUpperCase() === 'WEB-DEV' || comp.cat.toUpperCase() === 'TEKNOLOGI') ? 'Teknologi' : (comp.cat.toUpperCase() === 'UI-UX' || comp.cat.toUpperCase() === 'DESAIN') ? 'Desain' : 'Sains';
           document.getElementById('detail-cat-badge').textContent = `${emoji} ${catName}`;
           document.getElementById('detail-title-main').textContent = comp.title;
           document.getElementById('detail-org-scope').textContent = `${comp.organizer} · ${comp.scope}`;

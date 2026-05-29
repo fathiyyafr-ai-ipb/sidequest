@@ -314,8 +314,8 @@ const createCompetition = async (req, res) => {
   const userId = req.userId;
   const { title, organizer, categorySlug, deadline, tags, colorGradient, emoji, isFree, prize, description, minMembers, maxMembers, registrationModel } = req.body;
   try {
-    const catRes = await pool.query('SELECT id FROM categories WHERE slug = $1', [categorySlug || 'web-dev']);
-    const categoryId = catRes.rows.length > 0 ? catRes.rows[0].id : 3;
+    const catRes = await pool.query('SELECT id FROM categories WHERE slug = $1', [categorySlug || 'teknologi']);
+    const categoryId = catRes.rows.length > 0 ? catRes.rows[0].id : 1;
 
     const result = await pool.query(`
       INSERT INTO competitions 
@@ -358,8 +358,8 @@ const updateCompetition = async (req, res) => {
       return res.status(403).json({ message: 'Akses ditolak atau kompetisi tidak ditemukan' });
     }
 
-    const catRes = await pool.query('SELECT id FROM categories WHERE slug = $1', [categorySlug || 'web-dev']);
-    const categoryId = catRes.rows.length > 0 ? catRes.rows[0].id : 3;
+    const catRes = await pool.query('SELECT id FROM categories WHERE slug = $1', [categorySlug || 'teknologi']);
+    const categoryId = catRes.rows.length > 0 ? catRes.rows[0].id : 1;
 
     await pool.query(`
       UPDATE competitions

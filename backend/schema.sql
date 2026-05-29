@@ -129,9 +129,11 @@ INSERT INTO platform_settings (key, value) VALUES ('maintenance_mode', 'false');
 
 -- Seed Data Awal
 INSERT INTO categories (slug, name) VALUES 
-('ui-ux', 'UI/UX Design'), 
-('data-science', 'Data Science'), 
-('web-dev', 'Web Development');
+('teknologi', 'Teknologi'), 
+('bisnis', 'Bisnis'), 
+('sosial', 'Social Impact'),
+('desain', 'Desain'),
+('sains', 'Sains');
 
 -- Seed Users (Fathiyya, Aqilah, Gilbran, and Matchmaker Candidates)
 INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, role, experience, achievements, online) VALUES 

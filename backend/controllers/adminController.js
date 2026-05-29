@@ -151,7 +151,7 @@ const simulateWebScraping = async (req, res) => {
       template = {
         title: 'Instagram Creative UI/UX Poster Design Contest 2026',
         organizer: 'Instagram Creators ID',
-        categorySlug: 'ui-ux',
+        categorySlug: 'desain',
         description: 'Tantangan desain poster dan interface media sosial interaktif berskala nasional untuk memperingati hari kreativitas digital. Terbuka bagi seluruh mahasiswa aktif!',
         prize: 'Juara 1: Rp 10.000.000, Juara 2: Rp 5.000.000, Juara 3: Rp 3.000.000',
         minMembers: 1,
@@ -165,7 +165,7 @@ const simulateWebScraping = async (req, res) => {
       template = {
         title: 'Global Tech Innovation Hackathon 2026',
         organizer: 'GitHub Developer Union',
-        categorySlug: 'web-dev',
+        categorySlug: 'teknologi',
         description: 'Tantangan Hackathon Global berdurasi 48 jam penuh untuk memecahkan masalah pemanasan global dan efisiensi energi menggunakan teknologi web app modern dan kecerdasan buatan.',
         prize: 'Juara 1: Rp 50.000.000 + Trip San Francisco, Juara 2: Rp 25.000.000, Juara 3: Rp 15.000.000',
         minMembers: 3,
@@ -179,7 +179,7 @@ const simulateWebScraping = async (req, res) => {
       template = {
         title: 'National Mathematics & Data Olympiad 2026',
         organizer: 'Ikatan Ilmuwan Data Indonesia',
-        categorySlug: 'data-science',
+        categorySlug: 'sains',
         description: 'Olimpiade bergengsi tingkat nasional untuk menguji kemahiran analitis statistika terapan, visualisasi data interaktif, dan pemodelan prediktif machine learning tingkat lanjut.',
         prize: 'Juara 1: Rp 20.000.000 + Piala Rektor, Juara 2: Rp 10.000.000, Juara 3: Rp 5.000.000',
         minMembers: 2,

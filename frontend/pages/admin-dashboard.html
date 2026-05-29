@@ -482,9 +482,9 @@
           <div>
             <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Kategori Lomba *</label>
             <select id="scrape-inp-category" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 text-xs text-slate-700 focus:outline-none">
-              <option value="ui-ux">UI/UX Design</option>
-              <option value="web-dev">Web Development</option>
-              <option value="data-science">Data Science</option>
+              <option value="desain">UI/UX Design</option>
+              <option value="teknologi">Web Development</option>
+              <option value="sains">Data Science</option>
             </select>
           </div>
           <div>
@@ -952,7 +952,7 @@
       document.getElementById('scrape-inp-source').value = data.sourceUrl || '';
       document.getElementById('scrape-inp-title').value = data.title || '';
       document.getElementById('scrape-inp-organizer').value = data.organizer || '';
-      document.getElementById('scrape-inp-category').value = data.categorySlug || 'ui-ux';
+      document.getElementById('scrape-inp-category').value = data.categorySlug || 'desain';
       document.getElementById('scrape-inp-fee').value = String(data.isFree);
       document.getElementById('scrape-inp-regmodel').value = data.registrationModel || 'hosted';
       document.getElementById('scrape-inp-desc').value = data.description || '';

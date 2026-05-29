@@ -26,11 +26,11 @@ const chatWithSideKick = async (req, res) => {
       // Extract categories
       let categorySlug = null;
       if (cleanMsg.includes('design') || cleanMsg.includes('desain') || cleanMsg.includes('ui') || cleanMsg.includes('ux') || cleanMsg.includes('ui-ux') || cleanMsg.includes('figma')) {
-        categorySlug = 'ui-ux';
+        categorySlug = 'desain';
       } else if (cleanMsg.includes('data') || cleanMsg.includes('science') || cleanMsg.includes('sains') || cleanMsg.includes('ml') || cleanMsg.includes('python')) {
-        categorySlug = 'data-science';
+        categorySlug = 'sains';
       } else if (cleanMsg.includes('web') || cleanMsg.includes('dev') || cleanMsg.includes('coding') || cleanMsg.includes('frontend') || cleanMsg.includes('backend') || cleanMsg.includes('hackathon')) {
-        categorySlug = 'web-dev';
+        categorySlug = 'teknologi';
       }
 
       let query = `
