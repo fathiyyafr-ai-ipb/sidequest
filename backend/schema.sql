@@ -17,7 +17,8 @@ CREATE TABLE competitions (
   emoji VARCHAR(10),
   is_free BOOLEAN DEFAULT true,
   prize VARCHAR(100),
-  description TEXT
+  description TEXT,
+  status VARCHAR(20) DEFAULT 'published'
 );
 
 CREATE TABLE users (
