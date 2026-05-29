@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Admin & Moderasi — SideQuest</title>
+  
+  <!-- Modern Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#6C63FF",
+            "primary-dark": "#5A52E0",
+            "primary-light": "#EDE9FF",
+            accent: "#FF6B35",
+            "accent-gold": "#FFB800",
+            "bg-main": "#F8FAFC",
+            "slate-surface": "#FFFFFF"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          },
+          boxShadow: {
+            card: "0 4px 20px rgba(15, 23, 42, 0.05)",
+            "card-hover": "0 8px 30px rgba(15, 23, 42, 0.08)",
+            tab: "0 2px 10px rgba(108, 99, 255, 0.12)"
+          }
+        }
+      }
+    };
+  </script>
+  
+  <style>
+    /* Sleek slate light theme backdrop */
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 107, 53, 0.02) 0%, transparent 40%);
+      color: #334155;
+    }
+
+    /* Premium soft surface shadows */
+    .premium-card {
+      background: #FFFFFF;
+      border: 1px solid #F1F5F9;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .premium-card:hover {
+      box-shadow: 0 8px 30px rgba(15, 23, 42, 0.07);
+      border-color: #E2E8F0;
+    }
+
+    .form-input {
+      background: #F8FAFC;
+      border: 2px solid #F1F5F9;
+      transition: all 0.3s ease;
+    }
+    .form-input:focus {
+      background: #FFFFFF;
+      border-color: var(--primary);
+      outline: none;
+    }
+
+    /* Custom slate scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(108, 99, 255, 0.15);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 99, 255, 0.3);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/40 z-30 hidden lg:hidden" onclick="closeSidebar()"></div>
+
+  <!-- ── SIDEBAR PANEL (Premium Soft Light) ── -->
+  <aside id="sidebar" class="fixed lg:static top-0 bottom-0 left-0 w-72 bg-white z-40 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 border-r border-slate-100">
+    <div class="flex items-center gap-3 px-6 py-6 border-b border-slate-100">
+      <span class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white font-extrabold text-sm shadow-md shadow-primary/25">SQ</span>
+      <div>
+        <h1 class="text-lg font-800 text-slate-800 tracking-tight leading-none">SideQuest</h1>
+        <span class="text-[10px] font-700 text-primary uppercase tracking-wider">Console Pengawasan</span>
+      </div>
+    </div>
+
+    <!-- Active User Profile Card -->
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-100 bg-slate-50/50">
+      <div id="sidebar-avatar" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-extrabold text-sm shadow-sm">
+        AD
+      </div>
+      <div class="min-w-0">
+        <p id="sb-user-name" class="text-sm font-700 text-slate-800 leading-tight truncate">Administrator</p>
+        <p id="sb-user-role" class="text-[11px] text-slate-500 mt-0.5" style="text-transform: capitalize;">Staff</p>
+      </div>
+    </div>
+
+    <!-- Navigation Menu links -->
+    <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+      <button onclick="switchTab('overview')" id="btn-tab-overview" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-primary bg-primary/5 border border-primary/10">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2H6a2 2 0 01-2-2v-4zM14 16a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2v-4z" />
+        </svg>
+        Overview & Scraper
+      </button>
+
+      <button onclick="switchTab('moderation')" id="btn-tab-moderation" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+        </svg>
+        Moderasi Konten
+      </button>
+
+      <button onclick="switchTab('super')" id="btn-tab-super" class="w-full hidden flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+        </svg>
+        Superadmin Panel
+      </button>
+    </nav>
+
+    <!-- Logout Anchor -->
+    <div class="px-5 py-4 border-t border-slate-100">
+      <a href="#" data-logout class="flex items-center gap-3 px-4 py-2.5 text-xs text-red-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all font-700">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Keluar Console
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Container -->
+  <div class="flex-1 min-w-0 flex flex-col">
+    
+    <!-- Mobile Header -->
+    <header class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white border-b border-slate-100 px-4 py-3 flex items-center justify-between">
+      <button onclick="openSidebar()" class="p-2 rounded-xl hover:bg-slate-50 transition-colors">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <span class="font-extrabold text-slate-800 text-base">SideQuest Admin</span>
+      <div id="desktop-avatar" class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xs shadow-md">AD</div>
+    </header>
+
+    <!-- Desktop Header -->
+    <header class="hidden lg:flex fixed top-0 right-0 left-72 z-20 bg-white/95 backdrop-blur-md px-8 py-4.5 border-b border-slate-100 items-center justify-between">
+      <div>
+        <h2 id="header-title" class="text-base font-800 text-slate-800 leading-tight">Overview & Scraper</h2>
+        <p id="header-subtitle" class="text-xs text-slate-500 mt-0.5">Statistik platform SideQuest dan scraping lomba otomatis.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-600 text-xs font-700">
+          <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+          Koneksi: Aktif
+        </div>
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <p id="desktop-user-name" class="text-xs font-700 text-slate-800 leading-tight">Admin</p>
+            <p class="text-[10px] text-primary font-600 mt-0.5">Console Access</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content Container -->
+    <main class="flex-grow pt-16 lg:pt-24 px-4 lg:px-8 pb-12 max-w-6xl w-full mx-auto">
+      
+      <!-- ── SECTION 1: OVERVIEW & SCRAPER ── -->
+      <section id="tab-section-overview" class="space-y-6">
+        
+        <!-- Statistics Glowing Deck -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <!-- Users Stat -->
+          <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Total Pengguna</span>
+              <div class="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-xl">👥</div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="stat-users-total" class="text-3xl font-800 text-slate-800">0</h3>
+              <span id="stat-users-active" class="text-xs font-700 text-green-500">0 Aktif</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-transparent"></div>
+          </div>
+
+          <!-- Competitions Stat -->
+          <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Total Kompetisi</span>
+              <div class="w-10 h-10 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500 text-xl">🏆</div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="stat-comps-total" class="text-3xl font-800 text-slate-800">0</h3>
+              <span id="stat-comps-active" class="text-xs font-700 text-green-500">0 Aktif</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-transparent"></div>
+          </div>
+
+          <!-- Teams Stat -->
+          <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-4">
+              <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Total Tim Kerja</span>
+              <div class="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 text-xl">🤝</div>
+            </div>
+            <div class="flex items-baseline gap-2">
+              <h3 id="stat-teams-total" class="text-3xl font-800 text-slate-800">0</h3>
+              <span id="stat-teams-active" class="text-xs font-700 text-green-500">0 Aktif</span>
+            </div>
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-transparent"></div>
+          </div>
+        </div>
+
+        <!-- Scraping Console -->
+        <div class="premium-card rounded-3xl p-6">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+            <div>
+              <h3 class="font-800 text-slate-800 text-base">🔍 Impor Lomba Cerdas (AI Web Scraper)</h3>
+              <p class="text-xs text-slate-500 mt-1">Tempelkan tautan halaman web kompetisi atau postingan instagram untuk di-scrap otomatis.</p>
+            </div>
+            <span class="flex-shrink-0 self-start md:self-center text-[10px] font-800 bg-primary/10 border border-primary/20 text-primary px-3 py-1 rounded-full uppercase tracking-wider">Experimental AI</span>
+          </div>
+
+          <form onsubmit="startScrape(event)" class="space-y-4">
+            <div class="flex flex-col md:flex-row gap-3">
+              <input type="url" id="scrape-url-input" required placeholder="Contoh: https://instagram.com/p/C12345 atau https://hackathon.itb.ac.id" class="flex-1 form-input rounded-2xl px-5 py-4 text-sm text-slate-800 placeholder-slate-400 focus:outline-none"/>
+              <button type="submit" class="md:w-48 bg-primary hover:bg-primary-dark text-white font-800 text-sm px-6 py-4 rounded-2xl transition-all shadow-md shadow-primary/25 flex items-center justify-center gap-2">
+                <span>Mulai Scrape 🚀</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </section>
+
+      <!-- ── SECTION 2: MODERASI KONTEN (ROSTER VIEW) ── -->
+      <section id="tab-section-moderation" class="space-y-6 hidden">
+        
+        <!-- Search and Sub-tabs Header -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div class="flex gap-2 bg-slate-100 border border-slate-200/50 p-1 rounded-2xl">
+            <button onclick="switchModerationSubTab('users')" id="sub-tab-users" class="px-4 py-2 text-xs font-800 rounded-xl bg-primary text-white transition-all">👥 Pengguna</button>
+            <button onclick="switchModerationSubTab('competitions')" id="sub-tab-competitions" class="px-4 py-2 text-xs font-800 rounded-xl text-slate-500 hover:text-slate-800 transition-all">🏆 Kompetisi</button>
+            <button onclick="switchModerationSubTab('teams')" id="sub-tab-teams" class="px-4 py-2 text-xs font-800 rounded-xl text-slate-500 hover:text-slate-800 transition-all">👥 Tim Kerja</button>
+          </div>
+          <div class="relative w-full md:w-72">
+            <input type="text" id="roster-search-input" onkeyup="filterRosterTable()" placeholder="Pencarian cepat..." class="w-full form-input rounded-2xl pl-11 pr-5 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none"/>
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8" stroke-linecap="round"/><path d="m21 21-4.3-4.3" stroke-linecap="round"/></svg>
+            </span>
+          </div>
+        </div>
+
+        <!-- 2A. Users Table -->
+        <div id="panel-roster-users" class="premium-card rounded-3xl overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-500 font-800 bg-slate-50">
+                  <th class="px-6 py-4.5">ID</th>
+                  <th class="px-6 py-4.5">Nama Lengkap</th>
+                  <th class="px-6 py-4.5">Email</th>
+                  <th class="px-6 py-4.5">Universitas / Prodi</th>
+                  <th class="px-6 py-4.5 text-center">Role</th>
+                  <th class="px-6 py-4.5 text-center">Status</th>
+                  <th class="px-6 py-4.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="roster-users-body" class="divide-y divide-slate-100">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2B. Competitions Table -->
+        <div id="panel-roster-competitions" class="premium-card rounded-3xl overflow-hidden hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-500 font-800 bg-slate-50">
+                  <th class="px-6 py-4.5">ID</th>
+                  <th class="px-6 py-4.5">Judul Kompetisi</th>
+                  <th class="px-6 py-4.5">Penyelenggara</th>
+                  <th class="px-6 py-4.5">Kategori</th>
+                  <th class="px-6 py-4.5 text-center">Tipe Lomba</th>
+                  <th class="px-6 py-4.5 text-center">Status</th>
+                  <th class="px-6 py-4.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="roster-competitions-body" class="divide-y divide-slate-100">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2C. Teams Table -->
+        <div id="panel-roster-teams" class="premium-card rounded-3xl overflow-hidden hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-500 font-800 bg-slate-50">
+                  <th class="px-6 py-4.5">ID</th>
+                  <th class="px-6 py-4.5">Nama Tim</th>
+                  <th class="px-6 py-4.5">Pencipta (Owner)</th>
+                  <th class="px-6 py-4.5">Lomba Terkait</th>
+                  <th class="px-6 py-4.5 text-center">Anggota</th>
+                  <th class="px-6 py-4.5 text-center">Status</th>
+                  <th class="px-6 py-4.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="roster-teams-body" class="divide-y divide-slate-100">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ── SECTION 3: SUPERADMIN EXCLUSIVE PANEL ── -->
+      <section id="tab-section-super" class="space-y-6 hidden">
+        
+        <!-- Maintenance Mode Master Panel -->
+        <div class="premium-card rounded-3xl p-6 border border-amber-200 relative overflow-hidden bg-gradient-to-r from-amber-50 to-transparent">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div class="space-y-1.5">
+              <div class="flex items-center gap-2">
+                <span class="text-lg">⚠️</span>
+                <h3 class="font-800 text-slate-800 text-base">MODE PEMELIHARAAN SISTEM (MAINTENANCE MODE)</h3>
+              </div>
+              <p class="text-xs text-slate-500 leading-relaxed max-w-2xl">
+                Mengaktifkan mode pemeliharaan akan memblokir akses ke seluruh platform SideQuest bagi semua Peserta & Organizer secara global. Pengguna yang sedang aktif akan langsung diarahkan ke layar pemeliharaan premium.
+              </p>
+            </div>
+            
+            <!-- Switch Slider for Maintenance -->
+            <div class="flex items-center gap-4 flex-shrink-0">
+              <span id="maintenance-indicator-text" class="text-xs font-800 text-slate-400 tracking-wider">OFFLINE</span>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="super-maintenance-toggle" onchange="toggleMaintenanceMode(this)" class="sr-only peer">
+                <div class="w-14 h-8 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-amber-500"></div>
+              </label>
+            </div>
+          </div>
+          <div class="absolute top-0 bottom-0 left-0 w-1.5 bg-amber-500"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- 3A. Feature Control Deck -->
+          <div class="premium-card rounded-3xl p-6 space-y-5">
+            <div>
+              <h3 class="font-800 text-slate-800 text-base">⚙️ Konfigurasi Modul Platform</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Nonaktifkan atau aktifkan kembali fitur SideQuest secara instan.</p>
+            </div>
+
+            <div class="space-y-4.5 divide-y divide-slate-100">
+              <!-- Feature: Competitions -->
+              <div class="flex items-center justify-between pt-2">
+                <div>
+                  <h4 class="text-xs font-700 text-slate-800">Eksplorasi & Direktori Lomba</h4>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Daftar lomba, detail lomba, pendaftaran hosted.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="feature-competitions-toggle" onchange="toggleFeatureFlag('feature_competitions', this)" class="sr-only peer">
+                  <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+              </div>
+
+              <!-- Feature: Teams -->
+              <div class="flex items-center justify-between pt-4.5">
+                <div>
+                  <h4 class="text-xs font-700 text-slate-800">Modul Tim & Buka Rekrutmen</h4>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Pembuatan tim rekrutmen, ajuan gabung tim.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="feature-teams-toggle" onchange="toggleFeatureFlag('feature_teams', this)" class="sr-only peer">
+                  <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+              </div>
+
+              <!-- Feature: Matchmaking -->
+              <div class="flex items-center justify-between pt-4.5">
+                <div>
+                  <h4 class="text-xs font-700 text-slate-800">Matchmaking Cerdas & Rekomendasi</h4>
+                  <p class="text-[10px] text-slate-400 mt-0.5">Rekomendasi pencarian tim cerdas, kirim connection.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="feature-matchmaking-toggle" onchange="toggleFeatureFlag('feature_matchmaking', this)" class="sr-only peer">
+                  <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3B. Moderator Roster Console -->
+          <div class="premium-card rounded-3xl p-6 flex flex-col">
+            <div class="mb-4">
+              <h3 class="font-800 text-slate-800 text-base">🛡️ Roster Staff & Moderator</h3>
+              <p class="text-xs text-slate-500 mt-0.5">Kelola keaktifan dan suspend akun staff Moderator.</p>
+            </div>
+            
+            <div class="flex-grow overflow-y-auto max-h-72">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="border-b border-slate-100 text-slate-500 font-800 bg-slate-50">
+                    <th class="px-4 py-3">Nama Moderator</th>
+                    <th class="px-4 py-3 text-center">Status</th>
+                    <th class="px-4 py-3 text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="roster-moderators-body" class="divide-y divide-slate-100">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- ── MODAL: SCRAPER PROGRESS DIALOG ── -->
+  <div id="scrape-progress-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full border border-slate-100 shadow-2xl relative">
+      <h3 class="font-800 text-slate-800 text-base mb-4 text-center">⚙️ Menghubungkan ke Server AI Scraper</h3>
+      
+      <!-- Loading visual bar -->
+      <div class="w-full bg-slate-100 h-2 rounded-full mb-6 overflow-hidden relative">
+        <div id="scrape-progress-bar" class="w-0 bg-primary h-full transition-all duration-300"></div>
+      </div>
+
+      <!-- Realtime terminal-like progress logging console -->
+      <div id="scrape-log-console" class="bg-slate-900 rounded-2xl p-4 font-mono text-[10px] text-green-400 space-y-2 h-44 overflow-y-auto border border-slate-800 leading-relaxed">
+        <!-- Logs added in realtime -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL: SCRAPE PREFILL DRAFT FORM ── -->
+  <div id="scrape-form-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-white rounded-3xl p-6 lg:p-8 max-w-2xl w-full border border-slate-100 shadow-2xl my-8 relative">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div>
+          <h3 class="font-800 text-slate-800 text-base">✏️ Tinjau Data Hasil Impor Scraping</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Sesuaikan parameter data sebelum disimpan ke database.</p>
+        </div>
+        <button onclick="closeScrapeFormModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors flex items-center justify-center text-slate-500 hover:text-slate-800 font-bold">&times;</button>
+      </div>
+
+      <form onsubmit="submitScrapedLomba(event)" class="space-y-4">
+        <input type="hidden" id="scrape-inp-source"/>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Judul Kompetisi *</label>
+            <input type="text" id="scrape-inp-title" required class="w-full form-input rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Penyelenggara (Organizer) *</label>
+            <input type="text" id="scrape-inp-organizer" required class="w-full form-input rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Kategori Lomba *</label>
+            <select id="scrape-inp-category" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 text-xs text-slate-700 focus:outline-none">
+              <option value="ui-ux">UI/UX Design</option>
+              <option value="web-dev">Web Development</option>
+              <option value="data-science">Data Science</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Tipe Biaya *</label>
+            <select id="scrape-inp-fee" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 text-xs text-slate-700 focus:outline-none">
+              <option value="true">Gratis (Free)</option>
+              <option value="false">Berbayar</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Model Registrasi *</label>
+            <select id="scrape-inp-regmodel" required class="w-full bg-slate-50 border-2 border-slate-100 rounded-xl px-4 py-3 text-xs text-slate-700 focus:outline-none">
+              <option value="hosted">Hosted (Dalam Aplikasi)</option>
+              <option value="non-hosted">Non-Hosted (Redirect Luar)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Deskripsi Lengkap *</label>
+          <textarea id="scrape-inp-desc" required rows="4" class="w-full form-input rounded-xl px-4 py-3 text-xs text-slate-800 resize-none focus:outline-none"></textarea>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Daftar Hadiah Juara *</label>
+            <input type="text" id="scrape-inp-prize" required class="w-full form-input rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5">Deadline Penutupan *</label>
+            <input type="date" id="scrape-inp-deadline" required class="w-full form-input rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none"/>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5 font-bold text-primary">Min. Anggota Tim</label>
+            <input type="number" id="scrape-inp-min" min="1" max="10" required class="w-full form-input rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-800 text-slate-500 uppercase tracking-wider mb-1.5 font-bold text-primary">Max. Anggota Tim</label>
+            <input type="number" id="scrape-inp-max" min="1" max="10" required class="w-full form-input rounded-xl px-4 py-3 text-xs text-slate-800 focus:outline-none"/>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-4.5 border-t border-slate-100">
+          <button type="button" onclick="closeScrapeFormModal()" class="flex-1 py-3.5 rounded-xl border border-slate-200 text-slate-500 text-xs font-700 hover:bg-slate-50 transition-colors">Batal</button>
+          <button type="submit" class="flex-[2] py-3.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-800 transition-colors shadow-md shadow-primary/25">💾 Simpan Hasil Scraping</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── JAVASCRIPT LOGIC (ES MODULE) ── -->
+  <script type="module">
+    import { api, ui, handleApiError, token, currentUser } from '../js/api.js';
+    import { requireAuth, initSession, bindLogout } from '../js/auth.js';
+
+    let rosters = null; // Stored datasets
+    let currentActiveTab = 'overview';
+    let currentActiveModSubTab = 'users';
+
+    // Sidebar Mobile controls
+    window.openSidebar = () => {
+      document.getElementById('sidebar').classList.remove('-translate-x-full');
+      document.getElementById('sidebar-overlay').classList.remove('hidden');
+    };
+    window.closeSidebar = () => {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebar-overlay').classList.add('hidden');
+    };
+
+    // Tab switcher
+    window.switchTab = (tabId) => {
+      // 🔒 FRONTEND SECURITY GATE: Block moderator from accessing superadmin tab
+      if (tabId === 'super' && currentUser.get()?.role !== 'superadmin') {
+        ui.toast('Akses Ditolak: Hanya Superadmin yang dapat mengakses panel ini!', 'error');
+        return;
+      }
+
+      currentActiveTab = tabId;
+      window.closeSidebar();
+
+      // Hide all sections
+      document.getElementById('tab-section-overview').classList.add('hidden');
+      document.getElementById('tab-section-moderation').classList.add('hidden');
+      document.getElementById('tab-section-super').classList.add('hidden');
+
+      // Reset buttons classes (soft slate colors)
+      document.querySelectorAll('aside nav button').forEach(b => {
+        b.className = "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent";
+      });
+
+      // Show panel & highlight button
+      document.getElementById(`tab-section-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-primary bg-primary/5 border border-primary/10";
+      }
+
+      // Update headers
+      const titles = {
+        overview: ["Overview & Scraper", "Statistik platform SideQuest dan scraping lomba otomatis."],
+        moderation: ["Moderasi Konten Platform", "Suspend atau aktifkan kembali Pengguna, Kompetisi, dan Tim Kerja."],
+        super: ["Superadmin System Panel", "Pemeliharaan platform global dan toggle sakelar status modul."]
+      };
+      document.getElementById('header-title').textContent = titles[tabId][0];
+      document.getElementById('header-subtitle').textContent = titles[tabId][1];
+    };
+
+    // Sub-tab moderation switcher
+    window.switchModerationSubTab = (subTab) => {
+      currentActiveModSubTab = subTab;
+      
+      // Hide all tables
+      document.getElementById('panel-roster-users').classList.add('hidden');
+      document.getElementById('panel-roster-competitions').classList.add('hidden');
+      document.getElementById('panel-roster-teams').classList.add('hidden');
+
+      // Reset tabs
+      document.querySelectorAll('#tab-section-moderation button[id^="sub-tab-"]').forEach(b => {
+        b.className = "px-4 py-2 text-xs font-800 rounded-xl text-slate-500 hover:text-slate-800 transition-all";
+      });
+
+      // Show table
+      document.getElementById(`panel-roster-${subTab}`).classList.remove('hidden');
+      document.getElementById(`sub-tab-${subTab}`).className = "px-4 py-2 text-xs font-800 rounded-xl bg-primary text-white transition-all";
+      
+      // Reset search filter input
+      document.getElementById('roster-search-input').value = '';
+      filterRosterTable();
+    };
+
+    // Page Initialisation
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!requireAuth()) return;
+      const profile = await initSession();
+
+      if (!profile || (profile.role !== 'moderator' && profile.role !== 'superadmin')) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+
+      // Populate UI user labels
+      const initials = profile.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('sidebar-avatar').textContent = initials;
+      document.getElementById('desktop-avatar').textContent = initials;
+      document.getElementById('sb-user-name').textContent = profile.name;
+      document.getElementById('desktop-user-name').textContent = profile.name;
+      document.getElementById('sb-user-role').textContent = profile.role === 'superadmin' ? 'Super Administrator' : 'Staff Moderator';
+
+      if (profile.role === 'superadmin') {
+        document.getElementById('btn-tab-super').classList.remove('hidden');
+      }
+
+      await loadDashboardData();
+    });
+
+    // Fetch and render dashboard
+    async function loadDashboardData() {
+      ui.loading(true);
+      try {
+        // Fetch stats
+        const statsRes = await api.admin.getStats();
+        
+        document.getElementById('stat-users-total').textContent = statsRes.users.total;
+        document.getElementById('stat-users-active').textContent = `${statsRes.users.active} Aktif`;
+
+        document.getElementById('stat-comps-total').textContent = statsRes.competitions.total;
+        document.getElementById('stat-comps-active').textContent = `${statsRes.competitions.active} Aktif`;
+
+        document.getElementById('stat-teams-total').textContent = statsRes.teams.total;
+        document.getElementById('stat-teams-active').textContent = `${statsRes.teams.active} Aktif`;
+
+        // Configure Superadmin controllers
+        const superMaint = document.getElementById('super-maintenance-toggle');
+        const compToggle = document.getElementById('feature-competitions-toggle');
+        const teamToggle = document.getElementById('feature-teams-toggle');
+        const matchToggle = document.getElementById('feature-matchmaking-toggle');
+        const indicator = document.getElementById('maintenance-indicator-text');
+
+        if (statsRes.settings) {
+          const isMaint = statsRes.settings['maintenance_mode'] === 'true';
+          if (superMaint) superMaint.checked = isMaint;
+          if (indicator) {
+            indicator.textContent = isMaint ? 'ONLINE (ACTIVE MAINT)' : 'OFFLINE';
+            indicator.className = isMaint ? 'text-xs font-800 text-amber-500 tracking-wider' : 'text-xs font-800 text-slate-400 tracking-wider';
+          }
+
+          if (compToggle) compToggle.checked = statsRes.settings['feature_competitions'] === 'active';
+          if (teamToggle) teamToggle.checked = statsRes.settings['feature_teams'] === 'active';
+          if (matchToggle) matchToggle.checked = statsRes.settings['feature_matchmaking'] === 'active';
+        }
+
+        // Fetch rosters
+        const dataRes = await api.admin.getData();
+        rosters = dataRes;
+        
+        renderUsersTable(dataRes.users);
+        renderCompetitionsTable(dataRes.competitions);
+        renderTeamsTable(dataRes.teams);
+        
+        if (currentUser.get()?.role === 'superadmin') {
+          renderModeratorsTable(dataRes.users.filter(u => u.role === 'moderator'));
+        }
+
+      } catch (err) {
+        handleApiError(err, 'Gagal memuat status moderasi.');
+      } finally {
+        ui.loading(false);
+      }
+    }
+
+    // ── Table Renders ──
+
+    function renderUsersTable(users) {
+      const tbody = document.getElementById('roster-users-body');
+      const activeUser = currentUser.get();
+      
+      tbody.innerHTML = (users || []).map(u => {
+        // Moderator cannot suspend other moderators/superadmins.
+        const isDisabled = (u.role === 'superadmin' || u.role === 'moderator') && activeUser?.role !== 'superadmin';
+        
+        return `
+          <tr class="hover:bg-slate-50/50">
+            <td class="px-6 py-4 font-700 text-slate-400">${u.id}</td>
+            <td class="px-6 py-4 font-700 text-slate-800">${u.name}</td>
+            <td class="px-6 py-4 text-slate-600 font-500">${u.email}</td>
+            <td class="px-6 py-4 text-slate-500">${u.university || '-'} <div class="text-[10px] text-slate-400 font-500">${u.prodi || '-'}</div></td>
+            <td class="px-6 py-4 text-center">
+              <span class="px-2.5 py-1 rounded-lg text-[10px] font-800 uppercase tracking-wide ${u.role === 'superadmin' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' : u.role === 'moderator' ? 'bg-red-100 text-red-800 border border-red-200' : u.role === 'organizer' ? 'bg-blue-100 text-blue-800 border border-blue-200' : 'bg-green-100 text-green-800 border border-green-200'}">${u.role}</span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <span id="badge-users-${u.id}" class="px-2 py-0.5 rounded-full text-[10px] font-800 ${u.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${u.is_active ? 'Active' : 'Suspended'}</span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              <label class="relative inline-flex items-center ${isDisabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}">
+                <input type="checkbox" onchange="toggleItemKeaktifan('users', ${u.id}, this)" ${u.is_active ? 'checked' : ''} ${isDisabled ? 'disabled' : ''} class="sr-only peer">
+                <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderCompetitionsTable(comps) {
+      const tbody = document.getElementById('roster-competitions-body');
+      tbody.innerHTML = (comps || []).map(c => `
+        <tr class="hover:bg-slate-50/50">
+          <td class="px-6 py-4 font-700 text-slate-400">${c.id}</td>
+          <td class="px-6 py-4 font-700 text-slate-800 truncate max-w-xs">${c.title}</td>
+          <td class="px-6 py-4 text-slate-600 font-500">${c.organizer || '-'}</td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-0.5 rounded-lg text-[10px] font-700 bg-primary/10 text-primary border border-primary/20">${c.category_name}</span>
+          </td>
+          <td class="px-6 py-4 text-center font-700 text-slate-500" style="text-transform: capitalize;">${c.registration_model}</td>
+          <td class="px-6 py-4 text-center">
+            <span id="badge-competitions-${c.id}" class="px-2 py-0.5 rounded-full text-[10px] font-800 ${c.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${c.is_active ? 'Active' : 'Suspended'}</span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" onchange="toggleItemKeaktifan('competitions', ${c.id}, this)" ${c.is_active ? 'checked' : ''} class="sr-only peer">
+              <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderTeamsTable(teams) {
+      const tbody = document.getElementById('roster-teams-body');
+      tbody.innerHTML = (teams || []).map(t => `
+        <tr class="hover:bg-slate-50/50">
+          <td class="px-6 py-4 font-700 text-slate-400">${t.id}</td>
+          <td class="px-6 py-4 font-700 text-slate-800">${t.name}</td>
+          <td class="px-6 py-4 text-slate-600 font-500">${t.creator_name}</td>
+          <td class="px-6 py-4 text-slate-500 truncate max-w-xs">${t.competition_title || '-'}</td>
+          <td class="px-6 py-4 text-center font-700 text-slate-600">${t.joined_members}/${t.max_members}</td>
+          <td class="px-6 py-4 text-center">
+            <span id="badge-teams-${t.id}" class="px-2 py-0.5 rounded-full text-[10px] font-800 ${t.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${t.is_active ? 'Active' : 'Suspended'}</span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" onchange="toggleItemKeaktifan('teams', ${t.id}, this)" ${t.is_active ? 'checked' : ''} class="sr-only peer">
+              <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderModeratorsTable(mods) {
+      const tbody = document.getElementById('roster-moderators-body');
+      if (mods.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-slate-400 font-600">Belum ada akun Moderator terdaftar</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = mods.map(m => `
+        <tr class="hover:bg-slate-50/50">
+          <td class="px-4 py-3.5 font-700 text-slate-800">
+            ${m.name}
+            <div class="text-[10px] text-slate-400 font-500">${m.email}</div>
+          </td>
+          <td class="px-4 py-3.5 text-center">
+            <span id="badge-mods-${m.id}" class="px-2 py-0.5 rounded-full text-[10px] font-800 ${m.is_active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${m.is_active ? 'Active' : 'Suspended'}</span>
+          </td>
+          <td class="px-4 py-3.5 text-center">
+            <label class="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" onchange="toggleModeratorAktivasi(${m.id}, this)" ${m.is_active ? 'checked' : ''} class="sr-only peer">
+              <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+            </label>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ── Toggle Actions ──
+
+    window.toggleItemKeaktifan = async (type, id, el) => {
+      const checked = el.checked;
+      try {
+        const res = await api.admin.toggleActive(type, id);
+        ui.toast(res.message, 'success');
+
+        // Refresh badge
+        const badge = document.getElementById(`badge-${type}-${id}`);
+        if (badge) {
+          badge.textContent = checked ? 'Active' : 'Suspended';
+          badge.className = `px-2 py-0.5 rounded-full text-[10px] font-800 ${checked ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+        }
+      } catch (err) {
+        el.checked = !checked; // revert
+        handleApiError(err);
+      }
+    };
+
+    window.toggleModeratorAktivasi = async (id, el) => {
+      const checked = el.checked;
+      try {
+        const res = await api.admin.toggleModerator(id);
+        ui.toast(res.message, 'success');
+
+        const badge = document.getElementById(`badge-mods-${id}`);
+        if (badge) {
+          badge.textContent = checked ? 'Active' : 'Suspended';
+          badge.className = `px-2 py-0.5 rounded-full text-[10px] font-800 ${checked ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+        }
+      } catch (err) {
+        el.checked = !checked;
+        handleApiError(err);
+      }
+    };
+
+    // ── Superadmin Feature Flags & Maintenance Mode Toggles ──
+
+    window.toggleFeatureFlag = async (featureKey, el) => {
+      const checked = el.checked;
+      const valStr = checked ? 'active' : 'inactive';
+      try {
+        const res = await api.admin.updateFeatures(featureKey, valStr);
+        ui.toast(res.message, 'success');
+      } catch (err) {
+        el.checked = !checked;
+        handleApiError(err);
+      }
+    };
+
+    window.toggleMaintenanceMode = async (el) => {
+      const checked = el.checked;
+      const promptMsg = checked 
+        ? 'Apakah Anda yakin ingin MENGAKTIFKAN mode pemeliharaan (Maintenance Mode)?\nSeluruh akses pengguna umum akan segera diblokir!'
+        : 'Apakah Anda yakin ingin MEMATIKAN mode pemeliharaan?\nPengguna dapat kembali mengakses platform secara penuh.';
+      
+      if (!confirm(promptMsg)) {
+        el.checked = !checked;
+        return;
+      }
+
+      try {
+        const res = await api.admin.updateMaintenance(checked);
+        ui.toast(res.message, 'success');
+        
+        const indicator = document.getElementById('maintenance-indicator-text');
+        if (indicator) {
+          indicator.textContent = checked ? 'ONLINE (ACTIVE MAINT)' : 'OFFLINE';
+          indicator.className = checked ? 'text-xs font-800 text-amber-500 tracking-wider' : 'text-xs font-800 text-slate-400 tracking-wider';
+        }
+      } catch (err) {
+        el.checked = !checked;
+        handleApiError(err);
+      }
+    };
+
+    // ── Scraper Core Actions ──
+
+    window.startScrape = async (e) => {
+      e.preventDefault();
+      const input = document.getElementById('scrape-url-input');
+      const url = input.value.trim();
+      if (!url) return;
+
+      const progressModal = document.getElementById('scrape-progress-modal');
+      const pBar = document.getElementById('scrape-progress-bar');
+      const consoleLog = document.getElementById('scrape-log-console');
+
+      pBar.style.width = '0%';
+      consoleLog.innerHTML = '';
+      progressModal.classList.remove('hidden');
+
+      const logs = [
+        "🌐 [0.0s] Menghubungkan ke server parser AI SideQuest...",
+        "🧩 [0.3s] Ekstraksi tag metadata HTML & OpenGraph...",
+        "📜 [0.7s] Melakukan scraping detail deskripsi halaman sumber...",
+        "🧠 [1.1s] Menganalisis persyaratan pendaftaran & hadiah via AI...",
+        "✅ [1.5s] Analisis selesai! Mentransfer data pra-pengisian..."
+      ];
+
+      let logIndex = 0;
+      const logInterval = setInterval(() => {
+        if (logIndex < logs.length) {
+          const l = document.createElement('p');
+          l.textContent = logs[logIndex];
+          consoleLog.appendChild(l);
+          consoleLog.scrollTop = consoleLog.scrollHeight;
+          pBar.style.width = `${(logIndex + 1) * 20}%`;
+          logIndex++;
+        } else {
+          clearInterval(logInterval);
+        }
+      }, 300);
+
+      try {
+        const scraped = await api.admin.scrape(url);
+        
+        setTimeout(() => {
+          progressModal.classList.add('hidden');
+          openScrapeFormModal(scraped);
+          input.value = '';
+        }, 1800);
+      } catch (err) {
+        clearInterval(logInterval);
+        progressModal.classList.add('hidden');
+        handleApiError(err);
+      }
+    };
+
+    function openScrapeFormModal(data) {
+      document.getElementById('scrape-inp-source').value = data.sourceUrl || '';
+      document.getElementById('scrape-inp-title').value = data.title || '';
+      document.getElementById('scrape-inp-organizer').value = data.organizer || '';
+      document.getElementById('scrape-inp-category').value = data.categorySlug || 'ui-ux';
+      document.getElementById('scrape-inp-fee').value = String(data.isFree);
+      document.getElementById('scrape-inp-regmodel').value = data.registrationModel || 'hosted';
+      document.getElementById('scrape-inp-desc').value = data.description || '';
+      document.getElementById('scrape-inp-prize').value = data.prize || '';
+      document.getElementById('scrape-inp-deadline').value = data.deadline || '';
+      document.getElementById('scrape-inp-min').value = data.minMembers || 1;
+      document.getElementById('scrape-inp-max').value = data.maxMembers || 5;
+
+      document.getElementById('scrape-form-modal').classList.remove('hidden');
+    }
+
+    window.closeScrapeFormModal = () => {
+      document.getElementById('scrape-form-modal').classList.add('hidden');
+    };
+
+    window.submitScrapedLomba = async (e) => {
+      e.preventDefault();
+      
+      const payload = {
+        title: document.getElementById('scrape-inp-title').value.trim(),
+        organizer: document.getElementById('scrape-inp-organizer').value.trim(),
+        categorySlug: document.getElementById('scrape-inp-category').value,
+        registrationModel: document.getElementById('scrape-inp-regmodel').value,
+        description: document.getElementById('scrape-inp-desc').value.trim(),
+        prize: document.getElementById('scrape-inp-prize').value.trim(),
+        deadline: document.getElementById('scrape-inp-deadline').value,
+        minMembers: parseInt(document.getElementById('scrape-inp-min').value, 10) || 1,
+        maxMembers: parseInt(document.getElementById('scrape-inp-max').value, 10) || 5,
+        isFree: document.getElementById('scrape-inp-fee').value === 'true',
+        tags: [
+          document.getElementById('scrape-inp-category').options[document.getElementById('scrape-inp-category').selectedIndex].text,
+          document.getElementById('scrape-inp-regmodel').value === 'hosted' ? 'Hosted' : 'Non-Hosted'
+        ]
+      };
+
+      try {
+        await api.competitions.create(payload);
+        ui.toast('🏆 Kompetisi hasil scraping berhasil disimpan!', 'success');
+        closeScrapeFormModal();
+        await loadDashboardData();
+      } catch (err) {
+        handleApiError(err);
+      }
+    };
+
+    // ── Table Search filter ──
+
+    window.filterRosterTable = () => {
+      const q = document.getElementById('roster-search-input').value.toLowerCase().trim();
+      const tbodyId = `roster-${currentActiveModSubTab}-body`;
+      const tbody = document.getElementById(tbodyId);
+      if (!tbody) return;
+
+      const rows = tbody.getElementsByTagName('tr');
+      for (const row of rows) {
+        let match = false;
+        const tds = row.getElementsByTagName('td');
+        for (const td of tds) {
+          if (td.textContent.toLowerCase().includes(q)) {
+            match = true;
+            break;
+          }
+        }
+        row.style.display = match ? '' : 'none';
+      }
+    };
+  </script>
+</body>
+</html>

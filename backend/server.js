@@ -27,6 +27,12 @@ pool.query('SELECT NOW()', (err, res) => {
 });
 
 // Mount API Routes
+const { checkPlatformStatus } = require('./middleware/adminMiddleware');
+app.use(checkPlatformStatus);
+
+const adminRoutes = require('./routes/adminRoutes');
+app.use('/api/admin', adminRoutes);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/competitions', competitionRoutes);
 app.use('/api/users', userRoutes);

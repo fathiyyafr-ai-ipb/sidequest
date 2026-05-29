@@ -61,6 +61,11 @@ const login = async (req, res) => {
 
     const user = result.rows[0];
 
+    // Check active status
+    if (user.is_active === false) {
+      return res.status(403).json({ message: 'Akun Anda telah dinonaktifkan oleh administrator.' });
+    }
+
     // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {

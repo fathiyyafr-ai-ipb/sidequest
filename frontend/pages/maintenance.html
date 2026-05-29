@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Situs Sedang Diperbarui — SideQuest</title>
+  
+  <!-- Modern Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  
+  <style>
+    :root {
+      --primary: #6C63FF;
+      --primary-dark: #5A52E0;
+      --primary-light: #EDE9FF;
+      --accent: #FF6B35;
+      --accent-gold: #FFB800;
+      --dark-bg: #0F0C20;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 50%, #1c1543 0%, var(--dark-bg) 100%);
+      color: #FFFFFF;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Cosmic Grid Background Effect */
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(108, 99, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(108, 99, 255, 0.05) 1px, transparent 1px);
+      background-size: 40px 40px;
+      background-position: center;
+      mask-image: radial-gradient(ellipse at center, black, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 70%);
+      z-index: 1;
+    }
+
+    /* Ambient Nebulas */
+    .nebula {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.15;
+      z-index: 2;
+    }
+    .nebula-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--primary);
+      top: -100px;
+      left: -100px;
+      animation: drift 15s infinite alternate ease-in-out;
+    }
+    .nebula-2 {
+      width: 400px;
+      height: 400px;
+      background: var(--accent);
+      bottom: -150px;
+      right: -150px;
+      animation: drift 20s infinite alternate-reverse ease-in-out;
+    }
+
+    @keyframes drift {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 50px) scale(1.2); }
+    }
+
+    /* Glassmorphism Card Container */
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 32px;
+      padding: 48px 32px;
+      max-w: 520px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      z-index: 10;
+      position: relative;
+    }
+
+    /* Animated Gold Hourglass SVG Container */
+    .icon-container {
+      width: 100px;
+      height: 100px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      box-shadow: 0 12px 32px rgba(108, 99, 255, 0.15);
+      position: relative;
+    }
+
+    .icon-container svg {
+      animation: flip-hourglass 4s infinite ease-in-out;
+    }
+
+    @keyframes flip-hourglass {
+      0%, 90% { transform: rotate(0deg); }
+      100% { transform: rotate(180deg); }
+    }
+
+    /* Pulsing Light Beam */
+    .glow-dot {
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 32px;
+      height: 4px;
+      background: var(--accent-gold);
+      border-radius: 2px;
+      box-shadow: 0 0 16px var(--accent-gold);
+    }
+
+    h1 {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #D8CFFF 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #9D98BA;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      font-weight: 500;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 184, 0, 0.1);
+      border: 1px solid rgba(255, 184, 0, 0.2);
+      color: var(--accent-gold);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+
+    .status-badge .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-gold);
+      border-radius: 50%;
+      animation: blink 1.5s infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    /* Action Button */
+    .btn-retry {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      border: none;
+      border-radius: 18px;
+      padding: 16px 24px;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(108, 99, 255, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-retry:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(108, 99, 255, 0.45);
+      background: linear-gradient(135deg, #7C74FF 0%, #635BE8 100%);
+    }
+
+    .btn-retry:active {
+      transform: translateY(0);
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: #555077;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      z-index: 10;
+    }
+
+    /* Star Particle Effect */
+    .stars {
+      position: absolute;
+      inset: 0;
+      background: transparent;
+      z-index: 3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient background elements -->
+  <div class="nebula nebula-1"></div>
+  <div class="nebula nebula-2"></div>
+  
+  <div class="card">
+    <div class="status-badge">
+      <span class="dot"></span>
+      System Maintenance
+    </div>
+    
+    <div class="icon-container">
+      <div class="glow-dot"></div>
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFB800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 2h14"></path>
+        <path d="M5 22h14"></path>
+        <path d="M19 2v4c0 1.38-1.13 2.5-2.5 3.5L12 13l-4.5-3.5C6.13 8.5 5 7.38 5 6V2"></path>
+        <path d="M12 13l4.5 3.5c1.37 1 2.5 2.12 2.5 3.5v4H5v-4c0-1.38 1.13-2.5 2.5-3.5L12 13z"></path>
+      </svg>
+    </div>
+    
+    <h1>SideQuest Sedang Diperbarui</h1>
+    <p>Kami sedang melakukan pemeliharaan rutin dan peningkatan server untuk menghadirkan pengalaman kolaborasi terbaik. Platform SideQuest akan segera kembali online dalam beberapa saat.</p>
+    
+    <button class="btn-retry" onclick="checkStatus()">
+      <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+      </svg>
+      Coba Muat Ulang Halaman
+    </button>
+  </div>
+
+  <div class="footer">
+    &copy; 2026 SideQuest Inc. All rights reserved.
+  </div>
+
+  <script>
+    async function checkStatus() {
+      const btn = document.querySelector('.btn-retry');
+      btn.disabled = true;
+      btn.innerHTML = 'Memeriksa status sistem...';
+      
+      try {
+        const res = await fetch('http://localhost:3001/api/auth/refresh', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        // If the server does not return a 503, we can safely go back
+        if (res.status !== 503) {
+          window.location.href = '../pages/dashboard.html';
+        } else {
+          // Still in maintenance
+          setTimeout(() => {
+            btn.disabled = false;
+            btn.innerHTML = `
+              <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+              </svg>
+              Coba Muat Ulang Halaman
+            `;
+            alert('Sistem saat ini masih berada dalam mode pemeliharaan. Silakan coba kembali sesaat lagi.');
+          }, 800);
+        }
+      } catch (err) {
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.innerHTML = `
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+            </svg>
+            Coba Muat Ulang Halaman
+          `;
+          alert('Gagal menghubungi server. Silakan pastikan koneksi internet Anda aktif.');
+        }, 800);
+      }
+    }
+  </script>
+</body>
+</html>

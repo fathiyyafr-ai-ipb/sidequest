@@ -56,6 +56,12 @@ async function http(method, path, body=null, opts={}) {
     res = await fetch(url,{...cfg,headers});
   }
 
+  if (res.status === 503 && !window.location.pathname.includes('maintenance.html')) {
+    const isRoot = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || (window.location.pathname.includes('/sidequest/') && !window.location.pathname.includes('/pages/'));
+    window.location.href = isRoot ? 'pages/maintenance.html' : 'maintenance.html';
+    return;
+  }
+
   const ct = res.headers.get('content-type')||'';
   const data = ct.includes('application/json') ? await res.json() : await res.text();
   if (!res.ok) {
@@ -159,6 +165,16 @@ export const api = {
     async respond(id, applicantId, action) { const res=await _post(`/teams/${id}/respond`, { applicantId, action }); return res; },
     leave(id)         { return _del(`/teams/${id}/leave`); },
     invite(id,userId) { return _post(`/teams/${id}/invite`,{userId}); },
+  },
+
+  admin: {
+    async getStats() { const res = await _get('/admin/stats'); return res.data; },
+    async getData() { const res = await _get('/admin/data'); return res.data; },
+    toggleActive(type, id) { return _patch(`/admin/toggle/${type}/${id}`); },
+    async scrape(url) { const res = await _post('/admin/scrape', { url }); return res.data; },
+    toggleModerator(id) { return _patch(`/admin/super/moderator/${id}/toggle`); },
+    updateFeatures(featureKey, activeValue) { return _patch('/admin/super/features', { featureKey, activeValue }); },
+    updateMaintenance(enabled) { return _patch('/admin/super/maintenance', { enabled }); },
   },
 };
 

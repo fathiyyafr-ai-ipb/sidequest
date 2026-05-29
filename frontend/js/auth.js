@@ -15,7 +15,9 @@ export function requireAuth() {
 export function requireGuest() {
   if (token.isPresent()) {
     const user = currentUser.get();
-    if (user && user.role === 'organizer') {
+    if (user && (user.role === 'moderator' || user.role === 'superadmin')) {
+      window.location.href = '../pages/admin-dashboard.html';
+    } else if (user && user.role === 'organizer') {
       window.location.href = '../pages/organizer-dashboard.html';
     } else {
       window.location.href = '../pages/dashboard.html';
@@ -28,8 +30,15 @@ export function requireGuest() {
 export async function initSession() {
   if (!requireAuth()) return null;
   
-  // Auto redirect organizer from standard participant pages
+  // Auto redirect administrator/moderator from standard participant pages
   const user = currentUser.get();
+  if (user && (user.role === 'moderator' || user.role === 'superadmin') && 
+      !window.location.pathname.includes('admin-dashboard.html')) {
+    window.location.href = '../pages/admin-dashboard.html';
+    return null;
+  }
+  
+  // Auto redirect organizer from standard participant pages
   if (user && user.role === 'organizer' && 
       !window.location.pathname.includes('organizer-dashboard.html') && 
       !window.location.pathname.includes('posting-lomba.html')) {
@@ -44,6 +53,12 @@ export async function initSession() {
     const profile = await api.users.me();
     
     // Double check with latest profile role
+    if (profile && (profile.role === 'moderator' || profile.role === 'superadmin') && 
+        !window.location.pathname.includes('admin-dashboard.html')) {
+      window.location.href = '../pages/admin-dashboard.html';
+      return null;
+    }
+    
     if (profile && profile.role === 'organizer' && 
         !window.location.pathname.includes('organizer-dashboard.html') && 
         !window.location.pathname.includes('posting-lomba.html')) {
