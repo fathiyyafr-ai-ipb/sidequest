@@ -108,8 +108,16 @@ export const api = {
     save(id)   { return _post(`/competitions/${id}/save`); },
     unsave(id) { return _del(`/competitions/${id}/save`); },
     async getSaved() { const res=await _get('/competitions/saved'); return res.data; },
-    register(id) { return _post(`/competitions/${id}/register`); },
+    register(id, payload = null) { return _post(`/competitions/${id}/register`, payload); },
     async getRegistrationStatus(id) { const res=await _get(`/competitions/${id}/registration-status`); return res.data; },
+    // Organizer extensions
+    async getOrganizerCompetitions() { const res = await _get('/competitions/organizer/mine'); return res.data; },
+    create(payload) { return _post('/competitions/organizer/create', payload); },
+    update(id, payload) { return _put(`/competitions/organizer/${id}`, payload); },
+    publish(id) { return _patch(`/competitions/organizer/${id}/publish`); },
+    announce(id, announcement) { return _patch(`/competitions/organizer/${id}/announce`, { announcement }); },
+    async getApplicants(id) { const res = await _get(`/competitions/organizer/${id}/applicants`); return res.data; },
+    respondApplicant(id, userId, action) { return _patch(`/competitions/organizer/${id}/applicants/${userId}`, { action }); },
   },
 
   users: {

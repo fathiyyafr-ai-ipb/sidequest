@@ -29,7 +29,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/styles.css" />
 </head>
-<body class="min-h-screen bg-[#FFF5F5]">
+<body class="min-h-screen bg-[#FFF5F5] font-sans pb-28">
 
   <main class="main-content pt-6 pb-32 lg:pb-10 px-4 lg:px-8 max-w-6xl mx-auto">
 
@@ -45,8 +45,8 @@
         <h1 class="text-sm font-700 text-gray-800">Detail Lomba</h1>
       </div>
       <div class="ml-auto flex gap-2">
-        <button onclick="showToast('🔔 Pengingat diaktifkan!')"
-                class="w-9 h-9 rounded-xl bg-white shadow-card flex items-center justify-center hover:bg-primary-light transition-colors">
+        <button id="reminder-btn"
+                class="w-9 h-9 rounded-xl bg-white shadow-card flex items-center justify-center hover:bg-primary-light transition-colors border-0 cursor-pointer">
           <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
             <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"
                   stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
@@ -63,17 +63,25 @@
       </div>
     </div>
 
+    <!-- Winner Announcement Banner -->
+    <div id="winner-announcement-banner" class="hidden bg-gradient-to-r from-yellow-500/20 via-amber-500/20 to-yellow-600/20 border-2 border-yellow-400/50 rounded-2xl p-5 mb-5 flex flex-col md:flex-row items-center gap-4 animate-pulse">
+      <div class="w-14 h-14 rounded-full bg-yellow-400 flex items-center justify-center text-3xl shadow-md flex-shrink-0 animate-bounce">👑</div>
+      <div class="flex-1 text-center md:text-left">
+        <h4 class="font-800 text-yellow-800 text-sm uppercase tracking-wider mb-1">📢 Pengumuman Pemenang Lomba</h4>
+        <p class="text-xs text-yellow-900 leading-relaxed font-700 whitespace-pre-line" id="winner-announcement-text">Detail pemenang...</p>
+      </div>
+    </div>
+
     <!-- Hero -->
-    <div class="bg-gradient-to-br from-primary via-purple-500 to-primary-dark rounded-2xl p-6 mb-5 relative overflow-hidden">
+    <div class="bg-gradient-to-br from-primary via-purple-500 to-primary-dark rounded-2xl p-6 mb-5 relative overflow-hidden shadow-card">
       <div class="absolute -right-8 -top-8 w-32 h-32 bg-white/10 rounded-full"></div>
       <div class="absolute right-12 -bottom-4 w-20 h-20 bg-white/5 rounded-full"></div>
       <div class="relative z-10">
-        <span class="inline-block bg-white/20 backdrop-blur text-white text-xs font-700 px-3 py-1 rounded-full border border-white/30 mb-3">
-          🔬 Teknologi
+        <span id="detail-cat-badge" class="inline-block bg-white/20 backdrop-blur text-white text-xs font-700 px-3 py-1 rounded-full border border-white/30 mb-3">
+          🏆 Lomba
         </span>
-        <h2 class="text-xl font-800 text-accent mb-1">Gemastik XVII 2026</h2>
-        <h3 class="text-lg font-700 text-white mb-2">Pengembangan Perangkat Lunak</h3>
-        <p class="text-white/70 text-sm">Kemendikbud Ristek RI · Nasional</p>
+        <h2 id="detail-title-main" class="text-xl lg:text-2xl font-800 text-white mb-2 leading-tight">Memuat kompetisi…</h2>
+        <p id="detail-org-scope" class="text-white/70 text-sm">Penyelenggara · Scope</p>
       </div>
     </div>
 
@@ -83,95 +91,73 @@
 
         <!-- Deskripsi -->
         <div class="bg-white rounded-2xl shadow-card p-5">
-          <h3 class="font-800 text-gray-800 mb-3 flex items-center gap-2">
+          <h3 class="font-800 text-gray-800 mb-3 flex items-center gap-2 text-sm">
             <span class="w-6 h-6 rounded-lg bg-primary-light flex items-center justify-center text-xs">📋</span>
             Deskripsi Lomba
           </h3>
-          <p class="text-sm text-gray-600 leading-relaxed">
-            Gemastik (Pagelaran Mahasiswa Nasional Bidang TIK) adalah kompetisi nasional yang diselenggarakan
-            Kemendikbud. Bidang PPL mencakup pengembangan aplikasi web, mobile, dan desktop yang inovatif.
+          <p id="detail-desc" class="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+            Memuat deskripsi detail kompetisi…
           </p>
-          <div class="flex flex-wrap gap-2 mt-3">
-            <span class="tag-purple text-xs font-600 px-2.5 py-1 rounded-full">Web Development</span>
-            <span class="tag-orange text-xs font-600 px-2.5 py-1 rounded-full">Mobile App</span>
-            <span class="tag-blue text-xs font-600 px-2.5 py-1 rounded-full">Tim 3 orang</span>
+          <div id="detail-tags-container" class="flex flex-wrap gap-2 mt-4">
+            <!-- Dynamically populated tags -->
           </div>
         </div>
 
         <!-- Timeline + Syarat -->
         <div class="bg-white rounded-2xl shadow-card p-5">
-          <div class="flex items-start justify-between mb-4">
-            <h3 class="font-800 text-gray-800 flex items-center gap-2">
-              <span class="w-6 h-6 rounded-lg bg-primary-light flex items-center justify-center text-xs">📅</span>
-              Timeline
-            </h3>
-            <h3 class="font-800 text-gray-800 flex items-center gap-2">
-              <span class="w-6 h-6 rounded-lg bg-accent-light flex items-center justify-center text-xs">📜</span>
-              Syarat & Ketentuan
-            </h3>
-          </div>
-          <div class="flex gap-6">
+          <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
+            
             <!-- Timeline -->
-            <div class="flex-1 relative pl-6">
-              <div class="absolute left-2 top-2 bottom-2 w-0.5 tl-line rounded-full"></div>
-              <div class="relative mb-5">
-                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-accent border-2 border-white shadow-sm"></div>
-                <p class="text-xs font-700 text-accent">1 Maret 2026</p>
-                <p class="text-sm font-600 text-gray-800">Pendaftaran Dibuka</p>
-                <p class="text-xs text-gray-400">Daftar via portal gemastik.id</p>
-              </div>
-              <div class="relative mb-5">
-                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-primary border-2 border-white shadow-sm"></div>
-                <p class="text-xs font-700 text-primary">14 Mei 2026 ← Sekarang</p>
-                <p class="text-sm font-600 text-gray-800">Batas Upload Proposal</p>
-                <p class="text-xs text-gray-400">Format PDF, max 10 halaman</p>
-              </div>
-              <div class="relative mb-5">
-                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full border-2 border-gray-300 bg-white shadow-sm"></div>
-                <p class="text-xs font-700 text-gray-400">1 Juni 2026</p>
-                <p class="text-sm font-600 text-gray-800">Pengumuman 30 Besar</p>
-                <p class="text-xs text-gray-400">Via email & portal resmi</p>
-              </div>
-              <div class="relative">
-                <div class="absolute -left-6 top-1 w-4 h-4 rounded-full border-2 border-gray-300 bg-white shadow-sm"></div>
-                <p class="text-xs font-700 text-gray-400">15–17 Juli 2026</p>
-                <p class="text-sm font-600 text-gray-800">Grand Final</p>
-                <p class="text-xs text-gray-400">Presentasi & penjurian</p>
+            <div class="flex-1 space-y-4">
+              <h3 class="font-800 text-gray-800 flex items-center gap-2 text-sm">
+                <span class="w-6 h-6 rounded-lg bg-primary-light flex items-center justify-center text-xs">📅</span>
+                Timeline Penting
+              </h3>
+              <div class="relative pl-6 pt-2">
+                <div class="absolute left-2 top-2 bottom-2 w-0.5 bg-primary-light rounded-full"></div>
+                <div class="relative mb-6">
+                  <div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-accent border-2 border-white shadow-sm"></div>
+                  <p class="text-xs font-700 text-accent">Pendaftaran Terbuka</p>
+                  <p class="text-sm font-600 text-gray-800">Registrasi Calon Peserta</p>
+                  <p class="text-xs text-gray-400">Silakan daftarkan tim/diri Anda sebelum deadline</p>
+                </div>
+                <div class="relative">
+                  <div class="absolute -left-6 top-1 w-4 h-4 rounded-full bg-primary border-2 border-white shadow-sm"></div>
+                  <p id="detail-timeline-deadline" class="text-xs font-700 text-primary">Deadline Lomba</p>
+                  <p class="text-sm font-600 text-gray-800">Batas Penutupan Registrasi</p>
+                  <p class="text-xs text-gray-400">Pastikan profil tim & data Anda terisi lengkap</p>
+                </div>
               </div>
             </div>
+
             <!-- Syarat -->
-            <div class="flex-1 space-y-3">
-              <div class="flex items-start gap-2">
-                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+            <div class="flex-1 space-y-4">
+              <h3 class="font-800 text-gray-800 flex items-center gap-2 text-sm">
+                <span class="w-6 h-6 rounded-lg bg-accent-light flex items-center justify-center text-xs">📜</span>
+                Ketentuan Utama
+              </h3>
+              <div class="space-y-3 pt-2" id="detail-requirements-list">
+                <div class="flex items-start gap-2">
+                  <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                  </div>
+                  <p class="text-xs text-gray-600">Mahasiswa aktif perguruan tinggi</p>
                 </div>
-                <p class="text-xs text-gray-600">Mahasiswa S1/D4 aktif, semua jurusan</p>
-              </div>
-              <div class="flex items-start gap-2">
-                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                <div class="flex items-start gap-2">
+                  <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                  </div>
+                  <p class="text-xs text-gray-600" id="detail-req-team-size">Batasan tim sesuai kuota lomba</p>
                 </div>
-                <p class="text-xs text-gray-600">Tim: 3 mahasiswa + 1 dosen pembimbing</p>
-              </div>
-              <div class="flex items-start gap-2">
-                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                <div class="flex items-start gap-2">
+                  <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
+                  </div>
+                  <p class="text-xs text-gray-600">Karya orisinil & belum pernah menjuarai kompetisi lain</p>
                 </div>
-                <p class="text-xs text-gray-600">Karya orisinil, belum menang kompetisi lain</p>
-              </div>
-              <div class="flex items-start gap-2">
-                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
-                </div>
-                <p class="text-xs text-gray-600">Daftar via portal resmi gemastik.id</p>
-              </div>
-              <div class="flex items-start gap-2">
-                <div class="w-5 h-5 rounded-full bg-primary-light flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <svg width="10" height="10" fill="none" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke="#6C63FF" stroke-width="3" stroke-linecap="round"/></svg>
-                </div>
-                <p class="text-xs text-gray-600">Wajib hadir grand final di Bandung</p>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -179,173 +165,437 @@
       <!-- Right col -->
       <div class="space-y-4 mt-4 lg:mt-0">
         <!-- Hadiah -->
-        <div class="bg-white rounded-2xl shadow-card p-5">
-          <h3 class="font-800 text-gray-800 mb-3 text-sm">🏆 Hadiah</h3>
-          <div class="space-y-2">
-            <div class="flex items-center gap-3 p-2.5 rounded-xl bg-yellow-50">
-              <span class="text-xl">🥇</span>
-              <div><p class="text-xs font-700 text-gray-800">Juara 1</p><p class="text-xs text-accent font-600">Rp 25.000.000</p></div>
-            </div>
-            <div class="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50">
-              <span class="text-xl">🥈</span>
-              <div><p class="text-xs font-700 text-gray-800">Juara 2</p><p class="text-xs text-gray-500 font-600">Rp 15.000.000</p></div>
-            </div>
-            <div class="flex items-center gap-3 p-2.5 rounded-xl bg-gray-50">
-              <span class="text-xl">🥉</span>
-              <div><p class="text-xs font-700 text-gray-800">Juara 3</p><p class="text-xs text-gray-500 font-600">Rp 10.000.000</p></div>
+        <div class="bg-white rounded-2xl shadow-card p-5" id="detail-prize-card">
+          <h3 class="font-800 text-gray-800 mb-3 text-sm">🏆 Hadiah &amp; Benefit</h3>
+          <div class="flex items-start gap-3 p-3.5 rounded-2xl bg-yellow-50/70 border border-yellow-200/50">
+            <span class="text-2xl">🥇</span>
+            <div>
+              <p class="text-xs font-700 text-gray-400 uppercase tracking-wider">Total Penghargaan</p>
+              <p class="text-sm font-800 text-amber-600 mt-0.5" id="detail-prize-text">Sertifikat & Tropy</p>
             </div>
           </div>
         </div>
 
         <!-- Info -->
         <div class="bg-white rounded-2xl shadow-card p-5 space-y-3">
-          <h3 class="font-800 text-gray-800 text-sm mb-2">ℹ️ Info</h3>
-          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Penyelenggara</span><span class="text-xs font-600 text-gray-700">Kemendikbud</span></div>
-          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Lingkup</span><span class="text-xs font-600 text-gray-700">Nasional</span></div>
-          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Biaya Daftar</span><span class="text-xs font-700 text-green-600">Gratis</span></div>
-          <div class="flex items-center justify-between"><span class="text-xs text-gray-400">Peserta</span><span class="text-xs font-600 text-gray-700">340 tim</span></div>
+          <h3 class="font-800 text-gray-800 text-sm mb-2">ℹ️ Informasi Lomba</h3>
+          <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+            <span class="text-xs text-gray-400">Penyelenggara</span>
+            <span class="text-xs font-700 text-gray-700" id="detail-info-org">Kemendikbud</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+            <span class="text-xs text-gray-400">Lingkup</span>
+            <span class="text-xs font-700 text-gray-700" id="detail-info-scope">Nasional</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+            <span class="text-xs text-gray-400">Biaya Daftar</span>
+            <span class="text-xs font-800 text-green-600" id="detail-info-fee">Gratis</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+            <span class="text-xs text-gray-400">Format Lomba</span>
+            <span class="text-xs font-700 text-gray-700" id="detail-info-team-size">Kelompok (3-5 orang)</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5 border-b border-gray-50">
+            <span class="text-xs text-gray-400">Sistem Pendaftaran</span>
+            <span class="text-xs font-800 text-primary uppercase" id="detail-info-reg-model">HOSTED</span>
+          </div>
+          <div class="flex items-center justify-between py-1.5">
+            <span class="text-xs text-gray-400">Deadline</span>
+            <span class="text-xs font-700 text-gray-700" id="detail-info-deadline-text">14 Mei 2026</span>
+          </div>
         </div>
       </div>
     </div>
   </main>
 
   <!-- Action buttons (fixed bottom) -->
-  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 lg:px-8 py-3 flex gap-3 shadow-topbar z-10">
-    <a href="matchmaking.html" class="flex-1 py-3 rounded-xl border-2 border-primary text-primary text-sm font-700 hover:bg-primary-light transition-colors text-center">
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-4 lg:px-8 py-4 flex gap-3 shadow-topbar z-10">
+    <a href="matchmaking.html" id="detail-search-team-btn" class="flex-1 py-3 rounded-xl border-2 border-primary text-primary text-sm font-700 hover:bg-primary-light transition-colors text-center cursor-pointer no-underline">
       Cari Tim
     </a>
-    <button id="detail-save-btn" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors">
+    <button id="detail-save-btn" class="flex-1 py-3 rounded-xl border-2 border-gray-200 text-gray-600 text-sm font-700 hover:bg-gray-50 transition-colors cursor-pointer">
       Simpan
     </button>
-    <button id="detail-register-btn" class="flex-[2] py-3 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">
+    <button id="detail-register-btn" class="flex-[2] py-3 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md border-0 cursor-pointer">
       Daftar Sekarang →
     </button>
   </div>
 
-<script type="module">
-import { api, ui, handleApiError, token } from '../js/api.js';
-import { initSession, bindLogout } from '../js/auth.js';
-
-bindLogout();
-initSession();
-
-// Read competition ID from URL: detail.html?id=UUID
-const params = new URLSearchParams(window.location.search);
-const compId = params.get('id');
-
-const saveBtn = document.getElementById('detail-save-btn');
-const regBtn = document.getElementById('detail-register-btn');
-
-if (compId) {
-  // Fetch real competition from backend
-  (async () => {
-    try {
-      const c = await api.competitions.getById(compId);
-      // Update page title
-      document.title = c.title + ' — SideQuest';
+  <!-- Registration Form Modal for Hosted Competition -->
+  <div id="register-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+    <div class="bg-white rounded-3xl max-w-md w-full shadow-2xl relative border border-gray-100 p-6 md:p-8 max-h-[90vh] overflow-y-auto no-scrollbar">
+      <button id="close-register-modal-btn" class="absolute top-4 right-4 p-2 rounded-xl bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600 border-0 cursor-pointer">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
       
-      // Update hero section
-      const heroTitle = document.querySelector('.text-xl.font-800.text-accent');
-      if (heroTitle) heroTitle.textContent = c.title;
-      const heroOrg = document.querySelector('.text-white\/70.text-sm');
-      if (heroOrg) heroOrg.textContent = c.organizer + ' · ' + c.scope;
-      
-      // Update deadline badge
-      const days = c.daysUntilClose;
-      if (days != null) {
-        const deadlineEl = document.querySelector('.text-xs.text-accent.font-600');
-        if (deadlineEl) {
-          const urgency = days <= 3 ? '🔥' : days <= 7 ? '⏰' : '📅';
-          deadlineEl.textContent = `${urgency} Deadline: ${ui.formatDate(c.registrationClose)}`;
-          if (days <= 3) deadlineEl.classList.add('text-red-500');
-        }
-      }
+      <div class="text-center pb-4 border-b border-gray-100 mb-4">
+        <div class="w-12 h-12 rounded-2xl bg-primary-light flex items-center justify-center text-xl text-primary mx-auto mb-3">📝</div>
+        <h3 class="font-800 text-gray-800 text-base">Formulir Pendaftaran Lomba</h3>
+        <p class="text-xs text-gray-400 mt-0.5" id="register-comp-title">Nama Kompetisi</p>
+      </div>
 
-      // Check registration & save status
-      if (token.isPresent()) {
+      <form id="hosted-register-form" onsubmit="window.submitRegistrationForm(event)">
+        <div class="space-y-4">
+          <!-- Dropdown pilihan tim (Hanya owner tim & khusus lomba kelompok) -->
+          <div id="team-select-container" class="hidden space-y-1.5">
+            <label class="block text-xs font-700 text-gray-600 uppercase tracking-wide">Pilih Tim Anda *</label>
+            <div id="team-dropdown-loading" class="text-xs text-gray-400 italic">Mencari daftar tim...</div>
+            <select id="reg-team-dropdown" class="hidden w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
+              <!-- Loaded dynamically -->
+            </select>
+            <!-- Teks validasi kapasitas tim (Eror deskriptif / Indikator Sukses) -->
+            <p id="team-validation-error" class="text-[11px] font-600 text-red-600 mt-1 leading-snug hidden"></p>
+            <p id="team-validation-success" class="text-[11px] font-600 text-green-600 mt-1 leading-snug hidden"></p>
+          </div>
+
+          <div class="space-y-4" id="form-inputs-container">
+            <div>
+              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Tautan Portofolio / File *</label>
+              <input type="url" id="reg-portfolio" required placeholder="https://github.com/username atau link Google Drive" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+            </div>
+            <div>
+              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Pernyataan Motivasi / Catatan *</label>
+              <textarea id="reg-motivation" required rows="3" placeholder="Mengapa tim/Anda tertarik mengikuti lomba ini?" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
+            </div>
+            <div>
+              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">No. WhatsApp / Kontak Aktif *</label>
+              <input type="text" id="reg-contact" required placeholder="contoh: 081234567890 atau wa.me/..." class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+            </div>
+            <button type="submit" id="reg-submit-btn" class="w-full py-3.5 rounded-2xl bg-primary hover:bg-primary-dark text-white font-700 text-sm transition-colors shadow-md border-0 cursor-pointer">
+              Kirim Pendaftaran →
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { api, ui, handleApiError, token } from '../js/api.js';
+    import { initSession, bindLogout } from '../js/auth.js';
+
+    bindLogout();
+    initSession();
+
+    const params = new URLSearchParams(window.location.search);
+    const compId = parseInt(params.get('id'), 10);
+
+    const saveBtn = document.getElementById('detail-save-btn');
+    const regBtn = document.getElementById('detail-register-btn');
+    const searchTeamBtn = document.getElementById('detail-search-team-btn');
+    const registerModal = document.getElementById('register-modal');
+
+    let comp = null;
+    let selectedTeamId = null;
+
+    // Load dynamic competition info
+    if (compId) {
+      (async () => {
         try {
-          const status = await api.competitions.getRegistrationStatus(compId);
+          comp = await api.competitions.getById(compId);
+          document.title = comp.title + ' — SideQuest';
+
+          // 1. Winner Announcement Banner
+          if (comp.winnerAnnouncement) {
+            document.getElementById('winner-announcement-text').textContent = comp.winnerAnnouncement;
+            document.getElementById('winner-announcement-banner').classList.remove('hidden');
+          }
+
+          // 2. Hero Content
+          const emoji = ui.catEmoji(comp.cat.toUpperCase());
+          const catName = comp.cat.toUpperCase() === 'WEB-DEV' ? 'Teknologi' : comp.cat.toUpperCase() === 'UI-UX' ? 'Desain' : 'Sains';
+          document.getElementById('detail-cat-badge').textContent = `${emoji} ${catName}`;
+          document.getElementById('detail-title-main').textContent = comp.title;
+          document.getElementById('detail-org-scope').textContent = `${comp.organizer} · ${comp.scope}`;
+
+          // 3. Description & Tags
+          document.getElementById('detail-desc').textContent = comp.desc || comp.description || 'Tidak ada deskripsi.';
           
-          if (status.saved) {
+          const tagsContainer = document.getElementById('detail-tags-container');
+          tagsContainer.innerHTML = (comp.tags || []).map(t => {
+            const cls = ui.catColor(comp.cat.toUpperCase());
+            return `<span class="${cls} text-xs font-600 px-2.5 py-1 rounded-full">${t}</span>`;
+          }).join('');
+
+          // 4. Hide "Cari Tim" button for Solo Competitions
+          const isSoloComp = comp.minMembers === 1 && comp.maxMembers === 1;
+          if (isSoloComp) {
+            searchTeamBtn.style.display = 'none';
+            regBtn.classList.replace('flex-[2]', 'flex-1');
+          } else {
+            searchTeamBtn.style.display = '';
+          }
+
+          // 5. Timeline Deadline
+          document.getElementById('detail-timeline-deadline').textContent = `Deadline: ${ui.formatDate(comp.registrationClose)}`;
+
+          // 6. Syarat / Kapasitas Tim
+          const reqTeamSizeEl = document.getElementById('detail-req-team-size');
+          if (reqTeamSizeEl) {
+            reqTeamSizeEl.textContent = isSoloComp 
+              ? 'Lomba Perorangan (Solo)' 
+              : `Batasan tim: ${comp.minMembers} - ${comp.maxMembers} orang anggota`;
+          }
+
+          // 7. Right Column Info
+          document.getElementById('detail-prize-text').textContent = comp.prize || 'Sertifikat & Tropy';
+          document.getElementById('detail-info-org').textContent = comp.organizer;
+          document.getElementById('detail-info-scope').textContent = comp.scope;
+          document.getElementById('detail-info-fee').textContent = comp.free ? 'Gratis' : 'Berbayar';
+          document.getElementById('detail-info-team-size').textContent = isSoloComp 
+            ? 'Perorangan (Solo)' 
+            : `Kelompok (${comp.minMembers}-${comp.maxMembers} orang)`;
+          document.getElementById('detail-info-reg-model').textContent = comp.registrationModel;
+          document.getElementById('detail-info-deadline-text').textContent = ui.formatDate(comp.registrationClose);
+
+          // 8. Load Register & Save Status
+          if (token.isPresent()) {
+            try {
+              const status = await api.competitions.getRegistrationStatus(compId);
+              
+              if (status.saved) {
+                saveBtn.textContent = 'Tersimpan 🔖';
+                saveBtn.classList.remove('text-gray-600', 'bg-white');
+                saveBtn.classList.add('text-primary', 'bg-primary-light');
+                saveBtn.dataset.saved = 'true';
+              }
+
+              if (status.registered) {
+                regBtn.textContent = 'Sudah Terdaftar ✅';
+                regBtn.disabled = true;
+                regBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
+                regBtn.classList.add('bg-green-600', 'cursor-default');
+              }
+            } catch(e) {
+              console.warn('Gagal memuat status pendaftaran/simpan:', e.message);
+            }
+          }
+        } catch(err) {
+          console.error(err);
+          ui.toast('Gagal mengambil detail lomba', 'error');
+        }
+      })();
+    }
+
+    // Bookmark / Save Lomba
+    if (saveBtn) {
+      saveBtn.addEventListener('click', async () => {
+        if (!token.isPresent()) { window.location.href = 'login.html'; return; }
+        try {
+          if (!compId) return;
+          if (saveBtn.dataset.saved === 'true') {
+            await api.competitions.unsave(compId);
+            ui.toast('🔖 Lomba dihapus dari daftar simpan!', 'info');
+            saveBtn.textContent = 'Simpan';
+            saveBtn.classList.add('text-gray-600', 'bg-white');
+            saveBtn.classList.remove('text-primary', 'bg-primary-light');
+            saveBtn.dataset.saved = 'false';
+          } else {
+            await api.competitions.save(compId);
+            ui.toast('🔖 Lomba disimpan!', 'success');
             saveBtn.textContent = 'Tersimpan 🔖';
             saveBtn.classList.remove('text-gray-600', 'bg-white');
             saveBtn.classList.add('text-primary', 'bg-primary-light');
             saveBtn.dataset.saved = 'true';
           }
+        } catch(e) {
+          handleApiError(e, 'Gagal memproses simpan lomba');
+        }
+      });
+    }
 
-          if (status.registered) {
-            regBtn.textContent = 'Sudah Terdaftar ✅';
+    // Modal controls
+    const closeRegisterModal = () => {
+      registerModal.classList.add('hidden');
+    };
+    document.getElementById('close-register-modal-btn')?.addEventListener('click', closeRegisterModal);
+
+    // Register Button Click Handler
+    if (regBtn) {
+      regBtn.addEventListener('click', async () => {
+        if (!token.isPresent()) { window.location.href = 'login.html'; return; }
+        if (!comp) return;
+
+        // A. Jika non-hosted: Langsung daftar otomatis
+        if (comp.registrationModel === 'non-hosted') {
+          try {
             regBtn.disabled = true;
+            regBtn.textContent = 'Memproses…';
+            await api.competitions.register(compId);
+            ui.toast('✅ Pendaftaran berhasil! Silakan ikuti tautan eksternal.', 'success');
+            regBtn.textContent = 'Sudah Terdaftar ✅';
             regBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
             regBtn.classList.add('bg-green-600', 'cursor-default');
+          } catch(e) {
+            regBtn.disabled = false;
+            regBtn.textContent = 'Daftar Sekarang →';
+            handleApiError(e);
           }
-        } catch(e) {
-          console.warn('Gagal memuat status pendaftaran/simpan:', e.message);
+          return;
         }
+
+        // B. Jika hosted: Tampilkan popup modal formulir pendaftaran
+        document.getElementById('register-comp-title').textContent = comp.title;
+        document.getElementById('reg-portfolio').value = '';
+        document.getElementById('reg-motivation').value = '';
+        document.getElementById('reg-contact').value = '';
+        
+        const isTeamComp = comp.minMembers > 1 || comp.maxMembers > 1;
+        const selectContainer = document.getElementById('team-select-container');
+        const formInputsContainer = document.getElementById('form-inputs-container');
+        const errEl = document.getElementById('team-validation-error');
+        const succEl = document.getElementById('team-validation-success');
+        const submitBtn = document.getElementById('reg-submit-btn');
+
+        errEl.classList.add('hidden');
+        succEl.classList.add('hidden');
+        submitBtn.disabled = false;
+        formInputsContainer.classList.remove('hidden');
+
+        if (isTeamComp) {
+          selectContainer.classList.remove('hidden');
+          // Reset select container html to default dropdown in case it was replaced by Scenario A previously
+          selectContainer.innerHTML = `
+            <label class="block text-xs font-700 text-gray-600 uppercase tracking-wide">Pilih Tim Anda *</label>
+            <div id="team-dropdown-loading" class="text-xs text-gray-400 italic">Mencari daftar tim...</div>
+            <select id="reg-team-dropdown" class="hidden w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
+            </select>
+            <p id="team-validation-error" class="text-[11px] font-600 text-red-600 mt-1 leading-snug hidden"></p>
+            <p id="team-validation-success" class="text-[11px] font-600 text-green-600 mt-1 leading-snug hidden"></p>
+          `;
+
+          const loadingText = document.getElementById('team-dropdown-loading');
+          const dropdown = document.getElementById('reg-team-dropdown');
+          const newErrEl = document.getElementById('team-validation-error');
+          const newSuccEl = document.getElementById('team-validation-success');
+
+          loadingText.classList.remove('hidden');
+          dropdown.classList.add('hidden');
+          dropdown.innerHTML = '';
+          selectedTeamId = null;
+
+          try {
+            // Ambil daftar tim saya
+            const myTeams = await api.teams.mine();
+            
+            // Saring tim di mana user adalah owner
+            const ownerTeams = (myTeams || []).filter(t => t.role === 'owner');
+
+            loadingText.classList.add('hidden');
+
+            if (ownerTeams.length === 0) {
+              // Skenario A: Belum punya tim sebagai OWNER untuk kompetisi ini
+              dropdown.classList.add('hidden');
+              selectContainer.innerHTML = `
+                <label class="block text-xs font-700 text-gray-600 uppercase tracking-wide">Pilihan Tim Kelompok</label>
+                <div class="p-4 text-center rounded-2xl bg-orange-50 border border-orange-200 mt-1">
+                  <p class="text-xs text-orange-700 font-700 leading-relaxed">
+                    ⚠️ Lomba ini memerlukan tim (minimal ${comp.minMembers} orang, maksimal ${comp.maxMembers} orang). Anda belum memiliki tim sebagai pembuat (owner) untuk kompetisi ini.
+                  </p>
+                  <a href="cari-tim.html" class="inline-block mt-3 px-4 py-2 bg-primary text-white text-[10px] font-800 rounded-xl no-underline hover:bg-primary-dark transition-all">
+                    Buat Tim Baru Sekarang →
+                  </a>
+                </div>
+              `;
+              formInputsContainer.classList.add('hidden');
+              submitBtn.disabled = true;
+            } else {
+              // Skenario B: Punya tim sebagai OWNER
+              dropdown.classList.remove('hidden');
+              dropdown.innerHTML = '<option value="">-- Pilih Tim yang Didaftarkan --</option>' + 
+                ownerTeams.map(t => `<option value="${t.id}">${t.name} (${t.members.length} anggota)</option>`).join('');
+
+              // Add change event listener for team dropdown
+              dropdown.onchange = () => {
+                const val = dropdown.value;
+                newErrEl.classList.add('hidden');
+                newSuccEl.classList.add('hidden');
+                submitBtn.disabled = false;
+
+                if (!val) {
+                  selectedTeamId = null;
+                  submitBtn.disabled = true;
+                  return;
+                }
+
+                selectedTeamId = parseInt(val, 10);
+                const selectedTeam = ownerTeams.find(t => t.id === selectedTeamId);
+                
+                if (selectedTeam) {
+                  const membersCount = selectedTeam.members.length;
+                  if (membersCount < comp.minMembers || membersCount > comp.maxMembers) {
+                    // Descriptive error as requested
+                    newErrEl.textContent = `⚠️ Jumlah anggota tim masih belum sesuai (Dibutuhkan antara ${comp.minMembers} sampai ${comp.maxMembers} orang, tim Anda saat ini: ${membersCount} orang).`;
+                    newErrEl.classList.remove('hidden');
+                    submitBtn.disabled = true;
+                  } else {
+                    newSuccEl.textContent = `✅ Tim memenuhi syarat (${membersCount} anggota).`;
+                    newSuccEl.classList.remove('hidden');
+                    submitBtn.disabled = false;
+                  }
+                }
+              };
+
+              // Trigger initial state
+              dropdown.onchange();
+            }
+          } catch(e) {
+            console.error(e);
+            loadingText.textContent = 'Gagal memuat tim Anda.';
+            submitBtn.disabled = true;
+          }
+        } else {
+          selectContainer.classList.add('hidden');
+          selectedTeamId = null;
+        }
+
+        registerModal.classList.remove('hidden');
+      });
+    }
+
+    // Submit Hosted Registration Form
+    window.submitRegistrationForm = async (e) => {
+      e.preventDefault();
+      if (!comp) return;
+
+      const portfolioUrl = document.getElementById('reg-portfolio').value.trim();
+      const motivation = document.getElementById('reg-motivation').value.trim();
+      const contact = document.getElementById('reg-contact').value.trim();
+      
+      const submitBtn = document.getElementById('reg-submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Mengirim…';
+
+      try {
+        const payload = {
+          portfolioUrl,
+          motivation,
+          contact,
+          teamId: selectedTeamId
+        };
+
+        const res = await api.competitions.register(compId, payload);
+        ui.toast(res.message || '✅ Berhasil mendaftar lomba hosted!', 'success');
+        
+        closeRegisterModal();
+        
+        // Update main CTA button
+        regBtn.textContent = 'Sudah Terdaftar ✅';
+        regBtn.disabled = true;
+        regBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
+        regBtn.classList.add('bg-green-600', 'cursor-default');
+
+      } catch(err) {
+        handleApiError(err, 'Gagal mendaftar lomba hosted');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Kirim Pendaftaran →';
       }
-    } catch(err) {
-      console.warn('Detail fetch failed, showing static content:', err.message);
-    }
-  })();
-}
+    };
 
-// ── Save / Bookmark Action ──
-if (saveBtn) {
-  saveBtn.addEventListener('click', async () => {
-    if (!token.isPresent()) { window.location.href = 'login.html'; return; }
-    try {
-      if (!compId) return;
-      if (saveBtn.dataset.saved === 'true') {
-        // Toggle unsave
-        await api.competitions.unsave(compId);
-        ui.toast('🔖 Lomba dihapus dari daftar simpan!', 'info');
-        saveBtn.textContent = 'Simpan';
-        saveBtn.classList.add('text-gray-600', 'bg-white');
-        saveBtn.classList.remove('text-primary', 'bg-primary-light');
-        saveBtn.dataset.saved = 'false';
-      } else {
-        // Toggle save
-        await api.competitions.save(compId);
-        ui.toast('🔖 Lomba disimpan!', 'success');
-        saveBtn.textContent = 'Tersimpan 🔖';
-        saveBtn.classList.remove('text-gray-600', 'bg-white');
-        saveBtn.classList.add('text-primary', 'bg-primary-light');
-        saveBtn.dataset.saved = 'true';
-      }
-    } catch(e) {
-      handleApiError(e, 'Gagal memproses simpan lomba');
-    }
-  });
-}
-
-// ── Register / Daftar Action ──
-if (regBtn) {
-  regBtn.addEventListener('click', async () => {
-    if (!token.isPresent()) { window.location.href = 'login.html'; return; }
-    try {
-      if (!compId) return;
-      regBtn.disabled = true;
-      regBtn.textContent = 'Memproses…';
-      await api.competitions.register(compId);
-      ui.toast('✅ Berhasil mendaftar lomba!', 'success');
-      regBtn.textContent = 'Sudah Terdaftar ✅';
-      regBtn.classList.remove('bg-primary', 'hover:bg-primary-dark');
-      regBtn.classList.add('bg-green-600', 'cursor-default');
-    } catch(e) {
-      regBtn.disabled = false;
-      regBtn.textContent = 'Daftar Sekarang →';
-      handleApiError(e, 'Gagal mendaftar lomba');
-    }
-  });
-}
-
-// ── Reminder button ──
-document.querySelectorAll('[onclick*="Pengingat"]').forEach(btn => {
-  btn.removeAttribute('onclick');
-  btn.addEventListener('click', () => {
-    ui.toast('🔔 Pengingat diaktifkan!', 'success');
-  });
-});
-</script>
+    // Reminder Toast trigger
+    document.getElementById('reminder-btn')?.addEventListener('click', () => {
+      ui.toast('🔔 Pengingat diaktifkan!', 'success');
+    });
+  </script>
 </body>
 </html>

@@ -38,7 +38,8 @@ const register = async (req, res) => {
         user: {
           id: newUser.rows[0].id,
           name: newUser.rows[0].name,
-          email: newUser.rows[0].email
+          email: newUser.rows[0].email,
+          role: 'peserta'
         }
       }
     });
@@ -78,7 +79,8 @@ const login = async (req, res) => {
         user: {
           id: user.id,
           name: user.name,
-          email: user.email
+          email: user.email,
+          role: user.role
         }
       }
     });

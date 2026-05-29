@@ -121,9 +121,15 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   err.classList.add('hidden');
 
   try {
-    await api.auth.login(email, password);
+    const resData = await api.auth.login(email, password);
     ui.toast('✅ Login berhasil! Mengalihkan…', 'success');
-    setTimeout(() => window.location.href = 'dashboard.html', 800);
+    setTimeout(() => {
+      if (resData.user && resData.user.role === 'organizer') {
+        window.location.href = 'organizer-dashboard.html';
+      } else {
+        window.location.href = 'dashboard.html';
+      }
+    }, 800);
   } catch (ex) {
     err.textContent = ex.message || 'Email atau password salah.';
     err.classList.remove('hidden');
