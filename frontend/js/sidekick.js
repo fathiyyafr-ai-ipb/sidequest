@@ -117,6 +117,14 @@ export function initSideKick() {
   bubble.addEventListener('click', toggleDrawer);
   close.addEventListener('click', toggleDrawer);
 
+  // Close drawer when clicking outside of it (click-away UX enhancement)
+  document.addEventListener('click', (e) => {
+    const isDrawerOpen = !drawer.classList.contains('hidden');
+    if (isDrawerOpen && !drawer.contains(e.target) && !bubble.contains(e.target)) {
+      toggleDrawer();
+    }
+  });
+
   // Initialize Obrolan Cache History
   let chatHistory = [];
   try {
