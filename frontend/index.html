@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SideQuest — Temukan Rekan Tim & Kompetisi Terbaik</title>
+  <title>SideQuest — Hub Kolaborasi Prestasi & Matchmaking Cerdas Mahasiswa</title>
   <meta name="description" content="SideQuest membantu mahasiswa menemukan partner tim ideal untuk kompetisi nasional dan memudahkan penyelenggara event (EO) mengelola pendaftaran secara akurat." />
   
   <!-- Tailwind CSS -->
@@ -50,7 +50,6 @@
 
       <!-- Auth State CTA -->
       <div id="nav-auth-cta" class="flex items-center gap-4">
-        <!-- Will be filled by JS (either loading, login button, or dashboard button) -->
         <a href="pages/login.html" class="text-sm font-700 text-gray-700 hover:text-primary transition-colors px-4 py-2">Masuk</a>
         <a href="pages/register.html" class="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-700 shadow-md transition-all">Daftar Akun</a>
       </div>
@@ -58,14 +57,14 @@
   </header>
 
   <!-- Hero Section -->
-  <main class="relative pt-12 pb-24 px-6 max-w-7xl mx-auto">
+  <main class="relative pt-12 pb-20 px-6 max-w-7xl mx-auto">
     <div class="grid lg:grid-cols-12 gap-12 items-center">
       
       <!-- Left Side (Introduction & CTAs) -->
       <div class="lg:col-span-7 space-y-8 text-left">
         <div class="space-y-4">
           <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-light text-primary text-xs font-700 uppercase tracking-wide">
-            🏆 Platform Matchmaking Terdepan Mahasiswa
+            🚀 Hub Kolaborasi Prestasi & Matchmaking Cerdas Mahasiswa
           </div>
           <h1 class="text-4xl md:text-5xl lg:text-6xl font-800 text-gray-900 leading-tight tracking-tight">
             Temukan Rekan Tim <span class="text-primary">Impianmu</span> & Raih Prestasi Bersama
@@ -75,7 +74,7 @@
           </p>
         </div>
 
-        <!-- Action Card (Form & Dual CTA in beautiful container) -->
+        <!-- Action Card -->
         <div class="bg-white rounded-3xl p-6 md:p-8 border border-gray-100 shadow-xl space-y-6 max-w-xl">
           <div class="space-y-2">
             <h2 class="text-lg font-700 text-gray-800">Siap melangkah ke kompetisi berikutnya?</h2>
@@ -93,7 +92,7 @@
 
           <div class="text-center pt-2">
             <a href="pages/login.html" class="text-xs text-gray-500 hover:text-primary font-600 transition-colors">
-              Sudah bergabung sebelumnya? <span class="text-primary font-700 underline">Masuk ke Console</span>
+              Sudah bergabung sebelumnya? <span class="text-primary font-700 underline">Masuk ke SideQuest</span>
             </a>
           </div>
         </div>
@@ -116,9 +115,8 @@
 
       </div>
 
-      <!-- Right Side (Visual Showcase Aset) -->
+      <!-- Right Side (Visual Showcase) -->
       <div class="lg:col-span-5 relative flex justify-center">
-        <!-- Backdrops / Decorative blur blobs -->
         <div class="absolute -z-10 w-72 h-72 rounded-full bg-primary/10 blur-3xl -top-10 -right-10"></div>
         <div class="absolute -z-10 w-72 h-72 rounded-full bg-accent/10 blur-3xl -bottom-10 -left-10"></div>
 
@@ -129,6 +127,73 @@
 
     </div>
   </main>
+
+  <!-- Latest Competitions Section (Read-Only Preview) -->
+  <section class="py-16 px-6 max-w-7xl mx-auto border-t border-gray-100">
+    <div class="space-y-10">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-light text-accent text-xs font-700 uppercase tracking-wide">
+            🔥 Info Lomba Terbaru
+          </div>
+          <h2 class="text-2xl md:text-3xl font-800 text-gray-800 tracking-tight">Eksplorasi Kompetisi Nasional Terpopuler</h2>
+          <p class="text-gray-500 text-xs md:text-sm max-w-xl">
+            Intip deretan kompetisi terbaru yang aktif di platform kami. Segera gabung untuk mencari rekan tim komplementer Anda!
+          </p>
+        </div>
+        <div>
+          <a href="pages/login.html" onclick="ui.toast('🔑 Silakan login untuk mengeksplorasi seluruh detail kompetisi!', 'info')" class="inline-flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white hover:bg-gray-50 text-primary border-2 border-gray-100 hover:border-primary font-700 text-xs transition-all shadow-sm no-underline">
+            Cari Kompetisi Lengkap →
+          </a>
+        </div>
+      </div>
+
+      <!-- Competitions Cards Grid -->
+      <div id="latest-comps-list" class="grid sm:grid-cols-2 lg:grid-cols-5 gap-6">
+        <!-- Rendered by JS dynamically (shimmer placeholder default) -->
+        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm animate-pulse space-y-4 h-56 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+          <div class="h-8 bg-gray-100 rounded w-full mt-3"></div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm animate-pulse space-y-4 h-56 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+          <div class="h-8 bg-gray-100 rounded w-full mt-3"></div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm animate-pulse space-y-4 h-56 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+          <div class="h-8 bg-gray-100 rounded w-full mt-3"></div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm animate-pulse space-y-4 h-56 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+          <div class="h-8 bg-gray-100 rounded w-full mt-3"></div>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm animate-pulse space-y-4 h-56 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 bg-gray-200 rounded-full"></div>
+            <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div class="h-3 bg-gray-200 rounded w-1/2"></div>
+          </div>
+          <div class="h-8 bg-gray-100 rounded w-full mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- Value Propositions Section -->
   <section class="bg-white py-20 px-6 border-t border-gray-100">
@@ -183,26 +248,26 @@
         <span class="text-xs bg-primary/20 text-primary border border-primary/30 px-2.5 py-0.5 rounded-full font-700">v1.2</span>
       </div>
       <div class="flex flex-wrap justify-center gap-8 text-sm">
-        <a href="pages/dashboard.html" class="hover:text-white transition-colors">Eksplorasi Lomba</a>
-        <a href="pages/about.html" class="hover:text-white transition-colors">Tentang Kami</a>
-        <a href="pages/faq.html" class="hover:text-white transition-colors">FAQ</a>
+        <a href="pages/dashboard.html" class="hover:text-white transition-colors no-underline">Eksplorasi Lomba</a>
+        <a href="pages/about.html" class="hover:text-white transition-colors no-underline">Tentang Kami</a>
+        <a href="pages/faq.html" class="hover:text-white transition-colors no-underline">FAQ</a>
       </div>
     </div>
     <div class="max-w-7xl mx-auto pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
       <p>© 2026 SideQuest. Dibuat dengan 💜 oleh Aqilah, Fathiyya & Gilbran.</p>
       <div class="flex gap-4">
-        <span>Syarat & Ketentuan</span>
-        <span>Kebijakan Privasi</span>
+        <a href="pages/terms.html" class="hover:text-white transition-colors no-underline">Syarat & Ketentuan</a>
+        <a href="pages/privacy.html" class="hover:text-white transition-colors no-underline">Kebijakan Privasi</a>
       </div>
     </div>
   </footer>
 
-  <!-- Script Module to Load Live States -->
+  <!-- Script Module to Load Live States & 5 Recent Comps -->
   <script type="module">
-    import { api, currentUser, token } from './js/api.js';
+    import { api, currentUser, token, ui } from './js/api.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. Dynamic Login Status Navigation / Header Refresh
+      // 1. Dynamic Login Status Navigation
       const navAuthCta = document.getElementById('nav-auth-cta');
       if (token.isPresent()) {
         const user = currentUser.get();
@@ -210,21 +275,69 @@
         const dashboardUrl = role === 'organizer' ? 'pages/organizer-dashboard.html' : 'pages/dashboard.html';
         
         navAuthCta.innerHTML = `
-          <a href="${dashboardUrl}" class="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-700 shadow-md transition-all flex items-center gap-2">
+          <a href="${dashboardUrl}" class="px-5 py-2.5 rounded-full bg-primary hover:bg-primary-dark text-white text-sm font-700 shadow-md transition-all flex items-center gap-2 no-underline">
             Ke Dasbor Anda ✨
           </a>
         `;
       }
 
-      // 2. Fetch Dynamic Platform Stats
+      // 2. Fetch Dynamic Platform Stats & 5 Latest Competitions Preview
       try {
-        // Fetch public competition counts
-        const competitions = await api.competitions.list({ size: 1 });
+        const competitions = await api.competitions.list({ size: 5, sortBy: 'createdAt' });
+        
         if (competitions && typeof competitions.total === 'number') {
           document.getElementById('stat-competitions').textContent = `${competitions.total}+`;
         }
+
+        // Render 5 Latest Competitions (Read-Only)
+        const latestCompsList = document.getElementById('latest-comps-list');
+        if (latestCompsList && competitions && competitions.data) {
+          const comps = competitions.data.slice(0, 5);
+          if (comps.length === 0) {
+            latestCompsList.innerHTML = `
+              <div class="col-span-full text-center py-10 bg-white rounded-3xl border border-gray-100 shadow-sm">
+                <p class="text-sm text-gray-500 font-500">Belum ada kompetisi aktif saat ini.</p>
+              </div>
+            `;
+          } else {
+            latestCompsList.innerHTML = comps.map(c => {
+              const gradient = c.colorGradient || 'from-primary to-purple-600';
+              const emoji = c.emoji || '🏆';
+              const priceTag = c.isFree ? 'Gratis' : 'Berbayar';
+              const priceBg = c.isFree ? 'bg-green-50 text-green-700' : 'bg-orange-50 text-orange-700';
+
+              return `
+                <div class="bg-white rounded-3xl p-5 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between h-56 relative overflow-hidden group">
+                  <!-- Top gradient band -->
+                  <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r ${gradient}"></div>
+                  
+                  <div class="space-y-3 pt-2">
+                    <div class="flex items-center justify-between">
+                      <span class="text-2xl">${emoji}</span>
+                      <span class="text-[9px] font-800 uppercase px-2 py-0.5 rounded-md ${priceBg}">${priceTag}</span>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-800 text-gray-800 line-clamp-2 leading-snug group-hover:text-primary transition-colors">${c.title}</h4>
+                      <p class="text-[9px] text-gray-400 truncate mt-1">${c.organizer || 'Penyelenggara Lomba'}</p>
+                    </div>
+                  </div>
+
+                  <div class="space-y-3 pt-3 border-t border-gray-50">
+                    <div class="flex items-center justify-between text-[9px] font-600 text-gray-500">
+                      <span>⏳ Tutup:</span>
+                      <span class="text-accent font-700">${new Date(c.deadline).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}</span>
+                    </div>
+                    <a href="pages/login.html" onclick="ui.toast('🔑 Silakan login untuk melihat detail kompetisi lengkap!', 'info')" class="w-full py-2 bg-primary-light hover:bg-primary hover:text-white text-primary text-[9px] font-800 rounded-lg text-center transition-all block no-underline shadow-sm">
+                      Buka Detail 🔒
+                    </a>
+                  </div>
+                </div>
+              `;
+            }).join('');
+          }
+        }
       } catch (err) {
-        console.warn('Failed to load live stats count:', err);
+        console.warn('Failed to load stats & latest competitions:', err);
       }
     });
   </script>
