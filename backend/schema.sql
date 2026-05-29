@@ -83,6 +83,11 @@ CREATE TABLE competition_registrations (
   user_id INT REFERENCES users(id) ON DELETE CASCADE,
   competition_id INT REFERENCES competitions(id) ON DELETE CASCADE,
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  status VARCHAR(20) DEFAULT 'pending',
+  portfolio_url VARCHAR(255),
+  motivation TEXT,
+  contact VARCHAR(50),
+  team_id INT REFERENCES teams(id) ON DELETE SET NULL,
   PRIMARY KEY (user_id, competition_id)
 );
 
