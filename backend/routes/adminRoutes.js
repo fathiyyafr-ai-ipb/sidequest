@@ -7,7 +7,8 @@ const {
   simulateWebScraping,
   toggleModeratorStatus,
   updateFeatureSettings,
-  updateMaintenanceSettings
+  updateMaintenanceSettings,
+  approveOrganizer
 } = require('../controllers/adminController');
 
 const authMiddleware = require('../middleware/auth');
@@ -18,6 +19,7 @@ router.get('/stats', authMiddleware, isModeratorOrAdmin, getModeratorStats);
 router.get('/data', authMiddleware, isModeratorOrAdmin, getModeratorData);
 router.patch('/toggle/:type/:id', authMiddleware, isModeratorOrAdmin, toggleActiveStatus);
 router.post('/scrape', authMiddleware, isModeratorOrAdmin, simulateWebScraping);
+router.patch('/approve-organizer/:id', authMiddleware, isModeratorOrAdmin, approveOrganizer);
 
 // 2. Superadmin exclusive routes
 router.patch('/super/moderator/:id/toggle', authMiddleware, isSuperadmin, toggleModeratorStatus);

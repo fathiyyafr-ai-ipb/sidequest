@@ -126,6 +126,25 @@
               <option>Lainnya…</option>
             </select>
           </div>
+          
+          <!-- Additional dynamic fields if university is "Lainnya…" -->
+          <div id="uni-other-fields" class="hidden space-y-4">
+            <div>
+              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Universitas Baru</label>
+              <input type="text" id="inp-uni-other" placeholder="Masukkan nama universitas Anda" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Kota Lokasi Kampus</label>
+                <input type="text" id="inp-uni-city" placeholder="Kota Bogor" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+              </div>
+              <div>
+                <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Provinsi Lokasi Kampus</label>
+                <input type="text" id="inp-uni-prov" placeholder="Jawa Barat" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+              </div>
+            </div>
+          </div>
+
           <div>
             <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Program Studi</label>
             <input type="text" id="inp-prodi" placeholder="Teknik Informatika" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
@@ -142,17 +161,45 @@
             <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nama Instansi / Institusi Penyelenggara</label>
             <input type="text" id="inp-instansi" placeholder="Kemendikbud Ristek, Himpunan Mahasiswa Ilmu Komputer, dll" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
           </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Alamat Lengkap Kantor</label>
+            <textarea id="inp-office-address" rows="2" placeholder="Jl. Raya Pajajaran No. 1, Kota Bogor, Jawa Barat" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Nomor HP Pengguna</label>
+            <input type="text" id="inp-phone" placeholder="0812XXXXXXXX" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
         </div>
 
-        <!-- Shared: Password Field -->
-        <div>
-          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Password</label>
-          <input type="password" id="inp-pw" placeholder="Minimal 8 karakter" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+        <!-- Shared: Password & Confirm Password Fields -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Password</label>
+            <input type="password" id="inp-pw" placeholder="Minimal 8 karakter" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+          <div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Konfirmasi Password</label>
+            <input type="password" id="inp-pw-confirm" placeholder="Ulangi password" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+        </div>
+
+        <!-- Captcha Puzzle Field -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Verifikasi Keamanan (Captcha)</label>
+          <div class="flex items-center gap-3">
+            <div id="captcha-box" class="py-2.5 px-5 rounded-xl bg-gray-100 border-2 border-dashed border-gray-300 font-extrabold text-lg text-primary tracking-widest select-none text-center min-w-[100px] flex items-center justify-center bg-gradient-to-r from-primary/5 to-purple-500/5">
+              --
+            </div>
+            <button id="btn-refresh-captcha" type="button" class="p-2.5 rounded-xl border border-gray-200 hover:border-primary hover:text-primary transition-all text-gray-400">
+              🔄
+            </button>
+            <input type="text" id="inp-captcha" placeholder="Jawab matematika captcha" required class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
         </div>
         
         <label class="flex items-start gap-2.5 cursor-pointer">
           <input type="checkbox" required class="mt-1 accent-primary flex-shrink-0"/>
-          <span class="text-xs text-gray-500">Saya setuju dengan <a href="#" class="text-primary font-600 hover:underline">Syarat & Ketentuan</a> SideQuest.</span>
+          <span class="text-xs text-gray-500 font-500">Saya setuju dengan <a href="terms.html" class="text-primary font-600 hover:underline">Syarat & Ketentuan</a> & <a href="privacy.html" class="text-primary font-600 hover:underline">Kebijakan Privasi</a> SideQuest.</span>
         </label>
         
         <button type="submit" class="w-full py-3.5 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors shadow-md">
@@ -172,6 +219,7 @@ import { requireGuest } from '../js/auth.js';
 requireGuest();
 
 let activeRole = 'peserta'; // default
+let captchaExpectedValue = 0;
 
 // Elements
 const tabPeserta = document.getElementById('tab-peserta');
@@ -182,6 +230,56 @@ const lblEmail = document.getElementById('lbl-email');
 const inpEmail = document.getElementById('inp-email');
 const inpProdi = document.getElementById('inp-prodi');
 const inpInstansi = document.getElementById('inp-instansi');
+const inpOfficeAddress = document.getElementById('inp-office-address');
+const inpPhone = document.getElementById('inp-phone');
+
+const inpUni = document.getElementById('inp-uni');
+const uniOtherFields = document.getElementById('uni-other-fields');
+const inpUniOther = document.getElementById('inp-uni-other');
+const inpUniCity = document.getElementById('inp-uni-city');
+const inpUniProv = document.getElementById('inp-uni-prov');
+
+const inpPw = document.getElementById('inp-pw');
+const inpPwConfirm = document.getElementById('inp-pw-confirm');
+const inpCaptcha = document.getElementById('inp-captcha');
+const btnRefreshCaptcha = document.getElementById('btn-refresh-captcha');
+
+// Captcha Generator
+function generateCaptcha() {
+  const num1 = Math.floor(Math.random() * 9) + 1;
+  const num2 = Math.floor(Math.random() * 9) + 1;
+  const operators = ['+', '-'];
+  const op = operators[Math.floor(Math.random() * operators.length)];
+  if (op === '+') {
+    captchaExpectedValue = num1 + num2;
+  } else {
+    captchaExpectedValue = num1 - num2;
+  }
+  document.getElementById('captcha-box').textContent = `${num1} ${op} ${num2}`;
+  inpCaptcha.value = '';
+}
+
+// Initial captcha load
+generateCaptcha();
+btnRefreshCaptcha.addEventListener('click', generateCaptcha);
+
+// Dynamic University "Lainnya" Toggle
+inpUni.addEventListener('change', () => {
+  if (inpUni.value === 'Lainnya…') {
+    uniOtherFields.classList.remove('hidden');
+    inpUniOther.setAttribute('required', 'true');
+    inpUniCity.setAttribute('required', 'true');
+    inpUniProv.setAttribute('required', 'true');
+  } else {
+    uniOtherFields.classList.add('hidden');
+    inpUniOther.removeAttribute('required');
+    inpUniCity.removeAttribute('required');
+    inpUniProv.removeAttribute('required');
+    inpUniOther.value = '';
+    inpUniCity.value = '';
+    inpUniProv.value = '';
+  }
+});
 
 // Remove original inline onclick mapping
 const googleBtn = document.getElementById('btn-google');
@@ -208,6 +306,14 @@ function switchRole(role) {
     // Required attributes logic
     inpProdi.removeAttribute('required');
     inpInstansi.setAttribute('required', 'true');
+    inpOfficeAddress.setAttribute('required', 'true');
+    inpPhone.setAttribute('required', 'true');
+    
+    // Reset university "Lainnya" required state when hidden
+    inpUni.removeAttribute('required');
+    inpUniOther.removeAttribute('required');
+    inpUniCity.removeAttribute('required');
+    inpUniProv.removeAttribute('required');
   } else {
     // Styling tabs
     tabPeserta.className = "flex-1 py-3 px-4 rounded-xl text-xs font-700 transition-all bg-primary text-white shadow-md";
@@ -224,6 +330,14 @@ function switchRole(role) {
     // Required attributes logic
     inpProdi.setAttribute('required', 'true');
     inpInstansi.removeAttribute('required');
+    inpOfficeAddress.removeAttribute('required');
+    inpPhone.removeAttribute('required');
+    inpUni.setAttribute('required', 'true');
+    if (inpUni.value === 'Lainnya…') {
+      inpUniOther.setAttribute('required', 'true');
+      inpUniCity.setAttribute('required', 'true');
+      inpUniProv.setAttribute('required', 'true');
+    }
   }
 }
 
@@ -249,21 +363,56 @@ document.getElementById('reg-form').addEventListener('submit', async (e) => {
   const fname = document.getElementById('inp-fname').value.trim();
   const lname = document.getElementById('inp-lname').value.trim();
   
+  // Validation: Password Confirm
+  if (inpPw.value !== inpPwConfirm.value) {
+    err.textContent = 'Password dan konfirmasi password tidak cocok!';
+    err.classList.remove('hidden');
+    return;
+  }
+
+  // Validation: Captcha
+  const captchaAnswer = inpCaptcha.value.trim();
+  if (parseInt(captchaAnswer, 10) !== captchaExpectedValue) {
+    err.textContent = 'Jawaban captcha salah. Silakan coba lagi!';
+    err.classList.remove('hidden');
+    generateCaptcha();
+    return;
+  }
+
   const payload = {
     email:    inpEmail.value.trim(),
-    password: document.getElementById('inp-pw').value,
+    password: inpPw.value,
+    confirmPassword: inpPwConfirm.value,
+    captchaAnswer: parseInt(captchaAnswer, 10),
+    captchaExpected: captchaExpectedValue,
     fullName: (fname + ' ' + lname).trim(),
     role:     activeRole,
   };
 
   if (activeRole === 'peserta') {
-    payload.university = document.getElementById('inp-uni').value.trim();
+    if (inpUni.value === 'Lainnya…') {
+      payload.university = inpUniOther.value.trim();
+      payload.universityCity = inpUniCity.value.trim();
+      payload.universityProvince = inpUniProv.value.trim();
+    } else {
+      payload.university = inpUni.value.trim();
+      payload.universityCity = null;
+      payload.universityProvince = null;
+    }
     payload.studyProgram = inpProdi.value.trim();
     payload.semester = parseInt(document.getElementById('inp-sem').value) || 1;
+    
+    payload.officeAddress = null;
+    payload.phoneNumber = null;
   } else {
     payload.university = inpInstansi.value.trim();
     payload.studyProgram = null;
     payload.semester = null;
+    
+    payload.officeAddress = inpOfficeAddress.value.trim();
+    payload.phoneNumber = inpPhone.value.trim();
+    payload.universityCity = null;
+    payload.universityProvince = null;
   }
 
   btn.textContent = 'Membuat akun…';
@@ -271,21 +420,21 @@ document.getElementById('reg-form').addEventListener('submit', async (e) => {
   err.classList.add('hidden');
 
   try {
-    const resData = await api.auth.register(payload);
+    const res = await api.auth.register(payload);
     ui.toast('✅ Registrasi berhasil!', 'success');
     
     setTimeout(() => {
-      if (resData.user && resData.user.role === 'organizer') {
-        window.location.href = 'organizer-dashboard.html';
-      } else {
-        window.location.href = 'onboarding.html';
-      }
+      const emailEnc = encodeURIComponent(payload.email);
+      const token = res.verificationToken || '';
+      const isLocal = res.isLocalhost ? '1' : '0';
+      window.location.href = `onboarding.html?role=${activeRole}&email=${emailEnc}&token=${token}&localhost=${isLocal}`;
     }, 900);
   } catch (ex) {
     err.textContent = ex.message || 'Terjadi kesalahan. Coba lagi.';
     err.classList.remove('hidden');
     btn.textContent = 'Buat Akun →';
     btn.disabled = false;
+    generateCaptcha();
   }
 });
 </script>

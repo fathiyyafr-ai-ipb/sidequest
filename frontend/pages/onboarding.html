@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verifikasi Akun — SideQuest</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6C63FF',
+            'primary-dark': '#5A52E0',
+            'primary-light': '#EDE9FF',
+            accent: '#FF6B35',
+            'accent-light': '#FFF1EB',
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+</head>
+<body class="min-h-screen bg-[#FFF5F5] font-sans flex flex-col justify-between selection:bg-primary/20">
+
+  <!-- Transparent / Blurred Glass Header -->
+  <header class="sticky top-0 z-50 w-full bg-white/70 backdrop-blur-md border-b border-gray-100/80 transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <a href="../index.html" class="flex items-center gap-2">
+          <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='block';" />
+          <span id="logo-fallback" class="hidden text-2xl font-extrabold text-primary tracking-tight">SideQuest</span>
+          <span class="text-2xl font-extrabold text-primary tracking-tight" id="logo-text">SideQuest</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content Section -->
+  <main class="relative py-16 px-6 max-w-xl mx-auto w-full flex-grow flex items-center justify-center">
+    <div class="absolute -z-10 w-96 h-96 rounded-full bg-primary/5 blur-3xl -top-20 -left-20"></div>
+    <div class="absolute -z-10 w-96 h-96 rounded-full bg-accent/5 blur-3xl -bottom-20 -right-20"></div>
+
+    <div class="bg-white rounded-3xl p-8 md:p-10 border border-gray-100 shadow-xl space-y-8 w-full text-center">
+      
+      <!-- Icon Indicator -->
+      <div class="flex justify-center">
+        <div id="status-icon-bg" class="w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-inner animate-bounce">
+          👋
+        </div>
+      </div>
+
+      <!-- Header Titles -->
+      <div class="space-y-2">
+        <div id="role-badge" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-700 uppercase tracking-wide">
+          Memuat…
+        </div>
+        <h1 id="onboard-title" class="text-2xl md:text-3xl font-800 text-gray-800 tracking-tight leading-tight">
+          Menyiapkan Akun Anda
+        </h1>
+        <p id="onboard-desc" class="text-sm text-gray-500 leading-relaxed max-w-sm mx-auto">
+          Silakan tunggu sebentar selagi kami mengonfigurasi profil pendaftaran Anda.
+        </p>
+      </div>
+
+      <!-- Localhost / Auto-verified Content Box -->
+      <div id="box-localhost" class="hidden p-6 bg-green-50 border border-green-200 rounded-3xl text-left space-y-4">
+        <div class="flex gap-3">
+          <span class="text-2xl">🚀</span>
+          <div>
+            <h4 class="font-800 text-green-800 text-sm">Mode Pengembangan (Localhost) Terdeteksi</h4>
+            <p class="text-green-700 text-xs mt-1 leading-relaxed">
+              Pendaftaran Anda berjalan di server localhost. Demi kenyamanan pengerjaan dan pengujian fitur, sistem kami telah **menyetujui dan memverifikasi akun Anda secara otomatis** tanpa alur email konfirmasi!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Production Student / Email Verification Content Box -->
+      <div id="box-prod-student" class="hidden p-6 bg-blue-50 border border-blue-200 rounded-3xl text-left space-y-4">
+        <div class="flex gap-3">
+          <span class="text-2xl">📧</span>
+          <div>
+            <h4 class="font-800 text-blue-800 text-sm">Verifikasi Email Anda</h4>
+            <p class="text-blue-700 text-xs mt-1 leading-relaxed">
+              Kami telah mengirimkan tautan verifikasi ke email <strong id="student-email" class="underline"></strong>. Silakan buka kotak masuk (atau folder spam) Anda untuk mengaktifkan akun pendaftaran mahasiswa Anda sebelum masuk.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sandbox Simulation Box -->
+        <div class="pt-4 border-t border-blue-200/50 space-y-3">
+          <div class="flex items-center justify-between text-[10px] font-700 text-blue-800/60 uppercase tracking-wide">
+            <span>🧪 [Developer Sandbox] Simulasi Email</span>
+          </div>
+          <a id="btn-simulate-verify" href="#" class="w-full py-2.5 bg-primary hover:bg-primary-dark text-white text-xs font-800 rounded-xl text-center block transition-all no-underline shadow-md">
+            Verifikasi Email Secara Instan 🔗
+          </a>
+          <p class="text-[9px] text-blue-800/50 leading-snug">
+            Klik tombol sandbox di atas untuk mensimulasikan pembukaan kotak masuk email dan klik tautan verifikasi.
+          </p>
+        </div>
+      </div>
+
+      <!-- Production Organizer / Pending Approval Content Box -->
+      <div id="box-prod-organizer" class="hidden p-6 bg-amber-50 border border-amber-200 rounded-3xl text-left space-y-4">
+        <div class="flex gap-3">
+          <span class="text-2xl">⏳</span>
+          <div>
+            <h4 class="font-800 text-amber-800 text-sm">Menunggu Persetujuan Operator</h4>
+            <p class="text-amber-700 text-xs mt-1 leading-relaxed">
+              Akun penyelenggara lomba Anda saat ini berada dalam antrean **peninjauan manual** oleh tim superadmin/operator SideQuest. Setelah operator menyetujui instansi Anda, email tautan verifikasi akan otomatis dikirimkan ke <strong id="organizer-email" class="underline"></strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Sandbox Simulation Box for Organizer -->
+        <div class="pt-4 border-t border-amber-200/50 space-y-3">
+          <div class="flex items-center justify-between text-[10px] font-700 text-amber-800/60 uppercase tracking-wide">
+            <span>🧪 [Developer Sandbox] Panduan Persetujuan</span>
+          </div>
+          <p class="text-[10px] text-amber-700 leading-relaxed">
+            Untuk menyetujui akun ini secara instan di sandbox:
+          </p>
+          <ol class="list-decimal pl-4 text-[9px] text-amber-700 space-y-1">
+            <li>Buka halaman masuk dan gunakan akun Superadmin: <br/><strong class="bg-amber-100 px-1 py-0.5 rounded">superadmin@sidequest.com</strong> / <strong class="bg-amber-100 px-1 py-0.5 rounded">password123</strong></li>
+            <li>Masuk ke dasbor administrator, temukan email Anda di daftar pengguna, lalu klik tombol **"Setujui"**.</li>
+            <li>Tautan verifikasi email akan muncul pada log server.</li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <div class="pt-4">
+        <a href="login.html" id="btn-action" class="w-full py-4 bg-primary hover:bg-primary-dark text-white font-700 text-sm rounded-2xl text-center block transition-all no-underline shadow-md">
+          Ke Halaman Masuk →
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-8 px-6">
+    <div class="max-w-7xl mx-auto text-center text-xs text-gray-500">
+      <p>© 2026 SideQuest. Dibuat dengan 💜 oleh Aqilah, Fathiyya & Gilbran.</p>
+    </div>
+  </footer>
+
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Parse URL parameters
+      const params = new URLSearchParams(window.location.search);
+      const role = params.get('role') || 'peserta';
+      const email = params.get('email') || '';
+      const token = params.get('token') || '';
+      const localhost = params.get('localhost') === '1';
+
+      // UI elements
+      const roleBadge = document.getElementById('role-badge');
+      const iconBg = document.getElementById('status-icon-bg');
+      const onboardTitle = document.getElementById('onboard-title');
+      const onboardDesc = document.getElementById('onboard-desc');
+      const btnAction = document.getElementById('btn-action');
+
+      // Containers
+      const boxLocalhost = document.getElementById('box-localhost');
+      const boxProdStudent = document.getElementById('box-prod-student');
+      const boxProdOrganizer = document.getElementById('box-prod-organizer');
+
+      // Update badge
+      if (role === 'organizer') {
+        roleBadge.textContent = '💼 PENYELENGGARA LOMBA';
+        roleBadge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-700 bg-amber-50 text-amber-700 uppercase tracking-wide';
+      } else {
+        roleBadge.textContent = '🚀 PESERTA MAHASISWA';
+        roleBadge.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-700 bg-primary-light text-primary uppercase tracking-wide';
+      }
+
+      if (localhost) {
+        // Localhost auto-verified
+        iconBg.textContent = '✅';
+        iconBg.className = 'w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-inner bg-green-100 text-green-600 animate-bounce';
+        onboardTitle.textContent = 'Pendaftaran Anda Berhasil!';
+        onboardDesc.textContent = 'Akun Anda telah terkonfigurasi dan langsung aktif secara otomatis di lingkungan pengembangan.';
+        boxLocalhost.classList.remove('hidden');
+        btnAction.textContent = 'Masuk ke SideQuest Sekarang 🔓';
+      } else {
+        // Production Mode
+        if (role === 'peserta') {
+          // Student Email Verification
+          iconBg.textContent = '📧';
+          iconBg.className = 'w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-inner bg-blue-100 text-blue-600 animate-pulse';
+          onboardTitle.textContent = 'Satu Langkah Lagi!';
+          onboardDesc.textContent = 'Silakan lakukan verifikasi email Anda untuk mengaktifkan fitur pencarian partner.';
+          
+          document.getElementById('student-email').textContent = email;
+          document.getElementById('btn-simulate-verify').href = `/api/auth/verify?token=${token}`;
+          boxProdStudent.classList.remove('hidden');
+          
+          btnAction.textContent = 'Kembali ke Halaman Utama';
+          btnAction.className = 'w-full py-4 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 font-700 text-sm rounded-2xl text-center block transition-all no-underline shadow-sm';
+          btnAction.href = '../index.html';
+        } else {
+          // Organizer Manual Peninjauan
+          iconBg.textContent = '⏳';
+          iconBg.className = 'w-20 h-20 rounded-full flex items-center justify-center text-4xl shadow-inner bg-amber-100 text-amber-600 animate-pulse';
+          onboardTitle.textContent = 'Menunggu Verifikasi Instansi';
+          onboardDesc.textContent = 'Tim administrasi SideQuest sedang meninjau kelayakan berkas kepanitiaan Anda.';
+          
+          document.getElementById('organizer-email').textContent = email;
+          boxProdOrganizer.classList.remove('hidden');
+          
+          btnAction.textContent = 'Kembali ke Halaman Utama';
+          btnAction.className = 'w-full py-4 bg-white hover:bg-gray-50 text-gray-700 border-2 border-gray-200 font-700 text-sm rounded-2xl text-center block transition-all no-underline shadow-sm';
+          btnAction.href = '../index.html';
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>

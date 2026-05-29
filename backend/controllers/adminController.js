@@ -44,7 +44,7 @@ const getModeratorStats = async (req, res) => {
 const getModeratorData = async (req, res) => {
   try {
     // Fetch users (excluding sensitive password details)
-    const usersRes = await pool.query('SELECT id, name, email, university, prodi, role, is_active FROM users ORDER BY role ASC, id DESC');
+    const usersRes = await pool.query('SELECT id, name, email, university, prodi, role, is_active, is_approved, is_verified FROM users ORDER BY role ASC, id DESC');
     
     // Fetch competitions with category name
     const compsRes = await pool.query(`
@@ -307,6 +307,53 @@ const updateMaintenanceSettings = async (req, res) => {
   }
 };
 
+// 8. Approve pending organizer registration (Moderator/Admin)
+const approveOrganizer = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const checkRes = await pool.query("SELECT role, email, is_approved, verification_token FROM users WHERE id = $1", [id]);
+    if (checkRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Pengguna tidak ditemukan.' });
+    }
+
+    const user = checkRes.rows[0];
+    if (user.role !== 'organizer') {
+      return res.status(400).json({ message: 'Akses Ditolak: Hanya akun dengan peran Penyelenggara Lomba yang memerlukan persetujuan manual.' });
+    }
+
+    if (user.is_approved) {
+      return res.status(400).json({ message: 'Akun penyelenggara ini sudah disetujui sebelumnya.' });
+    }
+
+    // Generate token if not exists
+    const crypto = require('crypto');
+    const verificationToken = user.verification_token || crypto.randomBytes(32).toString('hex');
+
+    await pool.query(
+      "UPDATE users SET is_approved = true, verification_token = $1 WHERE id = $2",
+      [verificationToken, id]
+    );
+
+    // Simulate email log
+    console.log(`\n======================================================`);
+    console.log(`📧 [ADMIN APPROVED ORGANIZER - SIMULATION EMAIL SENT TO: ${user.email}]`);
+    console.log(`Tautan Verifikasi Akun Anda: http://localhost:3001/api/auth/verify?token=${verificationToken}`);
+    console.log(`======================================================\n`);
+
+    res.json({
+      message: `Akun penyelenggara "${user.email}" berhasil disetujui. Email instruksi verifikasi telah dikirimkan!`,
+      data: {
+        id,
+        is_approved: true,
+        verificationToken
+      }
+    });
+  } catch (err) {
+    console.error('[approveOrganizer]', err);
+    res.status(500).json({ message: 'Gagal menyetujui akun penyelenggara.' });
+  }
+};
+
 module.exports = {
   getModeratorStats,
   getModeratorData,
@@ -314,5 +361,6 @@ module.exports = {
   simulateWebScraping,
   toggleModeratorStatus,
   updateFeatureSettings,
-  updateMaintenanceSettings
+  updateMaintenanceSettings,
+  approveOrganizer
 };

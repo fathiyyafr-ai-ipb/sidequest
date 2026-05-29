@@ -97,6 +97,12 @@ import { requireGuest } from '../js/auth.js';
 // Redirect to dashboard if already logged in
 requireGuest();
 
+// Display success toast if verified URL param is present
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('verified') === 'true') {
+  ui.toast('✅ Akun Anda telah sukses diverifikasi! Silakan masuk.', 'success', 5000);
+}
+
 // Google OAuth simulation
 document.getElementById('btn-google').addEventListener('click', () => {
   ui.toast('Google OAuth belum tersambung — gunakan email/password untuk demo', 'warning', 4000);

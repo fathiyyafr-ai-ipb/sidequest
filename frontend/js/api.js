@@ -87,7 +87,7 @@ export const api = {
     },
     async register(payload) {
       const res = await _post('/auth/register',payload,{skipAuth:true,skipRefresh:true});
-      _store(res.data); return res.data;
+      return res; // returns { message, isLocalhost, verificationToken, data: { user } }
     },
     async forgotPassword(email) {
       return await _post('/auth/forgot-password',{email},{skipAuth:true,skipRefresh:true});
@@ -184,6 +184,7 @@ export const api = {
     toggleModerator(id) { return _patch(`/admin/super/moderator/${id}/toggle`); },
     updateFeatures(featureKey, activeValue) { return _patch('/admin/super/features', { featureKey, activeValue }); },
     updateMaintenance(enabled) { return _patch('/admin/super/maintenance', { enabled }); },
+    approveOrganizer(id) { return _patch(`/admin/approve-organizer/${id}`); },
   },
 };
 
