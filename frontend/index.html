@@ -115,13 +115,83 @@
 
       </div>
 
-      <!-- Right Side (Visual Showcase) -->
-      <div class="lg:col-span-5 relative flex justify-center">
-        <div class="absolute -z-10 w-72 h-72 rounded-full bg-primary/10 blur-3xl -top-10 -right-10"></div>
-        <div class="absolute -z-10 w-72 h-72 rounded-full bg-accent/10 blur-3xl -bottom-10 -left-10"></div>
+      <!-- Right Side (Visual Showcase Mockup) -->
+      <div class="lg:col-span-5 relative flex flex-col justify-center items-center lg:items-end min-h-[500px]">
+        <!-- Glow effects -->
+        <div class="absolute -z-10 w-72 h-72 rounded-full bg-primary/15 blur-3xl top-10 right-10"></div>
+        <div class="absolute -z-10 w-72 h-72 rounded-full bg-accent/15 blur-3xl bottom-10 left-10"></div>
 
-        <div class="bg-white rounded-3xl p-4 border border-gray-100 shadow-card hover:shadow-card-hover transition-shadow duration-300 max-w-md md:max-w-full">
-          <img src="assets/hero.png" alt="SideQuest Premium Collaboration Illustration" class="rounded-2xl w-full h-auto object-cover max-h-[500px]" />
+        <!-- Central Mockup App Container -->
+        <div class="w-full max-w-md relative space-y-4 p-2">
+          
+          <!-- Mock Card 1: Matchmaking Cerdas -->
+          <div class="bg-white/90 backdrop-blur rounded-3xl p-5 border border-gray-100 shadow-xl hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 transform -rotate-2 relative">
+            <div class="absolute top-4 right-4 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-[10px] font-800 px-3 py-1 rounded-full shadow-sm animate-pulse">
+              96% Match
+            </div>
+            
+            <div class="flex items-center gap-3.5 mb-4">
+              <div class="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-extrabold text-sm shadow-md border-2 border-white">
+                RA
+              </div>
+              <div>
+                <h4 class="font-800 text-gray-800 text-sm">Rizki Aditya</h4>
+                <p class="text-[10px] text-primary font-600 mt-0.5">Teknik Informatika · IPB</p>
+              </div>
+            </div>
+
+            <!-- Compat bar -->
+            <div class="space-y-1.5 mb-3.5">
+              <div class="flex justify-between items-center text-[10px] font-700 text-gray-400 uppercase tracking-wide">
+                <span>Kecocokan Keahlian</span>
+                <span class="text-primary">Sangat Cocok</span>
+              </div>
+              <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div class="bg-primary h-full rounded-full" style="width: 96%"></div>
+              </div>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5">
+              <span class="text-[10px] bg-primary-light text-primary font-700 px-2 py-0.5 rounded-lg">React Native</span>
+              <span class="text-[10px] bg-primary-light text-primary font-700 px-2 py-0.5 rounded-lg">TailwindCSS</span>
+              <span class="text-[10px] bg-accent-light text-accent font-700 px-2 py-0.5 rounded-lg">Figma UI/UX</span>
+            </div>
+          </div>
+
+          <!-- Mock Card 2: Kolaborasi Tim -->
+          <div class="bg-white/95 backdrop-blur rounded-3xl p-5 border border-gray-100 shadow-2xl hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 transform rotate-1 relative lg:-translate-x-6 z-10">
+            <div class="flex items-center justify-between mb-3 pb-3 border-b border-gray-50">
+              <div class="flex items-center gap-2">
+                <span class="text-sm">👥</span>
+                <h4 class="font-800 text-gray-800 text-xs">Tim Web Dev Gemastik</h4>
+              </div>
+              <span class="text-[9px] bg-orange-100 text-orange-700 font-800 px-2 py-0.5 rounded-md uppercase">1 Slot Sisa</span>
+            </div>
+            <p class="text-[11px] text-gray-500 leading-relaxed mb-3">Mencari anggota pengembang mobile app untuk kolaborasi tim lomba Gemastik bidang software development.</p>
+            <div class="flex items-center justify-between">
+              <div class="flex -space-x-2.5 overflow-hidden">
+                <div class="w-7 h-7 rounded-full bg-blue-500 text-white text-[9px] font-800 border-2 border-white flex items-center justify-center shadow-sm">RA</div>
+                <div class="w-7 h-7 rounded-full bg-green-500 text-white text-[9px] font-800 border-2 border-white flex items-center justify-center shadow-sm">FT</div>
+                <div class="w-7 h-7 rounded-full bg-purple-500 text-white text-[9px] font-800 border-2 border-white flex items-center justify-center shadow-sm">AD</div>
+              </div>
+              <button class="px-3.5 py-1.5 rounded-xl bg-primary text-white text-[10px] font-800 hover:bg-primary-dark transition-colors shadow-sm border-0 cursor-pointer">
+                Gabung Tim
+              </button>
+            </div>
+          </div>
+
+          <!-- Mock Card 3: Floating Notification -->
+          <div class="bg-white/90 backdrop-blur rounded-2xl p-3.5 border border-gray-100 shadow-xl hover:scale-[1.02] hover:shadow-2xl transition-all duration-300 transform -rotate-1 flex items-center gap-3 max-w-sm ml-auto relative lg:-translate-x-12 z-20">
+            <div class="w-8 h-8 rounded-full bg-accent-light flex items-center justify-center text-accent font-bold text-sm shadow-sm flex-shrink-0 animate-bounce">
+              🔔
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-[10px] font-800 text-gray-800 truncate">Rizki Aditya mengirim koneksi!</p>
+              <p class="text-[8px] text-gray-400">Teknik Informatika · Ingin bergabung tim Anda</p>
+            </div>
+            <span class="text-[8px] font-700 text-gray-400">1m lalu</span>
+          </div>
+
         </div>
       </div>
 
