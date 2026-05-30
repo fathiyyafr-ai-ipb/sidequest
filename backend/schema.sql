@@ -46,8 +46,8 @@ CREATE TABLE users (
   verification_token VARCHAR(255),
   university_city VARCHAR(100),
   university_province VARCHAR(100),
-  office_address VARCHAR(200),
-  phone_number VARCHAR(50)
+  office_address TEXT,
+  phone_number VARCHAR(20)
 );
 
 CREATE TABLE teams (
@@ -86,10 +86,10 @@ CREATE TABLE competition_registrations (
   competition_id INT REFERENCES competitions(id) ON DELETE CASCADE,
   registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   status VARCHAR(20) DEFAULT 'pending',
-  portfolio_url VARCHAR(255),
-  motivation TEXT,
-  contact VARCHAR(50),
-  team_id INT REFERENCES teams(id) ON DELETE SET NULL,
+  portfolio_url TEXT DEFAULT NULL,
+  motivation TEXT DEFAULT NULL,
+  contact VARCHAR(100) DEFAULT NULL,
+  team_id INT REFERENCES teams(id) ON DELETE SET NULL DEFAULT NULL,
   PRIMARY KEY (user_id, competition_id)
 );
 
@@ -131,8 +131,6 @@ CREATE TABLE platform_settings (
   key VARCHAR(100) PRIMARY KEY,
   value VARCHAR(255) NOT NULL
 );
-
-INSERT INTO platform_settings (key, value) VALUES ('maintenance_mode', 'false');
 
 -- Seed Data Awal
 INSERT INTO categories (slug, name) VALUES 
@@ -297,7 +295,46 @@ INSERT INTO user_skills (user_id, skill_id) VALUES
 (21, 60), (21, 54), (21, 61), (21, 62), -- Raka
 (22, 63), (22, 64), (22, 65), (22, 66), -- Sinta
 (23, 67), (23, 68), (23, 69), (23, 70), -- Taufik
-(24, 71), (24, 14), (24, 72), (24, 65); -- Ulfah
+(24, 71), (24, 14), (24, 72), (24, 65);
+
+-- Seed Platform Settings
+INSERT INTO platform_settings (key, value) VALUES
+('maintenance_mode', 'false'),
+('feature_competitions', 'active'),
+('feature_teams', 'active'),
+('feature_matchmaking', 'active'),
+('feature_connections', 'active')
+ON CONFLICT (key) DO NOTHING;
+
+-- Seed Moderator and Superadmin accounts
+INSERT INTO users (name, email, password, university, prodi, avatar_color, bio, role, is_active)
+VALUES 
+(
+  'Moderator SideQuest',
+  'moderator@sidequest.com',
+  '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS',
+  'SideQuest HQ',
+  'Security & Moderation',
+  'bg-red-500',
+  'Akun resmi Moderator untuk pengawasan kualitas konten platform.',
+  'moderator',
+  true
+),
+(
+  'Superadmin SideQuest',
+  'superadmin@sidequest.com',
+  '$2a$10$RSkZRsA7U61f4p9zkOfGR.U../8gzlcw63XpZXDWNokYJJyMEpyyS',
+  'SideQuest HQ',
+  'System Administration',
+  'bg-yellow-600',
+  'Akun resmi Super Administrator dengan hak akses sistem penuh.',
+  'superadmin',
+  true
+)
+ON CONFLICT (email) DO NOTHING;
+
+-- Auto-verify and approve all existing seed users
+UPDATE users SET is_verified = true, is_approved = true;
 
 
 
