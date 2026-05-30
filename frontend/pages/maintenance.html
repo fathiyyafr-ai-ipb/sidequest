@@ -276,7 +276,10 @@
       btn.innerHTML = 'Memeriksa status sistem...';
       
       try {
-        const res = await fetch('http://localhost:3001/api/auth/refresh', {
+        const apiHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? 'http://localhost:3001/api'
+          : 'https://sidequest-backend-3930.onrender.com/api';
+        const res = await fetch(`${apiHost}/auth/refresh`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' }
         });

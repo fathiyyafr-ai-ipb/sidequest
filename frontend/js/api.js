@@ -2,8 +2,11 @@
  * SideQuest — api.js  (ES Module)
  * Central HTTP client — import in every page.
  */
+// Konfigurasi URL API Dinamis
+const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:3001/api'
+  : 'https://sidequest-backend-3930.onrender.com/api';
 
-const API_BASE = 'http://localhost:3001/api';
 const TOKEN_KEY = 'sq_access_token';
 const REFRESH_KEY = 'sq_refresh_token';
 const USER_KEY = 'sq_user';

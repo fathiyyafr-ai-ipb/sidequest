@@ -498,7 +498,10 @@ document.addEventListener("DOMContentLoaded", () => {
 // PENTING: data disimpan ke lombaData agar filter chip tetap berfungsi
 async function fetchData() {
   try {
-    const response = await fetch('http://localhost:3001/api/competitions');
+    const apiHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+      ? 'http://localhost:3001/api'
+      : 'https://sidequest-backend-3930.onrender.com/api';
+    const response = await fetch(`${apiHost}/competitions`);
     if (!response.ok) throw new Error('API error ' + response.status);
     const apiData = await response.json();
     if (apiData && apiData.data && apiData.data.length > 0) {
