@@ -26,6 +26,32 @@ pool.query('SELECT NOW()', (err, res) => {
   }
 });
 
+app.get('/api/db-check-debug', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT NOW()');
+    res.json({
+      status: 'ok',
+      time: result.rows[0],
+      env: {
+        NODE_ENV: process.env.NODE_ENV,
+        HAS_DATABASE_URL: !!process.env.DATABASE_URL,
+        DATABASE_URL_PREFIX: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) : null
+      }
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: 'error',
+      message: err.message,
+      stack: err.stack,
+      env: {
+        NODE_ENV: process.env.NODE_ENV,
+        HAS_DATABASE_URL: !!process.env.DATABASE_URL,
+        DATABASE_URL_PREFIX: process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 30) : null
+      }
+    });
+  }
+});
+
 // Mount API Routes
 const { checkPlatformStatus } = require('./middleware/adminMiddleware');
 app.use(checkPlatformStatus);
