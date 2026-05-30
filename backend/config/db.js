@@ -11,6 +11,7 @@ const isProduction = process.env.NODE_ENV === 'production' || process.env.DATABA
 const pool = isProduction
   ? new Pool({
       connectionString: process.env.DATABASE_URL,
+      family: 4, // Force IPv4 to bypass ENETUNREACH IPv6 routing issue on Render
       ssl: {
         rejectUnauthorized: false
       }
@@ -21,6 +22,7 @@ const pool = isProduction
       database: process.env.DB_NAME || 'sidequest2',
       password: process.env.DB_PASSWORD, // Loaded dynamically from gitignored .env file
       port: parseInt(process.env.DB_PORT, 10) || 5432,
+      family: 4, // Force IPv4 locally as well for consistency
     });
 
 module.exports = pool;
