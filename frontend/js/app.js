@@ -9,11 +9,11 @@
    CONSTANTS
    ───────────────────────────────────────────────── */
 const PAGE_TITLES = {
-  dashboard:   "Dashboard",
-  direktori:   "Direktori Lomba",
-  detail:      "Detail Lomba",
+  dashboard: "Dashboard",
+  direktori: "Direktori Lomba",
+  detail: "Detail Lomba",
   matchmaking: "Matchmaking",
-  profil:      "Profil Saya",
+  profil: "Profil Saya",
 };
 
 /* sidebar order mirrors the <a> elements */
@@ -55,10 +55,10 @@ function navigate(page) {
   closeSidebar();
 
   /* 8 — lazy render pages that need JS */
-  if (page === "direktori")   renderLombaList(lombaData);
+  if (page === "direktori") renderLombaList(lombaData);
   if (page === "matchmaking") renderMatchList(matchData);
-  if (page === "profil")      renderProfil(currentUser);
-  if (page === "dashboard")   renderDashboard(currentUser);
+  if (page === "profil") renderProfil(currentUser);
+  if (page === "dashboard") renderDashboard(currentUser);
 }
 
 /* ─────────────────────────────────────────────────
@@ -109,9 +109,9 @@ function renderDashboard(user) {
   /* stats */
   if (user.stats) {
     const stats = {
-      "stat-lomba":     user.stats.lombaIkuti ?? 0,
-      "stat-tim":       user.stats.timAktif ?? 0,
-      "stat-undangan":  user.stats.undangan ?? 0,
+      "stat-lomba": user.stats.lombaIkuti ?? 0,
+      "stat-tim": user.stats.timAktif ?? 0,
+      "stat-undangan": user.stats.undangan ?? 0,
     };
     Object.entries(stats).forEach(([id, val]) => {
       const el = document.getElementById(id);
@@ -159,7 +159,7 @@ function renderDashboard(user) {
 let _currentCat = "all";
 
 function renderLombaList(data) {
-  const list  = document.getElementById("lomba-list");
+  const list = document.getElementById("lomba-list");
   const count = document.getElementById("lomba-count");
   if (count) count.textContent = data.length;
   if (!list) return;
@@ -192,9 +192,9 @@ function renderLombaList(data) {
           <div class="flex flex-wrap items-center gap-1.5">
             ${l.tags.map((t) => `<span class="tag-purple text-xs font-600 px-2 py-0.5 rounded-lg">${t}</span>`).join("")}
             ${l.free
-              ? `<span class="bg-green-100 text-green-700 text-xs font-600 px-2 py-0.5 rounded-lg">Gratis</span>`
-              : `<span class="bg-orange-100 text-orange-700 text-xs font-600 px-2 py-0.5 rounded-lg">${l.prize}</span>`
-            }
+      ? `<span class="bg-green-100 text-green-700 text-xs font-600 px-2 py-0.5 rounded-lg">Gratis</span>`
+      : `<span class="bg-orange-100 text-orange-700 text-xs font-600 px-2 py-0.5 rounded-lg">${l.prize}</span>`
+    }
           </div>
         </div>
       </div>
@@ -297,7 +297,7 @@ function renderMatchList(data) {
   list.innerHTML = data.map((m) => {
     const barColor =
       m.compat >= 85 ? "bg-green-500" :
-      m.compat >= 70 ? "bg-blue-500"  : "bg-orange-500";
+        m.compat >= 70 ? "bg-blue-500" : "bg-orange-500";
 
     return `
     <div class="match-card bg-white rounded-2xl shadow-card overflow-hidden">
@@ -313,8 +313,8 @@ function renderMatchList(data) {
             </svg>
           </div>
           ${m.online
-            ? `<span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-white"></span>`
-            : ""}
+        ? `<span class="absolute bottom-0.5 right-0.5 w-3.5 h-3.5 bg-green-400 rounded-full border-2 border-white"></span>`
+        : ""}
         </div>
         <div class="flex-1 min-w-0">
           <div class="flex items-center justify-between gap-2">
@@ -460,9 +460,9 @@ function renderProfil(user) {
   /* Stats header */
   if (user.stats) {
     const statMap = {
-      "profil-stat-lomba":   user.stats.lombaIkuti ?? 0,
-      "profil-stat-tim":     user.stats.timAktif ?? 0,
-      "profil-stat-match":   user.stats.matchRate ?? '-',
+      "profil-stat-lomba": user.stats.lombaIkuti ?? 0,
+      "profil-stat-tim": user.stats.timAktif ?? 0,
+      "profil-stat-match": user.stats.matchRate ?? '-',
     };
     Object.entries(statMap).forEach(([id, val]) => {
       const el = document.getElementById(id);
@@ -485,7 +485,7 @@ document.addEventListener("DOMContentLoaded", () => {
     /* Setelah data siap, navigasi ke halaman berdasarkan URL */
     let path = window.location.pathname.split('/').pop().replace('.html', '');
     if (!path || path === '' || path === 'index') path = 'dashboard';
-    
+
     if (TAB_ORDER.includes(path) || SIDEBAR_ORDER.includes(path)) {
       navigate(path);
     } else {
