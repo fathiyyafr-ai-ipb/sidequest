@@ -76,12 +76,15 @@ export async function initSession() {
 
 export function bindLogout() {
   document.querySelectorAll('[data-logout]').forEach(el=>{
+    if (el.dataset.logoutBound) return;
+    el.dataset.logoutBound = 'true';
+    
     el.addEventListener('click', e=>{
       e.preventDefault();
-      if (confirm('Keluar dari SideQuest?')) {
+      ui.confirm('Konfirmasi Keluar', 'Apakah Anda yakin ingin keluar dari SideQuest?', 'Keluar', () => {
         token.clear();
         window.location.href='../pages/login.html';
-      }
+      }, true);
     });
   });
 }

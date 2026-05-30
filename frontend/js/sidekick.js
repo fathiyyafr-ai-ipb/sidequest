@@ -104,8 +104,67 @@ export function initSideKick() {
   const input = document.getElementById('sidekick-input');
   const messagesPanel = document.getElementById('sidekick-messages');
 
+  // Draggable Logic
+  let isDragging = false;
+  let startX, startY, initialX, initialY;
+
+  bubble.style.touchAction = 'none'; // Prevent scroll on touch devices
+
+  const onPointerDown = (e) => {
+    isDragging = false;
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = container.getBoundingClientRect();
+    initialX = rect.left;
+    initialY = rect.top;
+    
+    // Capture pointer
+    bubble.setPointerCapture(e.pointerId);
+    bubble.addEventListener('pointermove', onPointerMove);
+    bubble.addEventListener('pointerup', onPointerUp);
+    bubble.addEventListener('pointercancel', onPointerUp);
+  };
+
+  const onPointerMove = (e) => {
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+      isDragging = true;
+      
+      // Override default classes temporarily to prevent transition stutters during drag
+      bubble.style.transition = 'none'; 
+      
+      let newX = initialX + dx;
+      let newY = initialY + dy;
+      
+      // Boundaries
+      newX = Math.max(0, Math.min(newX, window.innerWidth - container.offsetWidth));
+      newY = Math.max(0, Math.min(newY, window.innerHeight - container.offsetHeight));
+      
+      container.style.right = 'auto';
+      container.style.bottom = 'auto';
+      container.style.left = `${newX}px`;
+      container.style.top = `${newY}px`;
+    }
+  };
+
+  const onPointerUp = (e) => {
+    bubble.removeEventListener('pointermove', onPointerMove);
+    bubble.removeEventListener('pointerup', onPointerUp);
+    bubble.removeEventListener('pointercancel', onPointerUp);
+    bubble.releasePointerCapture(e.pointerId);
+    bubble.style.transition = ''; // Restore transition
+  };
+
+  bubble.addEventListener('pointerdown', onPointerDown);
+
   // Toggle drawer visibility
-  const toggleDrawer = () => {
+  const toggleDrawer = (e) => {
+    if (e && e.currentTarget === bubble && isDragging) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     const isHidden = drawer.classList.contains('hidden');
     if (isHidden) {
       drawer.classList.remove('hidden');

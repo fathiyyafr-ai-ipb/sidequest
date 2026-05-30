@@ -223,6 +223,54 @@ export const ui = {
     setTimeout(() => { el.style.opacity = '0'; el.style.transform = 'translateX(-50%) translateY(16px)'; setTimeout(() => el.remove(), 300); }, ms);
   },
 
+  confirm(title, msg, confirmText, onConfirm, isDestructive = true) {
+    const id = 'sq-confirm';
+    if (document.getElementById(id)) return;
+    const el = document.createElement('div'); el.id = id;
+    Object.assign(el.style, {
+      position: 'fixed', inset: '0',
+      background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: '9999',
+      opacity: '0', transition: 'opacity .2s ease',
+      fontFamily: "'Plus Jakarta Sans',sans-serif",
+    });
+    
+    const btnBg = isDestructive ? '#ef4444' : '#6C63FF';
+    const btnHover = isDestructive ? '#dc2626' : '#5b54d6';
+    
+    el.innerHTML = `
+      <div style="background:#fff; border-radius:20px; padding:24px; max-width:320px; width:90%; box-shadow:0 12px 40px rgba(0,0,0,.2); transform:scale(0.95); transition:transform .2s ease" id="sq-confirm-box">
+        <h3 style="margin:0 0 8px; font-size:18px; font-weight:800; color:#1f2937">${title}</h3>
+        <p style="margin:0 0 24px; font-size:14px; color:#4b5563; line-height:1.5">${msg}</p>
+        <div style="display:flex; gap:12px; justify-content:flex-end">
+          <button id="sq-confirm-no" style="padding:10px 20px; border-radius:12px; border:none; background:#f3f4f6; color:#4b5563; font-weight:700; font-size:13px; cursor:pointer; transition:background .2s">Batal</button>
+          <button id="sq-confirm-yes" style="padding:10px 20px; border-radius:12px; border:none; background:${btnBg}; color:#fff; font-weight:700; font-size:13px; cursor:pointer; transition:background .2s">${confirmText}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(el);
+    
+    // Add hover effects manually
+    document.getElementById('sq-confirm-no').onmouseover = function() { this.style.background = '#e5e7eb'; }
+    document.getElementById('sq-confirm-no').onmouseout = function() { this.style.background = '#f3f4f6'; }
+    document.getElementById('sq-confirm-yes').onmouseover = function() { this.style.background = btnHover; }
+    document.getElementById('sq-confirm-yes').onmouseout = function() { this.style.background = btnBg; }
+    
+    requestAnimationFrame(() => { 
+      el.style.opacity = '1'; 
+      document.getElementById('sq-confirm-box').style.transform = 'scale(1)';
+    });
+    
+    const close = () => {
+      el.style.opacity = '0';
+      document.getElementById('sq-confirm-box').style.transform = 'scale(0.95)';
+      setTimeout(() => el.remove(), 200);
+    };
+    
+    document.getElementById('sq-confirm-no').addEventListener('click', close);
+    document.getElementById('sq-confirm-yes').addEventListener('click', () => { close(); onConfirm(); });
+  },
+
   loading(show, container = null) {
     const id = 'sq-loading';
     if (!show) { document.getElementById(id)?.remove(); return; }
