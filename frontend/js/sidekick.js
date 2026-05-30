@@ -1,7 +1,11 @@
-import { api, ui } from './api.js';
+import { api, ui, currentUser } from './api.js';
 
 // Cache key for persistent chats
-const CHAT_CACHE_KEY = 'sq_sidekick_chat_history';
+function getChatCacheKey() {
+  const user = currentUser.get();
+  const userId = user ? (user.id || user.email || 'guest') : 'guest';
+  return `sq_sidekick_chat_history_${userId}`;
+}
 
 export function initSideKick() {
   if (document.getElementById('sidekick-container')) return;
@@ -128,7 +132,7 @@ export function initSideKick() {
   // Initialize Obrolan Cache History
   let chatHistory = [];
   try {
-    const cached = localStorage.getItem(CHAT_CACHE_KEY);
+    const cached = localStorage.getItem(getChatCacheKey());
     if (cached) chatHistory = JSON.parse(cached);
   } catch (_) {}
 
@@ -190,7 +194,7 @@ export function initSideKick() {
 
 function saveHistory(history) {
   try {
-    localStorage.setItem(CHAT_CACHE_KEY, JSON.stringify(history));
+    localStorage.setItem(getChatCacheKey(), JSON.stringify(history));
   } catch (_) {}
 }
 
