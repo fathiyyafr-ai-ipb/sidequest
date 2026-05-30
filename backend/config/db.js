@@ -9,13 +9,20 @@ if (dns.setDefaultResultOrder) {
 const isProduction = process.env.NODE_ENV === 'production' || process.env.DATABASE_URL;
 
 const pool = isProduction
-  ? new Pool({
-      connectionString: process.env.DATABASE_URL,
-      family: 4, // Force IPv4 to bypass ENETUNREACH IPv6 routing issue on Render
-      ssl: {
-        rejectUnauthorized: false
-      }
-    })
+  ? (() => {
+      const dbUrl = new URL(process.env.DATABASE_URL);
+      return new Pool({
+        user: dbUrl.username,
+        password: decodeURIComponent(dbUrl.password),
+        host: dbUrl.hostname,
+        port: parseInt(dbUrl.port, 10) || 5432,
+        database: dbUrl.pathname.slice(1),
+        family: 4, // Force IPv4 to bypass ENETUNREACH IPv6 routing issue on Render
+        ssl: {
+          rejectUnauthorized: false
+        }
+      });
+    })()
   : new Pool({
       user: process.env.DB_USER || 'postgres',
       host: process.env.DB_HOST || 'localhost',
