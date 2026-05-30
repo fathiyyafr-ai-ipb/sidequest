@@ -32,6 +32,14 @@ app.get('/api/db-check-debug', async (req, res) => {
     res.json({
       status: 'ok',
       time: result.rows[0],
+      poolOptions: {
+        host: pool.options?.host,
+        port: pool.options?.port,
+        database: pool.options?.database,
+        user: pool.options?.user,
+        family: pool.options?.family,
+        ssl: !!pool.options?.ssl
+      },
       env: {
         NODE_ENV: process.env.NODE_ENV,
         HAS_DATABASE_URL: !!process.env.DATABASE_URL,
@@ -43,6 +51,14 @@ app.get('/api/db-check-debug', async (req, res) => {
       status: 'error',
       message: err.message,
       stack: err.stack,
+      poolOptions: {
+        host: pool.options?.host,
+        port: pool.options?.port,
+        database: pool.options?.database,
+        user: pool.options?.user,
+        family: pool.options?.family,
+        ssl: !!pool.options?.ssl
+      },
       env: {
         NODE_ENV: process.env.NODE_ENV,
         HAS_DATABASE_URL: !!process.env.DATABASE_URL,
