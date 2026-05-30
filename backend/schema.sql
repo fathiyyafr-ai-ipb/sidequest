@@ -23,7 +23,8 @@ CREATE TABLE competitions (
   min_members INT DEFAULT 1,
   max_members INT DEFAULT 5,
   registration_model VARCHAR(50) DEFAULT 'hosted',
-  winner_announcement DATE
+  winner_announcement DATE,
+  is_active BOOLEAN DEFAULT true
 );
 
 CREATE TABLE users (
@@ -62,7 +63,8 @@ CREATE TABLE teams (
   max_members INT DEFAULT 5,
   urgency VARCHAR(20) DEFAULT 'normal',
   avatar_color VARCHAR(50) DEFAULT 'bg-primary',
-  emoji VARCHAR(10) DEFAULT '💻'
+  emoji VARCHAR(10) DEFAULT '💻',
+  is_active BOOLEAN DEFAULT true
 );
 
 CREATE TABLE team_members (
