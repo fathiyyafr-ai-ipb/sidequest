@@ -33,15 +33,15 @@ export async function initSession() {
   // Auto redirect administrator/moderator from standard participant pages
   const user = currentUser.get();
   if (user && (user.role === 'moderator' || user.role === 'superadmin') && 
-      !window.location.pathname.includes('admin-dashboard.html')) {
+      !window.location.pathname.includes('admin-dashboard')) {
     window.location.href = '../pages/admin-dashboard.html';
     return null;
   }
   
   // Auto redirect organizer from standard participant pages
   if (user && user.role === 'organizer' && 
-      !window.location.pathname.includes('organizer-dashboard.html') && 
-      !window.location.pathname.includes('posting-lomba.html')) {
+      !window.location.pathname.includes('organizer-dashboard') && 
+      !window.location.pathname.includes('posting-lomba')) {
     window.location.href = '../pages/organizer-dashboard.html';
     return null;
   }
@@ -54,14 +54,14 @@ export async function initSession() {
     
     // Double check with latest profile role
     if (profile && (profile.role === 'moderator' || profile.role === 'superadmin') && 
-        !window.location.pathname.includes('admin-dashboard.html')) {
+        !window.location.pathname.includes('admin-dashboard')) {
       window.location.href = '../pages/admin-dashboard.html';
       return null;
     }
     
     if (profile && profile.role === 'organizer' && 
-        !window.location.pathname.includes('organizer-dashboard.html') && 
-        !window.location.pathname.includes('posting-lomba.html')) {
+        !window.location.pathname.includes('organizer-dashboard') && 
+        !window.location.pathname.includes('posting-lomba')) {
       window.location.href = '../pages/organizer-dashboard.html';
       return null;
     }
