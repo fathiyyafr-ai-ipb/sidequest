@@ -135,6 +135,8 @@ const toggleActiveStatus = async (req, res) => {
 // 4. Mock AI Scraping Simulation
 const simulateWebScraping = async (req, res) => {
   const { url } = req.body;
+  const count = parseInt(req.body.count, 10) || 1;
+  
   if (!url) {
     return res.status(400).json({ message: 'URL sumber wajib disertakan.' });
   }
@@ -144,73 +146,108 @@ const simulateWebScraping = async (req, res) => {
     await new Promise(resolve => setTimeout(resolve, 1500));
 
     const urlLower = url.toLowerCase();
-    let template = {};
+    const scrapedItems = [];
+    
+    for (let i = 0; i < count; i++) {
+      let title = '';
+      let organizer = '';
+      let categorySlug = '';
+      let description = '';
+      let prize = '';
+      let minMembers = 1;
+      let maxMembers = 5;
+      let registrationModel = 'hosted';
+      let isFree = true;
+      let daysOffset = 20 + (i * 5);
+      
+      if (urlLower.includes('instagram') || urlLower.includes('tiktok') || urlLower.includes('dribbble') || urlLower.includes('behance')) {
+        // Design themed templates
+        const titles = [
+          'Instagram Creative UI/UX Poster Design Contest 2026',
+          'National Mobile App Design Awards 2026',
+          'Behance Digital Illustration Challenge 2026',
+          'Tokopedia × DSC UI/UX Challenge 2026',
+          'Creative Brand Identity Hackathon 2026'
+        ];
+        const organizers = ['Instagram Creators ID', 'Mobile UI Association', 'Behance Indonesia', 'Tokopedia', 'Creative Hub Jakarta'];
+        
+        title = titles[i % titles.length];
+        organizer = organizers[i % organizers.length];
+        categorySlug = 'desain';
+        description = `Tantangan desain kreatif untuk meningkatkan engagement pengguna dan memberikan sentuhan visual premium. Tema utama ke-${i+1}: 'Digital Synergy and Collaboration'. Terbuka bagi mahasiswa di seluruh Indonesia.`;
+        prize = `Juara ${i+1}: Rp ${15 - i * 3} Juta + Sertifikat Internasional`;
+        minMembers = 1;
+        maxMembers = 3;
+        isFree = i % 2 === 0;
+      } else if (urlLower.includes('github') || urlLower.includes('devpost') || urlLower.includes('hackathon') || urlLower.includes('hack')) {
+        // Tech themed templates
+        const titles = [
+          'Global Tech Innovation Hackathon 2026',
+          'Open Source Software Web Dev Contest 2026',
+          'Artificial Intelligence & Cloud Hack 2026',
+          'Devpost Cybersecurity Hackathon 2026',
+          'IoT Smart Agriculture Innovation 2026'
+        ];
+        const organizers = ['GitHub Developer Union', 'Fasilkom UI Labs', 'AWS Student Club', 'Cyber Security ID', 'BRIN Indonesia Tech'];
+        
+        title = titles[i % titles.length];
+        organizer = organizers[i % organizers.length];
+        categorySlug = 'teknologi';
+        description = `Tantangan pemrograman berdurasi intensif untuk memecahkan masalah kompleks berskala nasional menggunakan kecerdasan buatan, web modern, dan cloud. Batch ke-${i+1}.`;
+        prize = `Juara ${i+1}: Rp ${50 - i * 10} Juta + Mentoring Karir`;
+        minMembers = 3;
+        maxMembers = 5;
+        isFree = true;
+      } else {
+        // Science & Business themed templates
+        const titles = [
+          'National Mathematics & Data Olympiad 2026',
+          'Young Business Plan Strategy Summit 2026',
+          'National Scientific Writing Challenge 2026',
+          'Asean Sociopreneur Innovation Pitch 2026',
+          'Climate Change Research Symposium 2026'
+        ];
+        const organizers = ['Ikatan Ilmuwan Data Indonesia', 'HIPMI Youth Association', 'ITS Surabaya Press', 'UNDP Asia Pacific', 'Kementerian LHK RI'];
+        const slugs = ['sains', 'bisnis', 'sains', 'sosial', 'sosial'];
+        
+        title = titles[i % titles.length];
+        organizer = organizers[i % organizers.length];
+        categorySlug = slugs[i % slugs.length];
+        description = `Ajang bergengsi tingkat nasional/regional untuk menguji kemahiran taktis, pemecahan kasus nyata, dan riset ilmiah mendalam di bidang masing-masing. Edisi tahun 2026.`;
+        prize = `Juara ${i+1}: Rp ${20 - i * 4} Juta + Piala Kehormatan`;
+        minMembers = 2;
+        maxMembers = 4;
+        isFree = i % 3 !== 0;
+      }
 
-    if (urlLower.includes('instagram') || urlLower.includes('tiktok') || urlLower.includes('dribbble') || urlLower.includes('behance')) {
-      // Instagram / Social / Design Template
-      template = {
-        title: 'Instagram Creative UI/UX Poster Design Contest 2026',
-        organizer: 'Instagram Creators ID',
-        categorySlug: 'desain',
-        description: 'Tantangan desain poster dan interface media sosial interaktif berskala nasional untuk memperingati hari kreativitas digital. Terbuka bagi seluruh mahasiswa aktif!',
-        prize: 'Juara 1: Rp 10.000.000, Juara 2: Rp 5.000.000, Juara 3: Rp 3.000.000',
-        minMembers: 1,
-        maxMembers: 1,
-        registrationModel: 'hosted',
-        isFree: true,
-        daysOffset: 30
-      };
-    } else if (urlLower.includes('github') || urlLower.includes('devpost') || urlLower.includes('hackathon') || urlLower.includes('hack')) {
-      // Tech Hackathon Template
-      template = {
-        title: 'Global Tech Innovation Hackathon 2026',
-        organizer: 'GitHub Developer Union',
-        categorySlug: 'teknologi',
-        description: 'Tantangan Hackathon Global berdurasi 48 jam penuh untuk memecahkan masalah pemanasan global dan efisiensi energi menggunakan teknologi web app modern dan kecerdasan buatan.',
-        prize: 'Juara 1: Rp 50.000.000 + Trip San Francisco, Juara 2: Rp 25.000.000, Juara 3: Rp 15.000.000',
-        minMembers: 3,
-        maxMembers: 5,
-        registrationModel: 'hosted',
-        isFree: true,
-        daysOffset: 15
-      };
-    } else {
-      // Data Science / General Science Template
-      template = {
-        title: 'National Mathematics & Data Olympiad 2026',
-        organizer: 'Ikatan Ilmuwan Data Indonesia',
-        categorySlug: 'sains',
-        description: 'Olimpiade bergengsi tingkat nasional untuk menguji kemahiran analitis statistika terapan, visualisasi data interaktif, dan pemodelan prediktif machine learning tingkat lanjut.',
-        prize: 'Juara 1: Rp 20.000.000 + Piala Rektor, Juara 2: Rp 10.000.000, Juara 3: Rp 5.000.000',
-        minMembers: 2,
-        maxMembers: 3,
-        registrationModel: 'hosted',
-        isFree: false,
-        daysOffset: 20
-      };
+      // Generate deadline date dynamically
+      const deadlineDate = new Date();
+      deadlineDate.setDate(deadlineDate.getDate() + daysOffset);
+      const deadlineStr = deadlineDate.toISOString().split('T')[0];
+
+      // Check if duplicate title exists in database
+      const dupCheck = await pool.query('SELECT id FROM competitions WHERE LOWER(title) = LOWER($1)', [title]);
+      const isDuplicate = dupCheck.rows.length > 0;
+
+      scrapedItems.push({
+        title,
+        organizer,
+        categorySlug,
+        description,
+        prize,
+        minMembers,
+        maxMembers,
+        registrationModel,
+        isFree,
+        deadline: deadlineStr,
+        sourceUrl: url,
+        isDuplicate
+      });
     }
 
-    // Generate deadline date dynamically
-    const deadlineDate = new Date();
-    deadlineDate.setDate(deadlineDate.getDate() + template.daysOffset);
-    const deadlineStr = deadlineDate.toISOString().split('T')[0];
-
-    // Return high-fidelity prefilled metadata payload
     res.json({
-      message: 'Scraping & Analisis AI Berhasil!',
-      data: {
-        title: template.title,
-        organizer: template.organizer,
-        categorySlug: template.categorySlug,
-        description: template.description,
-        prize: template.prize,
-        minMembers: template.minMembers,
-        maxMembers: template.maxMembers,
-        registrationModel: template.registrationModel,
-        isFree: template.isFree,
-        deadline: deadlineStr,
-        sourceUrl: url
-      }
+      message: `Scraping & Analisis AI Berhasil! Menemukan ${count} kompetisi potensial.`,
+      data: scrapedItems
     });
 
   } catch (err) {

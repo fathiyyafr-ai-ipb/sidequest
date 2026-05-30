@@ -183,7 +183,11 @@ export const api = {
     async getStats() { const res = await _get('/admin/stats'); return res.data; },
     async getData() { const res = await _get('/admin/data'); return res.data; },
     toggleActive(type, id) { return _patch(`/admin/toggle/${type}/${id}`); },
-    async scrape(url) { const res = await _post('/admin/scrape', { url }); return res.data; },
+    async scrape(payload) {
+      const body = typeof payload === 'string' ? { url: payload } : payload;
+      const res = await _post('/admin/scrape', body);
+      return res; // Return raw response containing { message, data }
+    },
     toggleModerator(id) { return _patch(`/admin/super/moderator/${id}/toggle`); },
     updateFeatures(featureKey, activeValue) { return _patch('/admin/super/features', { featureKey, activeValue }); },
     updateMaintenance(enabled) { return _patch('/admin/super/maintenance', { enabled }); },
