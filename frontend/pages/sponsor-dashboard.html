@@ -84,6 +84,13 @@
     ::-webkit-scrollbar-thumb:hover {
       background: rgba(108, 99, 255, 0.4);
     }
+
+    /* Desktop Guard: Force hide the mobile sidebar overlay on screens >= 1024px */
+    @media (min-width: 1024px) {
+      #sidebar-overlay {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col lg:flex-row">
