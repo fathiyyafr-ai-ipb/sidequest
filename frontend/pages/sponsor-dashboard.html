@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Mitra Sponsor Console — SideQuest</title>
+  
+  <!-- Modern Typography & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: "#6C63FF",
+            "primary-dark": "#5A52E0",
+            "primary-light": "#EDE9FF",
+            accent: "#FF6B35",
+            "accent-gold": "#FFB800",
+            "bg-main": "#0B0F19", // Dark mode slate theme for sponsors
+            "slate-surface": "#161F30",
+            "slate-border": "#24324D"
+          },
+          fontFamily: {
+            sans: ["Plus Jakarta Sans", "sans-serif"]
+          },
+          boxShadow: {
+            glow: "0 0 25px rgba(108, 99, 255, 0.35)",
+            accentGlow: "0 0 25px rgba(255, 107, 53, 0.35)"
+          }
+        }
+      }
+    };
+  </script>
+  
+  <style>
+    body {
+      background-color: #0B0F19;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 107, 53, 0.05) 0%, transparent 40%);
+      color: #E2E8F0;
+    }
+
+    /* Glassmorphic Glowing Surfaces */
+    .glass-card {
+      background: rgba(22, 31, 48, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(36, 50, 77, 0.6);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .glass-card:hover {
+      border-color: rgba(108, 99, 255, 0.4);
+      box-shadow: 0 12px 40px 0 rgba(108, 99, 255, 0.15);
+    }
+
+    .form-input {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1.5px solid rgba(36, 50, 77, 0.8);
+      color: #F8FAFC;
+      transition: all 0.3s ease;
+    }
+    .form-input:focus {
+      background: rgba(15, 23, 42, 0.9);
+      border-color: #6C63FF;
+      box-shadow: 0 0 15px rgba(108, 99, 255, 0.25);
+      outline: none;
+    }
+
+    /* Custom Webkit scrollbar for dark portal */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(108, 99, 255, 0.2);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 99, 255, 0.4);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row">
+
+  <!-- Sidebar Overlay for Mobile -->
+  <div id="sidebar-overlay" class="fixed inset-0 bg-slate-950/60 z-30 hidden lg:hidden" onclick="closeSidebar()"></div>
+
+  <!-- ── SIDEBAR PANEL (Premium Dark Glass) ── -->
+  <aside id="sidebar" class="fixed lg:static top-0 bottom-0 left-0 w-72 bg-[#0E1524] z-40 flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0 border-r border-slate-border">
+    <div class="flex items-center gap-3 px-6 py-6 border-b border-slate-border/50">
+      <img src="../assets/logo.png" alt="SideQuest Logo" class="h-8 w-auto object-contain" />
+      <div>
+        <h1 class="text-lg font-800 text-slate-100 tracking-tight leading-none">SideQuest</h1>
+        <span class="text-[10px] font-700 text-accent uppercase tracking-wider">Mitra Kemitraan</span>
+      </div>
+    </div>
+
+    <!-- Active User Profile Card -->
+    <div class="flex items-center gap-3 px-6 py-5 border-b border-slate-border/50 bg-[#121B2C]/40">
+      <div id="sidebar-avatar" class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-extrabold text-sm shadow-md">
+        SP
+      </div>
+      <div class="min-w-0">
+        <p id="sb-user-name" class="text-sm font-700 text-slate-100 leading-tight truncate">Mitra Sponsor</p>
+        <p id="sb-user-role" class="text-[11px] text-accent font-600 mt-0.5" style="text-transform: capitalize;">Sponsor Korporat</p>
+      </div>
+    </div>
+
+    <!-- Navigation Menu links -->
+    <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+      <button onclick="switchTab('overview')" id="btn-tab-overview" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-primary bg-primary/10 border border-primary/20">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        Overview Kampanye
+      </button>
+
+      <button onclick="switchTab('create')" id="btn-tab-create" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Pasang Iklan Baru
+      </button>
+    </nav>
+  </aside>
+
+  <!-- Main Container -->
+  <div class="flex-1 min-w-0 flex flex-col">
+    
+    <!-- Mobile Header -->
+    <header class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-[#0E1524]/90 backdrop-blur-md border-b border-slate-border px-4 py-3 flex items-center justify-between">
+      <button onclick="openSidebar()" class="p-2 rounded-xl hover:bg-slate-800/60 transition-colors">
+        <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <span class="font-extrabold text-slate-100 text-base">Sponsor Portal</span>
+      <div id="mobile-avatar" class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white font-bold text-xs shadow-md">SP</div>
+    </header>
+
+    <!-- Desktop Header -->
+    <header class="hidden lg:flex fixed top-0 right-0 left-72 z-20 bg-[#0B0F19]/95 backdrop-blur-md px-8 py-4.5 border-b border-slate-border/40 items-center justify-between">
+      <div>
+        <h2 id="header-title" class="text-base font-800 text-slate-100 leading-tight">Overview Kampanye</h2>
+        <p id="header-subtitle" class="text-xs text-slate-400 mt-0.5">Analisis performa tayangan iklan dan pemantauan rasio klik sponsor.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 relative group cursor-pointer">
+          <div class="text-right">
+            <p id="desktop-user-name" class="text-xs font-700 text-slate-200 leading-tight">Mitra Sponsor</p>
+            <p id="desktop-company-label" class="text-[10px] text-accent font-600 mt-0.5">Corporate Access</p>
+          </div>
+          <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-bold text-xs shadow-md" id="desktop-avatar">SP</div>
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
+            <path d="M6 9l6 6 6-6" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          
+          <div class="absolute right-0 top-full mt-2 w-40 bg-[#161F30] rounded-xl shadow-2xl border border-slate-border opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 py-1">
+            <div class="p-1.5 flex flex-col gap-1">
+              <a href="#" data-logout class="flex items-center gap-2.5 px-3 py-2 text-xs font-700 text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-lg transition-colors no-underline">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke-linecap="round"/></svg>
+                Keluar Portal
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page Content Container -->
+    <main class="flex-grow pt-16 lg:pt-24 px-4 lg:px-8 pb-12 max-w-6xl w-full mx-auto">
+      
+      <!-- ── SECTION 1: OVERVIEW KAMPANYE ── -->
+      <section id="tab-section-overview" class="space-y-6">
+        
+        <!-- Statistics Deck -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <!-- Total Investment Card -->
+          <div class="glass-card rounded-3xl p-5 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Total Investasi</span>
+              <div class="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-sm">💰</div>
+            </div>
+            <div class="space-y-1">
+              <h3 id="stat-sponsor-cost" class="text-xl font-800 text-slate-100">IDR 0</h3>
+              <p class="text-[9px] text-slate-400 font-500 leading-tight">Total biaya yang dibayarkan untuk seluruh iklan.</p>
+            </div>
+          </div>
+
+          <!-- Total Impressions Card -->
+          <div class="glass-card rounded-3xl p-5 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Penayangan Iklan</span>
+              <div class="w-8 h-8 rounded-xl bg-accent/10 flex items-center justify-center text-accent text-sm">👁️</div>
+            </div>
+            <div class="space-y-1">
+              <h3 id="stat-sponsor-impressions" class="text-xl font-800 text-slate-100">0</h3>
+              <p class="text-[9px] text-slate-400 font-500 leading-tight">Jumlah iklan Anda ditayangkan kepada mahasiswa.</p>
+            </div>
+          </div>
+
+          <!-- Total Clicks Card -->
+          <div class="glass-card rounded-3xl p-5 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Klik Iklan</span>
+              <div class="w-8 h-8 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-500 text-sm">🎯</div>
+            </div>
+            <div class="space-y-1">
+              <h3 id="stat-sponsor-clicks" class="text-xl font-800 text-slate-100">0</h3>
+              <p class="text-[9px] text-slate-400 font-500 leading-tight">Frekuensi penonton mengeklik link target kampanye.</p>
+            </div>
+          </div>
+
+          <!-- Average CTR Card -->
+          <div class="glass-card rounded-3xl p-5 relative overflow-hidden group">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Rasio CTR Rata-Rata</span>
+              <div class="w-8 h-8 rounded-xl bg-green-500/10 flex items-center justify-center text-green-500 text-sm">📈</div>
+            </div>
+            <div class="space-y-1">
+              <h3 id="stat-sponsor-ctr" class="text-xl font-800 text-slate-100">0.00%</h3>
+              <p class="text-[9px] text-slate-400 font-500 leading-tight">Rasio efektivitas klik dibanding total penayangan iklan.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ads Roster Table -->
+        <div class="glass-card rounded-3xl overflow-hidden">
+          <div class="p-5 border-b border-slate-border/50 bg-[#161F30]/30">
+            <h3 class="font-800 text-slate-100 text-sm">🗂️ Roster Kampanye Iklan Sponsor</h3>
+            <p class="text-[10px] text-slate-400 mt-0.5">Daftar performa impressions, clicks, dan total tagihan biaya kampanye.</p>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-border text-slate-400 font-800 bg-[#0E1524]">
+                  <th class="px-6 py-4">Kampanye</th>
+                  <th class="px-6 py-4">Target Penempatan</th>
+                  <th class="px-6 py-4">Tanggal Kampanye</th>
+                  <th class="px-6 py-4 text-right">Biaya Kampanye</th>
+                  <th class="px-6 py-4 text-center">Tayangan</th>
+                  <th class="px-6 py-4 text-center">Klik</th>
+                  <th class="px-6 py-4 text-center">CTR</th>
+                  <th class="px-6 py-4 text-center">Status</th>
+                  <th class="px-6 py-4 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="roster-ads-body" class="divide-y divide-slate-border/40">
+                <!-- Injected dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <div id="roster-empty-state" class="hidden p-12 text-center text-slate-500 text-xs font-600">
+            💤 Anda belum memiliki kampanye iklan aktif. Buka tab "Pasang Iklan Baru" untuk memasang!
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ── SECTION 2: CREATE AD FORM ── -->
+      <section id="tab-section-create" class="space-y-6 hidden">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <!-- Create form card -->
+          <div class="glass-card rounded-3xl p-6 lg:col-span-2 space-y-5">
+            <div>
+              <h3 class="font-800 text-slate-100 text-base">➕ Pasang Kampanye Iklan Baru</h3>
+              <p class="text-xs text-slate-400 mt-0.5">Lengkapi formulir untuk menyiarkan iklan promosi/branding Anda secara instan.</p>
+            </div>
+
+            <form id="form-create-ad" class="space-y-4">
+              <!-- Campaign Title -->
+              <div class="space-y-1.5">
+                <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Judul Kampanye Promosi</label>
+                <input type="text" id="ad-title" required placeholder="Contoh: Pertamina Go-Green Hackathon 2026" class="w-full form-input rounded-2xl px-4 py-3.5 text-xs focus:outline-none"/>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Target URL -->
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Tautan Tujuan (Link Click URL)</label>
+                  <input type="url" id="ad-target-url" required placeholder="Contoh: https://pertamina.com/hackathon" class="w-full form-input rounded-2xl px-4 py-3.5 text-xs focus:outline-none"/>
+                </div>
+
+                <!-- Image URL -->
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Tautan Poster Iklan (Image URL)</label>
+                  <input type="url" id="ad-image-url" required placeholder="Contoh: https://i.imgur.com/image.png" class="w-full form-input rounded-2xl px-4 py-3.5 text-xs focus:outline-none"/>
+                </div>
+              </div>
+
+              <!-- Page Placement Selection -->
+              <div class="space-y-2">
+                <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider block">Target Penempatan Halaman Tampil</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <label class="flex flex-col p-3 rounded-2xl bg-slate-900 border border-slate-border/60 cursor-pointer select-none hover:border-primary/50 transition-colors">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-700 text-slate-300">Dashboard</span>
+                      <input type="checkbox" name="ad-pages" value="dashboard" onchange="runCostSimulation()" class="form-checkbox h-4.5 w-4.5 rounded text-primary focus:ring-primary bg-slate-950 border-slate-700"/>
+                    </div>
+                    <span class="text-[8px] text-slate-500 font-500 mt-2 block" id="sim-rate-dashboard">IDR 15.000 / hari</span>
+                  </label>
+
+                  <label class="flex flex-col p-3 rounded-2xl bg-slate-900 border border-slate-border/60 cursor-pointer select-none hover:border-primary/50 transition-colors">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-700 text-slate-300">Direktori Lomba</span>
+                      <input type="checkbox" name="ad-pages" value="competitions" onchange="runCostSimulation()" class="form-checkbox h-4.5 w-4.5 rounded text-primary focus:ring-primary bg-slate-950 border-slate-700"/>
+                    </div>
+                    <span class="text-[8px] text-slate-500 font-500 mt-2 block" id="sim-rate-competitions">IDR 10.000 / hari</span>
+                  </label>
+
+                  <label class="flex flex-col p-3 rounded-2xl bg-slate-900 border border-slate-border/60 cursor-pointer select-none hover:border-primary/50 transition-colors">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-700 text-slate-300">Matchmaking AI</span>
+                      <input type="checkbox" name="ad-pages" value="matchmaking" onchange="runCostSimulation()" class="form-checkbox h-4.5 w-4.5 rounded text-primary focus:ring-primary bg-slate-950 border-slate-700"/>
+                    </div>
+                    <span class="text-[8px] text-slate-500 font-500 mt-2 block" id="sim-rate-matchmaking">IDR 12.000 / hari</span>
+                  </label>
+
+                  <label class="flex flex-col p-3 rounded-2xl bg-slate-900 border border-slate-border/60 cursor-pointer select-none hover:border-primary/50 transition-colors">
+                    <div class="flex items-center justify-between">
+                      <span class="text-[10px] font-700 text-slate-300">Cari Tim</span>
+                      <input type="checkbox" name="ad-pages" value="teams" onchange="runCostSimulation()" class="form-checkbox h-4.5 w-4.5 rounded text-primary focus:ring-primary bg-slate-950 border-slate-700"/>
+                    </div>
+                    <span class="text-[8px] text-slate-500 font-500 mt-2 block" id="sim-rate-teams">IDR 8.000 / hari</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <!-- Start Date -->
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Tanggal Mulai Kampanye</label>
+                  <input type="date" id="ad-start-date" required onchange="runCostSimulation()" class="w-full form-input rounded-2xl px-4 py-3.5 text-xs focus:outline-none"/>
+                </div>
+
+                <!-- End Date -->
+                <div class="space-y-1.5">
+                  <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Tanggal Selesai Kampanye</label>
+                  <input type="date" id="ad-end-date" required onchange="runCostSimulation()" class="w-full form-input rounded-2xl px-4 py-3.5 text-xs focus:outline-none"/>
+                </div>
+              </div>
+
+              <button type="submit" class="w-full py-4 rounded-2xl bg-primary hover:bg-primary-dark text-white font-800 text-xs transition-all shadow-glow flex items-center justify-center gap-2">
+                <span>⚡ Daftarkan Kampanye Sponsor</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Realtime Cost Simulator widget -->
+          <div class="glass-card rounded-3xl p-6 space-y-6">
+            <div>
+              <h3 class="font-800 text-slate-100 text-sm">📊 Simulator Biaya Real-time</h3>
+              <p class="text-[10px] text-slate-400 mt-0.5">Estimasi biaya kampanye iklan berdasarkan setelan yang Anda tentukan.</p>
+            </div>
+
+            <div class="space-y-4">
+              <div class="flex justify-between items-center py-2.5 border-b border-slate-border/40 text-xs">
+                <span class="font-700 text-slate-400">Total Durasi</span>
+                <span class="font-800 text-slate-200" id="sim-duration">0 Hari</span>
+              </div>
+              <div class="flex justify-between items-center py-2.5 border-b border-slate-border/40 text-xs">
+                <span class="font-700 text-slate-400">Tarif Harian Total</span>
+                <span class="font-800 text-slate-200" id="sim-rate-total">IDR 0 / hari</span>
+              </div>
+              <div class="flex justify-between items-center py-2.5 border-b border-slate-border/40 text-xs">
+                <span class="font-700 text-slate-400">Harga Berlaku (SLA)</span>
+                <span class="font-800 text-accent" id="sim-pricing-sla">Rates Seeded</span>
+              </div>
+              
+              <!-- Total glow calculation -->
+              <div class="bg-primary/5 border border-primary/20 rounded-2xl p-4.5 text-center shadow-inner space-y-1">
+                <span class="text-[9px] font-800 text-slate-400 uppercase tracking-wider">Estimasi Total Tagihan</span>
+                <h2 class="text-2xl font-800 text-slate-100 text-shadow-glow" id="sim-total-cost">IDR 0</h2>
+                <span class="text-[8px] text-slate-500 font-600 block">Dihitung otomatis di backend sesuai effective-date.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- ── MODAL: CAMPAIGN LOGS AUDIT MODAL ── -->
+  <div id="cost-logs-modal" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#161F30] rounded-3xl p-6 max-w-lg w-full border border-slate-border shadow-2xl relative space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-border/50">
+        <div>
+          <h3 class="font-800 text-slate-100 text-sm">🛡️ Riwayat Penyesuaian Biaya (Audit Log)</h3>
+          <p class="text-[9px] text-slate-400 mt-0.5">Catatan transparan modifikasi tagihan kampanye oleh administrator.</p>
+        </div>
+        <button onclick="closeCostLogsModal()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors flex items-center justify-center text-slate-400 hover:text-slate-200 font-bold">&times;</button>
+      </div>
+
+      <div class="max-h-60 overflow-y-auto space-y-3" id="cost-logs-list">
+        <!-- Log entries populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ── JAVASCRIPT LOGIC (ES MODULE) ── -->
+  <script type="module">
+    import { api, ui, handleApiError, token, currentUser } from '../js/api.js';
+    import { requireAuth, initSession, bindLogout } from '../js/auth.js';
+
+    let myCampaigns = [];
+    let pricingRates = {}; // Cached rates for simulator
+
+    // Sidebar controls
+    window.openSidebar = () => {
+      document.getElementById('sidebar').classList.remove('-translate-x-full');
+      document.getElementById('sidebar-overlay').classList.remove('hidden');
+    };
+    window.closeSidebar = () => {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebar-overlay').classList.add('hidden');
+    };
+
+    // Tab switches
+    window.switchTab = (tabId) => {
+      // Hide sections
+      document.getElementById('tab-section-overview').classList.add('hidden');
+      document.getElementById('tab-section-create').classList.add('hidden');
+
+      // Reset buttons
+      document.querySelectorAll('aside nav button').forEach(b => {
+        b.className = "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 border border-transparent";
+      });
+
+      // Show section & highlight button
+      document.getElementById(`tab-section-${tabId}`).classList.remove('hidden');
+      const activeBtn = document.getElementById(`btn-tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-primary bg-primary/10 border border-primary/20";
+      }
+
+      // Update headers
+      const titles = {
+        overview: ["Overview Kampanye", "Analisis performa tayangan iklan dan pemantauan rasio klik sponsor."],
+        create: ["Pasang Iklan Baru", "Lengkapi formulir untuk menyiarkan iklan promosi/branding Anda secara instan."]
+      };
+      document.getElementById('header-title').textContent = titles[tabId][0];
+      document.getElementById('header-subtitle').textContent = titles[tabId][1];
+      window.closeSidebar();
+    };
+
+    // DOM Loaded Initialization
+    document.addEventListener('DOMContentLoaded', async () => {
+      if (!requireAuth()) return;
+      const profile = await initSession();
+
+      if (!profile || profile.role !== 'sponsor') {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // Fill user labels
+      document.getElementById('sb-user-name').textContent = profile.name;
+      document.getElementById('desktop-user-name').textContent = profile.name;
+      document.getElementById('desktop-company-label').textContent = profile.university || 'Corporate Partner';
+
+      const initials = profile.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('sidebar-avatar').textContent = initials;
+      document.getElementById('desktop-avatar').textContent = initials;
+      if (document.getElementById('mobile-avatar')) document.getElementById('mobile-avatar').textContent = initials;
+
+      // Set standard date inputs default values for create tab
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('ad-start-date').min = today;
+      document.getElementById('ad-start-date').value = today;
+      
+      const nextWeek = new Date();
+      nextWeek.setDate(nextWeek.getDate() + 7);
+      document.getElementById('ad-end-date').min = today;
+      document.getElementById('ad-end-date').value = nextWeek.toISOString().split('T')[0];
+
+      // Load data
+      await loadSponsorData();
+      
+      // Seed initial pricing for simulator
+      await queryPricingRates();
+    });
+
+    // Fetch and populate sponsor portal data
+    async function loadSponsorData() {
+      ui.loading(true);
+      try {
+        const adsRes = await api.sponsor.getMyAds();
+        myCampaigns = adsRes;
+
+        renderStatsDeck(adsRes);
+        renderCampaignsTable(adsRes);
+      } catch (err) {
+        handleApiError(err, 'Gagal memuat kampanye sponsor.');
+      } finally {
+        ui.loading(false);
+      }
+    }
+
+    // Render metrics stats totals
+    function renderStatsDeck(ads) {
+      let totalCost = 0;
+      let totalImpressions = 0;
+      let totalClicks = 0;
+
+      ads.forEach(ad => {
+        totalCost += parseFloat(ad.total_cost);
+        totalImpressions += parseInt(ad.impressions || 0, 10);
+        totalClicks += parseInt(ad.clicks || 0, 10);
+      });
+
+      const ctr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : '0.00';
+
+      document.getElementById('stat-sponsor-cost').textContent = `IDR ${totalCost.toLocaleString('id-ID')}`;
+      document.getElementById('stat-sponsor-impressions').textContent = totalImpressions.toLocaleString('id-ID');
+      document.getElementById('stat-sponsor-clicks').textContent = totalClicks.toLocaleString('id-ID');
+      document.getElementById('stat-sponsor-ctr').textContent = `${ctr}%`;
+    }
+
+    // Render roster table list of ads
+    function renderCampaignsTable(ads) {
+      const tbody = document.getElementById('roster-ads-body');
+      const emptyState = document.getElementById('roster-empty-state');
+
+      if (!ads || ads.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      tbody.innerHTML = ads.map(ad => {
+        const start = new Date(ad.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        const end = new Date(ad.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        
+        const costVal = parseFloat(ad.total_cost);
+        const imps = parseInt(ad.impressions || 0, 10);
+        const clicks = parseInt(ad.clicks || 0, 10);
+        const ctr = imps > 0 ? ((clicks / imps) * 100).toFixed(2) : '0.00';
+
+        const hasLogs = ad.modification_logs && ad.modification_logs.length > 0;
+        const modifiedIndicator = hasLogs 
+          ? `<div class="text-[8px] text-amber-500 font-bold tracking-wider mt-1 animate-pulse">🔧 MODIFIKASI ADMIN</div>` 
+          : '';
+
+        const actionBtn = hasLogs
+          ? `<button onclick="viewCostLogs(${ad.id})" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-700 text-[9px] rounded-lg transition-colors border border-slate-700">Audit Log 🛡️</button>`
+          : `<span class="text-slate-600 font-500 text-[10px]">-</span>`;
+
+        return `
+          <tr class="hover:bg-[#121B2C]/30 transition-colors">
+            <td class="px-6 py-4 font-700 text-slate-100">
+              ${ad.title}
+              <div class="text-[9px] text-slate-500 mt-1 font-500 truncate max-w-xs">${ad.target_url}</div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-wrap gap-1">
+                ${ad.pages.map(p => `<span class="px-2 py-0.5 rounded-lg text-[8px] font-800 uppercase tracking-wide bg-primary/10 border border-primary/20 text-primary">${p}</span>`).join('')}
+              </div>
+            </td>
+            <td class="px-6 py-4 text-slate-400 font-600 whitespace-nowrap">
+              ${start} - ${end}
+            </td>
+            <td class="px-6 py-4 text-right font-800 text-slate-200 whitespace-nowrap">
+              IDR ${costVal.toLocaleString('id-ID')}
+              ${modifiedIndicator}
+            </td>
+            <td class="px-6 py-4 text-center text-slate-300 font-700">${imps.toLocaleString('id-ID')}</td>
+            <td class="px-6 py-4 text-center text-slate-300 font-700">${clicks.toLocaleString('id-ID')}</td>
+            <td class="px-6 py-4 text-center text-green-400 font-800">${ctr}%</td>
+            <td class="px-6 py-4 text-center">
+              <span class="px-2 py-0.5 rounded-full text-[9px] font-800 uppercase ${ad.is_active ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-red-500/10 text-red-400 border border-red-500/20'}">
+                ${ad.is_active ? 'Active' : 'Suspended'}
+              </span>
+            </td>
+            <td class="px-6 py-4 text-center">
+              ${actionBtn}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Query current date effective pricing rates
+    async function queryPricingRates() {
+      const dateVal = document.getElementById('ad-start-date').value;
+      try {
+        const res = await api.sponsor.getPricing(dateVal);
+        pricingRates = res.rates;
+
+        // Populate rate visual hints under checkboxes
+        document.getElementById('sim-rate-dashboard').textContent = `IDR ${parseFloat(res.rates.dashboard).toLocaleString('id-ID')} / hari`;
+        document.getElementById('sim-rate-competitions').textContent = `IDR ${parseFloat(res.rates.competitions).toLocaleString('id-ID')} / hari`;
+        document.getElementById('sim-rate-matchmaking').textContent = `IDR ${parseFloat(res.rates.matchmaking).toLocaleString('id-ID')} / hari`;
+        document.getElementById('sim-rate-teams').textContent = `IDR ${parseFloat(res.rates.teams).toLocaleString('id-ID')} / hari`;
+
+        document.getElementById('sim-pricing-sla').textContent = `Rates Ok (${dateVal})`;
+        document.getElementById('sim-pricing-sla').className = 'font-800 text-green-400';
+      } catch (err) {
+        console.error('Failed to query pricing rates', err);
+        document.getElementById('sim-pricing-sla').textContent = 'Error Loading Rates';
+        document.getElementById('sim-pricing-sla').className = 'font-800 text-red-500';
+      }
+    }
+
+    // Run dynamic cost simulation
+    window.runCostSimulation = async () => {
+      const startInput = document.getElementById('ad-start-date').value;
+      const endInput = document.getElementById('ad-end-date').value;
+
+      if (!startInput || !endInput) return;
+
+      // Query price rates for the updated start date if changed
+      await queryPricingRates();
+
+      const start = new Date(startInput);
+      const end = new Date(endInput);
+
+      if (start > end) {
+        document.getElementById('sim-duration').textContent = 'Invalid Range';
+        document.getElementById('sim-total-cost').textContent = 'IDR -';
+        return;
+      }
+
+      const duration = Math.round((end - start) / (1000 * 60 * 60 * 24)) + 1;
+      document.getElementById('sim-duration').textContent = `${duration} Hari`;
+
+      // Sum active checkboxes
+      let dailyTotal = 0;
+      const checkboxes = document.querySelectorAll('input[name="ad-pages"]:checked');
+      checkboxes.forEach(c => {
+        dailyTotal += pricingRates[c.value] || 0;
+      });
+
+      document.getElementById('sim-rate-total').textContent = `IDR ${dailyTotal.toLocaleString('id-ID')} / hari`;
+
+      const totalCost = dailyTotal * duration;
+      document.getElementById('sim-total-cost').textContent = `IDR ${totalCost.toLocaleString('id-ID')}`;
+    };
+
+    // Handle Create Ad Submit campaign
+    document.getElementById('form-create-ad').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('ad-title').value.trim();
+      const targetUrl = document.getElementById('ad-target-url').value.trim();
+      const imageUrl = document.getElementById('ad-image-url').value.trim();
+      const startDate = document.getElementById('ad-start-date').value;
+      const endDate = document.getElementById('ad-end-date').value;
+
+      const pages = [];
+      document.querySelectorAll('input[name="ad-pages"]:checked').forEach(c => {
+        pages.push(c.value);
+      });
+
+      if (pages.length === 0) {
+        ui.toast('Gagal: Pilih minimal satu target penempatan halaman iklan!', 'warning');
+        return;
+      }
+
+      try {
+        ui.loading(true);
+        const res = await api.sponsor.createAd({
+          title,
+          target_url: targetUrl,
+          image_url: imageUrl,
+          pages,
+          start_date: startDate,
+          end_date: endDate
+        });
+
+        ui.toast(`✅ Kampanye "${title}" berhasil terpasang!`, 'success');
+        
+        // Reset form
+        document.getElementById('form-create-ad').reset();
+        
+        // Refresh overview
+        await loadSponsorData();
+        
+        // Return to overview tab
+        switchTab('overview');
+      } catch (err) {
+        handleApiError(err, 'Gagal membuat kampanye iklan baru.');
+      } finally {
+        ui.loading(false);
+      }
+    });
+
+    // View cost logs logs history audit
+    window.viewCostLogs = async (adId) => {
+      ui.loading(true);
+      try {
+        const logs = await api.admin.getAdCostLogs(adId);
+        
+        const listContainer = document.getElementById('cost-logs-list');
+        if (!logs || logs.length === 0) {
+          listContainer.innerHTML = `<p class="text-slate-500 text-xs font-600 text-center py-6">Belum ada riwayat penyesuaian biaya untuk iklan ini.</p>`;
+        } else {
+          listContainer.innerHTML = logs.map(l => {
+            const timeStr = new Date(l.modified_at).toLocaleDateString('id-ID', {
+              day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+            const oldVal = parseFloat(l.old_cost);
+            const newVal = parseFloat(l.new_cost);
+
+            return `
+              <div class="bg-slate-900 border border-slate-border/50 rounded-2xl p-4.5 space-y-2 text-xs">
+                <div class="flex justify-between items-center text-[10px] font-800 text-slate-400">
+                  <span>📅 ${timeStr}</span>
+                  <span class="text-primary uppercase tracking-wider">Oleh: ${l.modifier_name || 'Staff'}</span>
+                </div>
+                <div class="flex justify-between items-baseline pt-1">
+                  <div>
+                    <span class="text-[9px] text-slate-500 font-700 block">Biaya Sebelumnya</span>
+                    <span class="text-slate-400 font-600 line-through">IDR ${oldVal.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-[9px] text-slate-500 font-700 block">Biaya Penyesuaian Baru</span>
+                    <span class="text-accent font-800 text-sm">IDR ${newVal.toLocaleString('id-ID')}</span>
+                  </div>
+                </div>
+                <div class="pt-2 border-t border-slate-border/30 text-slate-300 font-600 leading-normal">
+                  📢 <strong class="text-slate-400">Alasan:</strong> "${l.reason || 'Disesuaikan oleh administrator'}"
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        // Show modal
+        document.getElementById('cost-logs-modal').classList.remove('hidden');
+
+      } catch (err) {
+        handleApiError(err, 'Gagal mengambil log penyesuaian biaya.');
+      } finally {
+        ui.loading(false);
+      }
+    };
+
+    window.closeCostLogsModal = () => {
+      document.getElementById('cost-logs-modal').classList.add('hidden');
+    };
+
+  </script>
+</body>
+</html>

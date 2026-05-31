@@ -192,6 +192,21 @@ export const api = {
     updateFeatures(featureKey, activeValue) { return _patch('/admin/super/features', { featureKey, activeValue }); },
     updateMaintenance(enabled) { return _patch('/admin/super/maintenance', { enabled }); },
     approveOrganizer(id) { return _patch(`/admin/approve-organizer/${id}`); },
+    inviteSponsor(payload) { return _post('/admin/invite-sponsor', payload); },
+    async getSponsorships() { const res = await _get('/admin/sponsorships'); return res.data; },
+    toggleAd(id) { return _patch(`/admin/sponsorships/${id}/toggle`); },
+    updateAdCost(id, payload) { return _patch(`/admin/sponsorships/${id}/cost`, payload); },
+    updatePricingRate(payload) { return _post('/admin/sponsorship-pricing', payload); },
+    async getAdCostLogs(id) { const res = await _get(`/admin/sponsorships/${id}/logs`); return res.data; },
+  },
+
+  sponsor: {
+    async createAd(payload) { const res = await _post('/sponsor/ads', payload); return res; },
+    async getMyAds() { const res = await _get('/sponsor/ads'); return res.data; },
+    async getPricing(dateStr = '') { const res = await _get(`/sponsor/pricing?date=${dateStr}`); return res.data; },
+    async getActiveAd(page) { const res = await _get(`/sponsor/active-ads?page=${page}`); return res.data; },
+    trackImpression(adIds) { return _post('/sponsor/ads/impression', { adIds }); },
+    trackClick(id) { return _post(`/sponsor/ads/${id}/click`); }
   },
 };
 
@@ -379,4 +394,102 @@ export function handleApiError(err, fallback = 'Terjadi kesalahan. Coba lagi.') 
   console.error('[API]', err);
   ui.toast(err?.message || fallback, 'error');
   return null;
+}
+
+export async function renderSponsorshipAd(pageKey, containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  try {
+    const res = await api.sponsor.getActiveAd(pageKey);
+    const adData = res; // getActiveAd returns { data: ... } or just the active ad object directly.
+    
+    // We make the container visible first
+    container.classList.remove('hidden');
+
+    if (adData) {
+      // Setup dynamic sponsorship campaign UI with CTR tracking
+      container.innerHTML = `
+        <div class="relative overflow-hidden rounded-2xl border border-gray-100 bg-white/75 backdrop-blur-md shadow-card transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5">
+          <!-- Ad Badge -->
+          <div class="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-black/45 px-2.5 py-0.5 text-[9px] font-800 tracking-wider uppercase text-white backdrop-blur-sm shadow-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            Sponsor
+          </div>
+          
+          <a id="sponsor-ad-link-${adData.id}" href="${adData.target_url}" target="_blank" class="block no-underline group">
+            <div class="flex flex-col md:flex-row items-center gap-4 p-4 md:p-5">
+              <!-- Ad Image -->
+              <div class="w-full md:w-44 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 relative">
+                <img src="${adData.image_url}" alt="${adData.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              </div>
+              <!-- Ad Details -->
+              <div class="flex-1 text-center md:text-left min-w-0">
+                <h3 class="font-800 text-gray-800 text-sm md:text-base leading-snug mb-1 truncate">${adData.title}</h3>
+                <p class="text-xs text-gray-500 leading-relaxed mb-3 truncate">${adData.target_url}</p>
+                <div class="inline-flex items-center gap-1.5 text-xs font-700 text-primary hover:text-primary-dark transition-colors">
+                  Kunjungi Website <span class="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `;
+
+      // Track impression asynchronously in background
+      try {
+        await api.sponsor.trackImpression([adData.id]);
+      } catch (err) {
+        console.warn('Failed to track impression:', err);
+      }
+
+      // Bind click tracker on the anchor
+      const adLink = document.getElementById(`sponsor-ad-link-${adData.id}`);
+      if (adLink) {
+        adLink.onclick = async () => {
+          try {
+            await api.sponsor.trackClick(adData.id);
+          } catch (err) {
+            console.warn('Failed to track click:', err);
+          }
+        };
+      }
+    } else {
+      // Render fallback internal SideQuest promo card
+      const fallbackTitle = "Tingkatkan Peluang Menangmu dengan Sidekick AI! 🤖";
+      const fallbackDesc = "Analisis peluang kemenangan tim-mu secara instan, latih presentasi pitch deck, dan rancang strategi kompetisi dengan bantuan model kecerdasan buatan cerdas khusus mahasiswa.";
+      
+      container.innerHTML = `
+        <div class="relative overflow-hidden rounded-2xl border border-primary/10 bg-gradient-to-br from-primary/5 via-white to-purple-50/50 backdrop-blur-md shadow-card transition-all duration-300 hover:shadow-card-hover hover:-translate-y-0.5">
+          <!-- Promo Badge -->
+          <div class="absolute right-3 top-3 z-10 flex items-center gap-1 rounded-full bg-primary/10 border border-primary/20 px-2.5 py-0.5 text-[9px] font-800 tracking-wider uppercase text-primary backdrop-blur-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+            PROMO
+          </div>
+          
+          <a href="matchmaking.html" class="block no-underline group">
+            <div class="flex flex-col md:flex-row items-center gap-4 p-4 md:p-5">
+              <!-- Illustrative Box with Gradient -->
+              <div class="w-full md:w-44 h-28 flex-shrink-0 rounded-xl overflow-hidden bg-gradient-to-br from-primary to-purple-500 flex flex-col items-center justify-center text-white relative shadow-sm">
+                <span class="text-4xl">🚀</span>
+                <span class="text-[9px] font-800 uppercase tracking-widest mt-1.5 opacity-90">Sidekick AI</span>
+                <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-white/10 rounded-full"></div>
+              </div>
+              <!-- Details -->
+              <div class="flex-1 text-center md:text-left min-w-0">
+                <h3 class="font-800 text-gray-800 text-sm md:text-base leading-snug mb-1">${fallbackTitle}</h3>
+                <p class="text-xs text-gray-500 leading-relaxed mb-3 line-clamp-2">${fallbackDesc}</p>
+                <div class="inline-flex items-center gap-1.5 text-xs font-700 text-primary hover:text-primary-dark transition-colors">
+                  Coba Sekarang <span class="transition-transform duration-300 group-hover:translate-x-0.5">→</span>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      `;
+    }
+  } catch (err) {
+    console.error('Error rendering sponsorship ad:', err);
+    container.classList.add('hidden');
+  }
 }

@@ -224,6 +224,9 @@
         </div>
       </div>
 
+      <!-- ── Sponsorship Banner Widget ── -->
+      <div id="sponsorship-banner" class="mb-6 hidden"></div>
+
       <!-- ── Tim Saya & Rekrutmen Widget ── -->
       <div id="widget-my-team" class="mb-6"></div>
 
@@ -425,7 +428,7 @@
   </nav>
 
   <script type="module">
-    import { api, ui, handleApiError, token } from '../js/api.js';
+    import { api, ui, handleApiError, token, renderSponsorshipAd } from '../js/api.js';
     import { initSession, bindLogout } from '../js/auth.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -437,6 +440,7 @@
           window.renderDashboard(u);
         }
         await loadMyTeamWidget();
+        await renderSponsorshipAd('dashboard', 'sponsorship-banner');
         await updateNotificationState();
       }
     });

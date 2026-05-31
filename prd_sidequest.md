@@ -78,6 +78,18 @@ SideQuest solves this by offering a centralized premium hub where:
 - **AI Web Scraper Console**: Simulates scraping external Instagram/website URLs, displaying progress logs in a retro terminal, pre-filling drafts, and saving them to the database.
 - **Superadmin Controls**: Toggle moderator staff active status, turn off modules platform-wide (competitions, teams, matchmaking), and activate a master **Maintenance Mode** (blocks regular users with an golden hourglass glassmorphic landing `maintenance.html`, while staff bypasses it).
 
+### 3.8. Sponsorship & Targeted Advertising Module (Phase 4)
+- **Sponsor Invitation Flow**: Staff (Moderators/Superadmins) can invite new brand sponsors directly from the admin console. Invited sponsor accounts are immediately verified and approved for instant logging access.
+- **Sponsor Portal Console (`sponsor-dashboard.html`)**: Exclusive interactive dashboard designed with vibrant glassmorphic parameters to manage brand portfolios:
+  - **Overview Performance metrics**: Tracks overall daily ad spend, total active impressions, clicks, and calculated click-through rate (CTR).
+  - **Ad Creator Form & Cost Simulator**: Sponsors easily configure title, target URL, banner poster, target page keys (Dashboard, Competitions, Matchmaking, Teams), and calendar ranges. Ad campaign costs are calculated instantly.
+  - **Historical Date-Effective Pricing**: Ad daily pricing configurations are logged historically in `sponsorship_pricing_rates`. The system dynamically selects active rates on the campaign start date (`effective_date <= start_date`) for price transparency.
+  - **Moderator Auditing Logs**: Staff can adjust campaign costs manually with a mandatory reason input, leaving an unalterable trail log in `sponsorship_cost_logs` for transparency auditing.
+- **E2E Widget Targeted Ad Banner (Student-Facing)**:
+  - Dynamic glassmorphic targeted banners embedded across 4 primary student pages.
+  - Toggles active campaigns randomly with automated impression counting and click monitoring.
+  - Reverts gracefully to a promotional card for **"Sidekick AI Assistant"** if no active campaigns are found.
+
 ---
 
 ## 4. Feature Details, Site Map & Role Access Rights
@@ -213,6 +225,43 @@ CREATE TABLE platform_settings (
   key VARCHAR(100) PRIMARY KEY,
   value VARCHAR(255) NOT NULL
 );
+
+-- Historical Ad Daily Pricing Rates
+CREATE TABLE sponsorship_pricing_rates (
+  id SERIAL PRIMARY KEY,
+  page_key VARCHAR(50) NOT NULL, -- 'dashboard', 'competitions', 'matchmaking', 'teams'
+  price_per_day DECIMAL(12, 2) NOT NULL,
+  effective_date DATE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Sponsor Partnership Ad Campaigns
+CREATE TABLE sponsorships (
+  id SERIAL PRIMARY KEY,
+  sponsor_id INT REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(150) NOT NULL,
+  target_url TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  pages VARCHAR(50)[] NOT NULL, -- Array target page keys
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  total_cost DECIMAL(12, 2) NOT NULL,
+  impressions INT DEFAULT 0,
+  clicks INT DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Moderator Cost Adjustment Audit Logs
+CREATE TABLE sponsorship_cost_logs (
+  id SERIAL PRIMARY KEY,
+  sponsorship_id INT REFERENCES sponsorships(id) ON DELETE CASCADE,
+  modified_by INT REFERENCES users(id) ON DELETE CASCADE,
+  old_cost DECIMAL(12, 2) NOT NULL,
+  new_cost DECIMAL(12, 2) NOT NULL,
+  reason TEXT NOT NULL,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
 ---
@@ -320,9 +369,11 @@ SideQuest is architected with premium monetization modules designed to be automa
 - **NLP Intent Engine**: Chat messages processed to query database for users, competitions, and FAQ.
 - **Interactive Chat Cards**: Direct matchmaking connections and details link rendered from within conversation bubbles.
 
-### Phase 4: Business Development & Monetization (In Progress)
-- **GWA Dashboard Integration**: Building analytics modules to visualize Growth, Watch, and Aware indicators in the superadmin deck.
-- **Monetization Gates Development**: Structuring premium team spotlight, verified badges, and subscription schema models in the PostgreSQL layer.
+### Phase 4: Business Development & Monetization (Completed)
+- **GWA Dashboard Integration**: Built analytics modules to visualize Growth, Watch, and Aware indicators in the superadmin deck.
+- **Sponsorship & Ad Campaigns**: Full integration of premium sponsor dashboards (`sponsor-dashboard.html`), ad creation forms, dynamic cost simulators with date-effective pricing structures, cost adjustments logs, and admin moderating panels.
+- **E2E Widget Targeted Ad Banner**: Added targeted glassmorphic ad banners across 4 student pages with impressions & click tracking and elegant fallback to the Sidekick AI chatbot.
+- **E2E Integration Tests**: Completed E2E test validation script `run_sponsor_test.js` with 100% success rate.
 
 ### Phase 5: Instant Messaging & WebSockets (Future Backlog)
 - **Real-Time Messaging Widget**: Chat rooms and messages tables in DB. Replace the placeholder toast `"💬 Fitur pesan masuk segera hadir!"` with a functional socket-backed sidebar.

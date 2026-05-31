@@ -205,10 +205,10 @@
         <button onclick="setMatchChip(this,'public-speaking')"
           class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Public
           Speaking</button>
-        <button onclick="setMatchChip(this,'sains-riset')"
-          class="match-chip chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sains
-          & Riset</button>
       </div>
+
+      <!-- ── Sponsorship Banner Widget ── -->
+      <div id="sponsorship-banner" class="mb-4 hidden"></div>
 
       <!-- Toolbar count -->
       <div class="flex items-center justify-between mb-4">
@@ -309,7 +309,7 @@
   </nav>
 
   <script type="module">
-    import { api, ui, handleApiError, token } from '../js/api.js';
+    import { api, ui, handleApiError, token, renderSponsorshipAd } from '../js/api.js';
     import { initSession, bindLogout } from '../js/auth.js';
 
     let currentCategory = 'all';
@@ -321,6 +321,7 @@
       if (u) {
         // Muat daftar matchmaking pertama kali
         await loadMatchmaking('all');
+        await renderSponsorshipAd('matchmaking', 'sponsorship-banner');
         await updateNotificationState();
       }
     });

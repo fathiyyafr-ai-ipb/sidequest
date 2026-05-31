@@ -154,8 +154,12 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     const resData = await api.auth.login(email, password);
     ui.toast('✅ Login berhasil! Mengalihkan…', 'success');
     setTimeout(() => {
-      if (resData.user && resData.user.role === 'organizer') {
+      if (resData.user && (resData.user.role === 'superadmin' || resData.user.role === 'moderator')) {
+        window.location.href = 'admin-dashboard.html';
+      } else if (resData.user && resData.user.role === 'organizer') {
         window.location.href = 'organizer-dashboard.html';
+      } else if (resData.user && resData.user.role === 'sponsor') {
+        window.location.href = 'sponsor-dashboard.html';
       } else {
         window.location.href = 'dashboard.html';
       }

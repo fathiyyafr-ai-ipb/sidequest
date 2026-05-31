@@ -19,6 +19,8 @@ export function requireGuest() {
       window.location.href = '../pages/admin-dashboard.html';
     } else if (user && user.role === 'organizer') {
       window.location.href = '../pages/organizer-dashboard.html';
+    } else if (user && user.role === 'sponsor') {
+      window.location.href = '../pages/sponsor-dashboard.html';
     } else {
       window.location.href = '../pages/dashboard.html';
     }
@@ -46,6 +48,13 @@ export async function initSession() {
     return null;
   }
   
+  // Auto redirect sponsor from standard participant pages
+  if (user && user.role === 'sponsor' && 
+      !window.location.pathname.includes('sponsor-dashboard')) {
+    window.location.href = '../pages/sponsor-dashboard.html';
+    return null;
+  }
+  
   ui.fillSidebarUser();          // immediate from cache
   ui.updateNotifBadge();         // badge in background
   bindLogout();
@@ -63,6 +72,12 @@ export async function initSession() {
         !window.location.pathname.includes('organizer-dashboard') && 
         !window.location.pathname.includes('posting-lomba')) {
       window.location.href = '../pages/organizer-dashboard.html';
+      return null;
+    }
+    
+    if (profile && profile.role === 'sponsor' && 
+        !window.location.pathname.includes('sponsor-dashboard')) {
+      window.location.href = '../pages/sponsor-dashboard.html';
       return null;
     }
     

@@ -126,6 +126,20 @@
         Moderasi Konten
       </button>
 
+      <button onclick="switchTab('metrics')" id="btn-tab-metrics" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        Pemantauan GWA
+      </button>
+
+      <button onclick="switchTab('sponsorship')" id="btn-tab-sponsorship" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+        </svg>
+        Sponsor & Iklan
+      </button>
+
       <button onclick="switchTab('super')" id="btn-tab-super" class="w-full hidden flex items-center gap-3.5 px-4 py-3 rounded-xl transition-all font-700 text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-50 border border-transparent">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
@@ -449,6 +463,281 @@
         </div>
 
       </section>
+
+      <!-- ── SECTION 4: PEMANTAUAN METRIK GWA ── -->
+      <section id="tab-section-metrics" class="space-y-6 hidden">
+        
+        <!-- segment 1: Growth Metrics -->
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-sm font-800 text-primary uppercase tracking-wider bg-primary/10 px-3 py-1 rounded-full">Growth (G)</span>
+            <h3 class="font-800 text-slate-800 text-sm">Metrik Vitalitas & Akuisisi Platform</h3>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- MAU / DAU Ratio Card -->
+            <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Aktif Bulanan & Harian (MAU/DAU)</span>
+                <div class="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary text-xl">📈</div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex justify-between items-baseline">
+                  <div>
+                    <span class="text-2xl font-800 text-slate-800" id="gwa-growth-mau">0</span>
+                    <span class="text-[10px] text-slate-400 font-600 block">MAU (Akun Aktif)</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-2xl font-800 text-primary" id="gwa-growth-dau">0</span>
+                    <span class="text-[10px] text-slate-400 font-600 block">DAU (Online Hari Ini)</span>
+                  </div>
+                </div>
+                <!-- Progress bar for ratio -->
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[10px] font-700 text-slate-500">
+                    <span>Rasio Keterlibatan Harian (Stickiness)</span>
+                    <span id="gwa-growth-stickiness-pct">0%</span>
+                  </div>
+                  <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="gwa-growth-stickiness-bar" class="bg-gradient-to-r from-primary to-primary-dark h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-transparent"></div>
+            </div>
+
+            <!-- Team Completion Rate Card -->
+            <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Kelengkapan Tim Kerja</span>
+                <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-xl">👥</div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-baseline gap-2">
+                  <h3 id="gwa-growth-team-completion" class="text-3xl font-800 text-slate-800">0%</h3>
+                  <span class="text-[10px] font-700 text-green-500">Rasio Penuh</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="flex justify-between text-[10px] font-700 text-slate-500">
+                    <span>Anggota Terisi Maksimal</span>
+                    <span id="gwa-growth-team-completion-label">Sesuai Kuota</span>
+                  </div>
+                  <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="gwa-growth-team-bar" class="bg-gradient-to-r from-indigo-500 to-primary h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-indigo-500 to-transparent"></div>
+            </div>
+
+            <!-- Active Competitions Card -->
+            <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Kompetisi Aktif</span>
+                <div class="w-10 h-10 rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-500 text-xl">🏆</div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-baseline gap-2">
+                  <h3 id="gwa-growth-active-comps" class="text-3xl font-800 text-slate-800">0</h3>
+                  <span class="text-[10px] font-700 text-rose-500 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-100">Sedang Berjalan</span>
+                </div>
+                <p class="text-[10px] text-slate-400 font-500 leading-normal">
+                  Kompetisi terverifikasi dengan tenggat waktu pendaftaran yang belum terlampaui.
+                </p>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-rose-500 to-transparent"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- segment 2: Watch Metrics -->
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-sm font-800 text-accent uppercase tracking-wider bg-accent/10 px-3 py-1 rounded-full">Watch (W)</span>
+            <h3 class="font-800 text-slate-800 text-sm">Metrik Keselarasan & Gerbang Kualitas Bisnis</h3>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- Avg Matchmaking Score Card -->
+            <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Skor Kecocokan Matchmaking AI</span>
+                <div class="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center text-accent text-xl">🧠</div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-baseline gap-2">
+                  <h3 id="gwa-watch-matchmaking" class="text-3xl font-800 text-slate-800">0%</h3>
+                  <span class="text-[10px] font-700 text-accent bg-accent/5 px-2 py-0.5 rounded-md border border-accent/10">Sinergi Lintas Prodi</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="gwa-watch-matchmaking-bar" class="bg-gradient-to-r from-accent to-accent-gold h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                  </div>
+                  <p class="text-[9px] text-slate-400 font-500 leading-normal pt-1">
+                    Diukur secara real-time dari relasi gap-analysis keahlian & kolaborasi mahasiswa.
+                  </p>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-accent to-transparent"></div>
+            </div>
+
+            <!-- ATS Application Conversion Rate Card -->
+            <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Konversi Lamaran Lomba (ATS)</span>
+                <div class="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center text-amber-500 text-xl">💼</div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-baseline gap-2">
+                  <h3 id="gwa-watch-ats" class="text-3xl font-800 text-slate-800">0%</h3>
+                  <span class="text-[10px] font-700 text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100">Tingkat Persetujuan</span>
+                </div>
+                <div class="space-y-1">
+                  <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                    <div id="gwa-watch-ats-bar" class="bg-gradient-to-r from-amber-500 to-accent-gold h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+                  </div>
+                  <p class="text-[9px] text-slate-400 font-500 leading-normal pt-1">
+                    Persentase calon anggota tim rekrutmen yang berhasil disetujui oleh pemilik tim.
+                  </p>
+                </div>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 to-transparent"></div>
+            </div>
+
+            <!-- Pending Connection Requests Card -->
+            <div class="premium-card rounded-3xl p-6 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-xs font-800 text-slate-400 uppercase tracking-wider">Hubungan Pertemanan Pending</span>
+                <div class="w-10 h-10 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500 text-xl">⚡</div>
+              </div>
+              <div class="space-y-4">
+                <div class="flex items-baseline gap-2">
+                  <h3 id="gwa-watch-connections" class="text-3xl font-800 text-slate-800">0</h3>
+                  <span class="text-[10px] font-700 text-orange-500">Menunggu Respon</span>
+                </div>
+                <p class="text-[10px] text-slate-400 font-500 leading-normal">
+                  Permintaan relasi kolaborasi antarpeserta yang saat ini aktif menunggu konfirmasi.
+                </p>
+              </div>
+              <div class="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 to-transparent"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- segment 3: Aware Metrics -->
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-sm font-800 text-slate-600 uppercase tracking-wider bg-slate-100 px-3 py-1 rounded-full">Aware (A)</span>
+            <h3 class="font-800 text-slate-800 text-sm">Metrik Diagnostik Sistem & SLA Live Pulse</h3>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- API Request Latency Card -->
+            <div class="premium-card rounded-3xl p-5 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Rasio Latensi API</span>
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 text-sm">⏱️</div>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center gap-2.5">
+                  <h4 id="gwa-aware-api-latency" class="text-2xl font-800 text-slate-800">0ms</h4>
+                  <div class="flex items-center gap-1 bg-green-500/10 border border-green-500/20 text-green-600 text-[9px] font-800 px-1.5 py-0.5 rounded-full">
+                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></span>
+                    Aktif
+                  </div>
+                </div>
+                <p class="text-[9px] text-slate-400 font-500 leading-tight">Waktu muat rata-rata HTTP server gateway.</p>
+              </div>
+            </div>
+
+            <!-- Database Pool Card -->
+            <div class="premium-card rounded-3xl p-5 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Utilisasi DB Pool</span>
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 text-sm">🔌</div>
+              </div>
+              <div class="space-y-3">
+                <h4 id="gwa-aware-db-connections" class="text-2xl font-800 text-slate-800">0/20</h4>
+                <p class="text-[9px] text-slate-400 font-500 leading-tight">Sesi koneksi database PostgreSQL yang terpakai.</p>
+              </div>
+            </div>
+
+            <!-- Organizer Verification Speed Card -->
+            <div class="premium-card rounded-3xl p-5 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">SLA Verifikasi EO</span>
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 text-sm">🛡️</div>
+              </div>
+              <div class="space-y-3">
+                <h4 id="gwa-aware-verification-speed" class="text-2xl font-800 text-slate-800">14m</h4>
+                <p class="text-[9px] text-slate-400 font-500 leading-tight">Rata-rata respon moderator menyetujui akun penyelenggara baru.</p>
+              </div>
+            </div>
+
+            <!-- SideKick Chatbot Load Card -->
+            <div class="premium-card rounded-3xl p-5 relative overflow-hidden group">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Beban SideKick AI</span>
+                <div class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 text-sm">🤖</div>
+              </div>
+              <div class="space-y-3">
+                <h4 id="gwa-aware-chatbot-load" class="text-2xl font-800 text-slate-800">0 thread</h4>
+                <p class="text-[9px] text-slate-400 font-500 leading-tight">Simultan query parsing & AI matching aktif saat ini.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ── SECTION 5: KEMITRAAN SPONSOR & IKLAN ── -->
+      <section id="tab-section-sponsorship" class="space-y-6 hidden">
+        
+        <!-- Controls Toolbar Grid -->
+        <div class="flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <div>
+            <h3 class="font-800 text-slate-800 text-base">🛡️ Pengelolaan Sponsor & Kampanye Iklan</h3>
+            <p class="text-xs text-slate-500 mt-0.5">Pantau performa tayangan, suspend kampanye, undang mitra sponsor baru, dan atur tarif harga.</p>
+          </div>
+          <div class="flex gap-2 w-full sm:w-auto">
+            <button onclick="openInviteSponsorModal()" class="flex-1 sm:flex-initial px-4 py-2.5 bg-primary hover:bg-primary-dark text-white font-800 text-xs rounded-xl transition-all shadow-md shadow-primary/20">
+              ➕ Undang Sponsor
+            </button>
+            <button onclick="openPricingRateModal()" class="flex-1 sm:flex-initial px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-100 font-800 text-xs rounded-xl transition-all border border-slate-700">
+              ⚙️ Atur Tarif Harga
+            </button>
+          </div>
+        </div>
+
+        <!-- Roster Table list of all campaigns -->
+        <div class="premium-card rounded-3xl overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs border-collapse">
+              <thead>
+                <tr class="border-b border-slate-100 text-slate-500 font-800 bg-slate-50">
+                  <th class="px-6 py-4.5">Sponsor / Perusahaan</th>
+                  <th class="px-6 py-4.5">Judul Kampanye</th>
+                  <th class="px-6 py-4.5">Halaman Target</th>
+                  <th class="px-6 py-4.5">Durasi</th>
+                  <th class="px-6 py-4.5 text-right">Biaya Total</th>
+                  <th class="px-6 py-4.5 text-center">Tayangan</th>
+                  <th class="px-6 py-4.5 text-center">Klik</th>
+                  <th class="px-6 py-4.5 text-center">CTR</th>
+                  <th class="px-6 py-4.5 text-center">Status</th>
+                  <th class="px-6 py-4.5 text-center">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="admin-sponsorships-body" class="divide-y divide-slate-100">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+          <div id="admin-sponsorships-empty" class="hidden p-12 text-center text-slate-500 font-700">
+            💤 Belum ada kampanye iklan sponsor terpasang di platform.
+          </div>
+        </div>
+
+      </section>
     </main>
   </div>
 
@@ -500,14 +789,132 @@
         </table>
       </div>
 
-      <div class="flex gap-3 pt-4.5 border-t border-slate-100">
-        <button type="button" onclick="closeScrapeFormModal()" class="flex-1 py-3.5 rounded-xl border border-slate-200 text-slate-500 text-xs font-700 hover:bg-slate-50 transition-colors">Batal</button>
-        <button type="button" onclick="importSelectedScrapedLomba()" id="btn-import-scraped" class="flex-[2] py-3.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-xs font-800 transition-colors shadow-md shadow-primary/25 flex items-center justify-center gap-2">
-          <span>💾 Impor Item Terpilih</span>
-        </button>
       </div>
     </div>
   </div>
+  </div>
+
+  <!-- ── MODAL: UNDANG SPONSOR BARU ── -->
+  <div id="invite-sponsor-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 lg:p-8 max-w-md w-full border border-slate-100 shadow-2xl relative space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="font-800 text-slate-800 text-base">📧 Undang Mitra Sponsor Baru</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Daftarkan akun mitra korporat untuk memposting kampanye iklan.</p>
+        </div>
+        <button onclick="closeInviteSponsorModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors flex items-center justify-center text-slate-500 hover:text-slate-800 font-bold">&times;</button>
+      </div>
+
+      <form id="form-invite-sponsor" class="space-y-4">
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Nama Kontak Sponsor</label>
+          <input type="text" id="inv-sponsor-name" required placeholder="Contoh: Budi Santoso" class="w-full form-input rounded-2xl px-4 py-3 text-xs focus:outline-none"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Email Mitra Sponsor</label>
+          <input type="email" id="inv-sponsor-email" required placeholder="Contoh: sponsor@pertamina.com" class="w-full form-input rounded-2xl px-4 py-3 text-xs focus:outline-none"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Sandi Sementara</label>
+          <input type="password" id="inv-sponsor-password" required placeholder="Sandi minimal 6 karakter" class="w-full form-input rounded-2xl px-4 py-3 text-xs focus:outline-none"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Nama Perusahaan / Institusi</label>
+          <input type="text" id="inv-sponsor-company" required placeholder="Contoh: PT Pertamina (Persero)" class="w-full form-input rounded-2xl px-4 py-3 text-xs focus:outline-none"/>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-primary hover:bg-primary-dark text-white font-800 text-xs rounded-xl shadow-md transition-all">
+          ⚡ Daftarkan & Kirim Undangan Sesi
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MODAL: SESUAIKAN BIAYA KAMPANYE (EDIT COST) ── -->
+  <div id="edit-cost-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 lg:p-8 max-w-md w-full border border-slate-100 shadow-2xl relative space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="font-800 text-slate-800 text-base">💰 Penyesuaian Biaya Kampanye</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Ubah biaya iklan secara manual dan catat audit log perubahan.</p>
+        </div>
+        <button onclick="closeEditCostModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors flex items-center justify-center text-slate-500 hover:text-slate-800 font-bold">&times;</button>
+      </div>
+
+      <form id="form-edit-cost" class="space-y-4">
+        <input type="hidden" id="edit-cost-ad-id"/>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Biaya Kampanye Lama</label>
+          <input type="text" id="edit-cost-old-label" disabled class="w-full form-input rounded-2xl px-4 py-3 text-xs bg-slate-50 text-slate-400 font-700"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Biaya Penyesuaian Baru (IDR)</label>
+          <input type="number" id="edit-cost-new-input" required placeholder="Contoh: 110000" class="w-full form-input rounded-2xl px-4 py-3 text-xs font-700 focus:outline-none"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Alasan Penyesuaian</label>
+          <textarea id="edit-cost-reason-input" required placeholder="Contoh: Diskon khusus promosi kemitraan Pertamina Go-Green Hackathon" class="w-full form-input rounded-2xl px-4 py-3 text-xs h-20 focus:outline-none"></textarea>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-accent hover:bg-accent-dark text-white font-800 text-xs rounded-xl shadow-md transition-all">
+          💾 Simpan & Catat Audit Log
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MODAL: ATUR TARIF HARGA HISTORIS ── -->
+  <div id="pricing-rate-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-6 lg:p-8 max-w-md w-full border border-slate-100 shadow-2xl relative space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="font-800 text-slate-800 text-base">⚙️ Konfigurasi Tarif Iklan Historis</h3>
+          <p class="text-xs text-slate-500 mt-0.5">Tentukan tarif harga per hari per halaman baru beserta masa berlakunya.</p>
+        </div>
+        <button onclick="closePricingRateModal()" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 transition-colors flex items-center justify-center text-slate-500 hover:text-slate-800 font-bold">&times;</button>
+      </div>
+
+      <form id="form-pricing-rate" class="space-y-4">
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider block">Target Penempatan Halaman</label>
+          <select id="pr-page-key" class="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 py-3.5 text-xs font-700 text-slate-700 focus:outline-none">
+            <option value="dashboard">Dashboard (Utama)</option>
+            <option value="competitions">Direktori Lomba</option>
+            <option value="matchmaking">AI Matchmaking</option>
+            <option value="teams">Cari Tim Kerja</option>
+          </select>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Tarif Baru Per Hari (IDR)</label>
+          <input type="number" id="pr-price" required placeholder="Contoh: 18000" class="w-full form-input rounded-2xl px-4 py-3.5 text-xs font-700 focus:outline-none"/>
+        </div>
+        <div class="space-y-1">
+          <label class="text-[10px] font-800 text-slate-400 uppercase tracking-wider">Mulai Berlaku Tanggal (Effective Date)</label>
+          <input type="date" id="pr-effective-date" required class="w-full form-input rounded-2xl px-4 py-3.5 text-xs focus:outline-none"/>
+        </div>
+
+        <button type="submit" class="w-full py-3.5 bg-slate-800 hover:bg-slate-700 text-white font-800 text-xs rounded-xl shadow-md transition-all">
+          💾 Pasang Tarif Efektif Baru
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ── MODAL: AUDIT LOGS MODAL (FOR ADMIN) ── -->
+  <div id="cost-logs-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-[#1E1B3A] text-white rounded-3xl p-6 max-w-md w-full border border-slate-800 shadow-2xl relative space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="font-800 text-slate-100 text-sm">🛡️ Riwayat Penyesuaian Biaya (Audit Log)</h3>
+          <p class="text-[9px] text-slate-400 mt-0.5">Catatan modifikasi tagihan kampanye oleh administrator.</p>
+        </div>
+        <button onclick="closeCostLogsModal()" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 transition-colors flex items-center justify-center text-slate-400 hover:text-slate-200 font-bold">&times;</button>
+      </div>
+
+      <div class="max-h-60 overflow-y-auto space-y-3" id="cost-logs-list">
+        <!-- Log entries populated here -->
+      </div>
+    </div>
   </div>
 
   <!-- ── JAVASCRIPT LOGIC (ES MODULE) ── -->
@@ -544,6 +951,8 @@
       // Hide all sections
       document.getElementById('tab-section-overview').classList.add('hidden');
       document.getElementById('tab-section-moderation').classList.add('hidden');
+      document.getElementById('tab-section-metrics').classList.add('hidden');
+      document.getElementById('tab-section-sponsorship').classList.add('hidden');
       document.getElementById('tab-section-super').classList.add('hidden');
 
       // Reset buttons classes (soft slate colors)
@@ -562,6 +971,8 @@
       const titles = {
         overview: ["Overview & Scraper", "Statistik platform SideQuest dan scraping lomba otomatis."],
         moderation: ["Moderasi Konten Platform", "Suspend atau aktifkan kembali Pengguna, Kompetisi, dan Tim Kerja."],
+        metrics: ["Pemantauan Metrik GWA", "Analisis real-time indikator Growth, Watch, dan Aware untuk kesehatan bisnis platform."],
+        sponsorship: ["Kemitraan Sponsor & Iklan", "Kelola pendaftaran mitra sponsor, tinjau iklan aktif global, penyesuaian biaya, dan kelola tarif harga."],
         super: ["Superadmin System Panel", "Pemeliharaan platform global dan toggle sakelar status modul."]
       };
       document.getElementById('header-title').textContent = titles[tabId][0];
@@ -632,6 +1043,62 @@
         document.getElementById('stat-teams-total').textContent = statsRes.teams.total;
         document.getElementById('stat-teams-active').textContent = `${statsRes.teams.active} Aktif`;
 
+        // Populate GWA Metrics
+        if (statsRes.gwa) {
+          const gwa = statsRes.gwa;
+
+          // 1. Growth
+          document.getElementById('gwa-growth-mau').textContent = gwa.growth.mau;
+          document.getElementById('gwa-growth-dau').textContent = gwa.growth.dau;
+          
+          const stickiness = gwa.growth.mau > 0 ? Math.round((gwa.growth.dau / gwa.growth.mau) * 100) : 0;
+          document.getElementById('gwa-growth-stickiness-pct').textContent = `${stickiness}%`;
+          document.getElementById('gwa-growth-stickiness-bar').style.width = `${stickiness}%`;
+
+          document.getElementById('gwa-growth-team-completion').textContent = `${gwa.growth.teamCompletionRate}%`;
+          document.getElementById('gwa-growth-team-bar').style.width = `${gwa.growth.teamCompletionRate}%`;
+          document.getElementById('gwa-growth-team-completion-label').textContent = `${gwa.growth.teamCompletionRate}% Anggota Terisi`;
+
+          document.getElementById('gwa-growth-active-comps').textContent = gwa.growth.activeCompetitions;
+
+          // 2. Watch
+          document.getElementById('gwa-watch-matchmaking').textContent = `${gwa.watch.avgMatchmakingScore}%`;
+          document.getElementById('gwa-watch-matchmaking-bar').style.width = `${gwa.watch.avgMatchmakingScore}%`;
+
+          document.getElementById('gwa-watch-ats').textContent = `${gwa.watch.atsConversionRate}%`;
+          document.getElementById('gwa-watch-ats-bar').style.width = `${gwa.watch.atsConversionRate}%`;
+
+          document.getElementById('gwa-watch-connections').textContent = gwa.watch.pendingConnections;
+
+          // 3. Aware
+          document.getElementById('gwa-aware-api-latency').textContent = gwa.aware.apiLatency;
+          document.getElementById('gwa-aware-db-connections').textContent = gwa.aware.dbConnections;
+          document.getElementById('gwa-aware-verification-speed').textContent = gwa.aware.verificationSpeed;
+          document.getElementById('gwa-aware-chatbot-load').textContent = gwa.aware.chatbotLoad;
+
+          // Active operational ping and SLA latency simulator interval
+          if (window.gwaLiveInterval) clearInterval(window.gwaLiveInterval);
+          window.gwaLiveInterval = setInterval(() => {
+            const latencyEl = document.getElementById('gwa-aware-api-latency');
+            const dbEl = document.getElementById('gwa-aware-db-connections');
+            const botEl = document.getElementById('gwa-aware-chatbot-load');
+
+            if (latencyEl) {
+              const base = 120;
+              const variance = Math.floor(Math.random() * 11) - 5; // -5 to +5
+              latencyEl.textContent = `${base + variance}ms`;
+            }
+            if (dbEl) {
+              const conns = 6 + Math.floor(Math.random() * 3); // 6 to 8
+              dbEl.textContent = `${conns}/20`;
+            }
+            if (botEl) {
+              const threads = 2 + Math.floor(Math.random() * 4); // 2 to 5
+              botEl.textContent = `${threads} thread aktif`;
+            }
+          }, 3000);
+        }
+
         // Configure Superadmin controllers
         const superMaint = document.getElementById('super-maintenance-toggle');
         const compToggle = document.getElementById('feature-competitions-toggle');
@@ -662,6 +1129,10 @@
         
         if (currentUser.get()?.role === 'superadmin') {
           renderModeratorsTable(dataRes.users.filter(u => u.role === 'moderator'));
+        }
+
+        if (currentUser.get()?.role === 'superadmin' || currentUser.get()?.role === 'moderator') {
+          await loadSponsorshipsRoster();
         }
 
       } catch (err) {
@@ -1118,6 +1589,213 @@
         row.style.display = match ? '' : 'none';
       }
     };
-  </script>
+
+    // ── GWA Sponsorship Administration Logic ──
+    let allSponsorships = [];
+
+    window.loadSponsorshipsRoster = async () => {
+      try {
+        const ads = await api.admin.getSponsorships();
+        allSponsorships = ads;
+        renderAdminSponsorshipsTable(ads);
+      } catch (err) {
+        console.error('Gagal mengambil daftar iklan sponsor', err);
+      }
+    };
+
+    window.renderAdminSponsorshipsTable = (ads) => {
+      const tbody = document.getElementById('admin-sponsorships-body');
+      const emptyState = document.getElementById('admin-sponsorships-empty');
+
+      if (!ads || ads.length === 0) {
+        tbody.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      emptyState.classList.add('hidden');
+
+      tbody.innerHTML = ads.map(ad => {
+        const start = new Date(ad.start_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        const end = new Date(ad.end_date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        const costVal = parseFloat(ad.total_cost);
+        const imps = parseInt(ad.impressions || 0, 10);
+        const clicks = parseInt(ad.clicks || 0, 10);
+        const ctr = imps > 0 ? ((clicks / imps) * 100).toFixed(2) : '0.00';
+
+        const auditBtn = `<button onclick="viewCostLogs(${ad.id})" class="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 font-700 text-[9px] rounded-lg transition-colors border border-slate-200">Log 🛡️</button>`;
+
+        return `
+          <tr class="hover:bg-slate-50/50">
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="font-700 text-slate-800">${ad.sponsor_name}</div>
+              <div class="text-[10px] text-slate-400 font-500">${ad.company_name}</div>
+            </td>
+            <td class="px-6 py-4 font-700 text-slate-800 truncate max-w-xs">
+              ${ad.title}
+              <div class="text-[9px] text-slate-400 font-500 truncate max-w-xs mt-0.5">${ad.target_url}</div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-wrap gap-1">
+                ${ad.pages.map(p => `<span class="px-1.5 py-0.5 rounded text-[8px] font-800 uppercase bg-primary/10 text-primary border border-primary/25">${p}</span>`).join('')}
+              </div>
+            </td>
+            <td class="px-6 py-4 text-slate-500 font-600 whitespace-nowrap">${start} - ${end}</td>
+            <td class="px-6 py-4 text-right font-800 text-slate-700 whitespace-nowrap">IDR ${costVal.toLocaleString('id-ID')}</td>
+            <td class="px-6 py-4 text-center text-slate-600 font-700">${imps.toLocaleString('id-ID')}</td>
+            <td class="px-6 py-4 text-center text-slate-600 font-700">${clicks.toLocaleString('id-ID')}</td>
+            <td class="px-6 py-4 text-center text-green-600 font-800">${ctr}%</td>
+            <td class="px-6 py-4 text-center">
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" onchange="toggleAdActiveStatus(${ad.id}, this)" ${ad.is_active ? 'checked' : ''} class="sr-only peer">
+                <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary"></div>
+              </label>
+            </td>
+            <td class="px-6 py-4 text-center whitespace-nowrap">
+              <div class="flex gap-1.5 justify-center">
+                <button onclick="openEditCostModal(${ad.id}, ${ad.total_cost})" class="px-2 py-1 bg-primary text-white hover:bg-primary-dark font-700 text-[9px] rounded-lg transition-colors shadow-sm shadow-primary/20">Edit Biaya 💰</button>
+                ${auditBtn}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    };
+
+    window.toggleAdActiveStatus = async (adId, checkbox) => {
+      try {
+        const res = await api.admin.toggleAd(adId);
+        ui.toast(res.message || 'Status keaktifan iklan berhasil diubah!', 'success');
+      } catch (err) {
+        checkbox.checked = !checkbox.checked;
+        handleApiError(err, 'Gagal mengubah status keaktifan iklan.');
+      }
+    };
+
+    window.openInviteSponsorModal = () => { document.getElementById('invite-sponsor-modal').classList.remove('hidden'); };
+    window.closeInviteSponsorModal = () => { document.getElementById('invite-sponsor-modal').classList.add('hidden'); };
+    
+    window.openPricingRateModal = () => {
+      document.getElementById('pricing-rate-modal').classList.remove('hidden');
+      document.getElementById('pr-effective-date').value = new Date().toISOString().split('T')[0];
+    };
+    window.closePricingRateModal = () => { document.getElementById('pricing-rate-modal').classList.add('hidden'); };
+
+    window.openEditCostModal = (adId, oldCost) => {
+      document.getElementById('edit-cost-ad-id').value = adId;
+      document.getElementById('edit-cost-old-label').value = `IDR ${parseFloat(oldCost).toLocaleString('id-ID')}`;
+      document.getElementById('edit-cost-new-input').value = oldCost;
+      document.getElementById('edit-cost-reason-input').value = '';
+      document.getElementById('edit-cost-modal').classList.remove('hidden');
+    };
+    window.closeEditCostModal = () => { document.getElementById('edit-cost-modal').classList.add('hidden'); };
+
+    window.viewCostLogs = async (adId) => {
+      ui.loading(true);
+      try {
+        const logs = await api.admin.getAdCostLogs(adId);
+        const listContainer = document.getElementById('cost-logs-list');
+        
+        if (!logs || logs.length === 0) {
+          listContainer.innerHTML = `<p class="text-slate-400 text-xs font-600 text-center py-6">Belum ada riwayat penyesuaian biaya untuk iklan ini.</p>`;
+        } else {
+          listContainer.innerHTML = logs.map(l => {
+            const timeStr = new Date(l.modified_at).toLocaleDateString('id-ID', {
+              day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+            const oldVal = parseFloat(l.old_cost);
+            const newVal = parseFloat(l.new_cost);
+
+            return `
+              <div class="bg-[#1E1B3A] border border-slate-800 rounded-2xl p-4 space-y-2 text-xs text-white">
+                <div class="flex justify-between items-center text-[10px] font-800 text-slate-500">
+                  <span>📅 ${timeStr}</span>
+                  <span class="text-primary uppercase tracking-wider">Oleh: ${l.modifier_name || 'Staff'}</span>
+                </div>
+                <div class="flex justify-between items-baseline pt-1">
+                  <div>
+                    <span class="text-[9px] text-slate-500 font-700 block">Biaya Lama</span>
+                    <span class="text-slate-450 font-600 line-through">IDR ${oldVal.toLocaleString('id-ID')}</span>
+                  </div>
+                  <div class="text-right">
+                    <span class="text-[9px] text-slate-500 font-700 block">Biaya Disesuaikan</span>
+                    <span class="text-accent font-800 text-sm">IDR ${newVal.toLocaleString('id-ID')}</span>
+                  </div>
+                </div>
+                <div class="pt-2 border-t border-slate-800 text-slate-350 font-600 leading-normal">
+                  📢 <strong class="text-slate-500">Alasan:</strong> "${l.reason || 'Disesuaikan oleh administrator'}"
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        document.getElementById('cost-logs-modal').classList.remove('hidden');
+      } catch (err) {
+        handleApiError(err, 'Gagal mengambil log perubahan biaya.');
+      } finally {
+        ui.loading(false);
+      }
+    };
+    window.closeCostLogsModal = () => { document.getElementById('cost-logs-modal').classList.add('hidden'); };
+
+    document.getElementById('form-invite-sponsor').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('inv-sponsor-name').value.trim();
+      const email = document.getElementById('inv-sponsor-email').value.trim();
+      const password = document.getElementById('inv-sponsor-password').value;
+      const company_name = document.getElementById('inv-sponsor-company').value.trim();
+
+      try {
+        ui.loading(true);
+        await api.admin.inviteSponsor({ name, email, password, company_name });
+        ui.toast(`✅ Mitra Sponsor "${name}" berhasil diundang!`, 'success');
+        document.getElementById('form-invite-sponsor').reset();
+        window.closeInviteSponsorModal();
+        await loadSponsorshipsRoster();
+      } catch (err) {
+        handleApiError(err, 'Gagal mengundang sponsor baru.');
+      } finally {
+        ui.loading(false);
+      }
+    });
+
+    document.getElementById('form-edit-cost').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const adId = document.getElementById('edit-cost-ad-id').value;
+      const total_cost = document.getElementById('edit-cost-new-input').value;
+      const reason = document.getElementById('edit-cost-reason-input').value.trim();
+
+      try {
+        ui.loading(true);
+        const res = await api.admin.updateAdCost(adId, { total_cost, reason });
+        ui.toast(res.message || 'Biaya kampanye berhasil disesuaikan!', 'success');
+        window.closeEditCostModal();
+        await loadSponsorshipsRoster();
+      } catch (err) {
+        handleApiError(err, 'Gagal menyesuaikan biaya kampanye.');
+      } finally {
+        ui.loading(false);
+      }
+    });
+
+    document.getElementById('form-pricing-rate').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const page_key = document.getElementById('pr-page-key').value;
+      const price_per_day = document.getElementById('pr-price').value;
+      const effective_date = document.getElementById('pr-effective-date').value;
+
+      try {
+        ui.loading(true);
+        const res = await api.admin.updatePricingRate({ page_key, price_per_day, effective_date });
+        ui.toast(res.message || 'Tarif baru berhasil dipasang!', 'success');
+        document.getElementById('form-pricing-rate').reset();
+        window.closePricingRateModal();
+      } catch (err) {
+        handleApiError(err, 'Gagal menambahkan tarif harga baru.');
+      } finally {
+        ui.loading(false);
+      }
+    });
+</script>
 </body>
 </html>

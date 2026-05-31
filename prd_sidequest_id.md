@@ -78,6 +78,18 @@ SideQuest hadir untuk menyatukan ekosistem ini dalam satu portal premium:
 - **AI Web Scraper Console**: Memungkinkan moderator menempelkan URL Instagram kompetisi luar, menyimulasikan logs scraper di terminal retro, dan menyimpan draf ke database.
 - **Superadmin Panel Deck**: Fitur untuk menangguhkan moderator staf, feature flags mematikan/menghidupkan modul platform (matchmaking, tim, lomba), dan master switch **Maintenance Mode** (peserta diblokir layar pemeliharaan `maintenance.html` dengan jam pasir emas, staf melintas bypass).
 
+### 3.8. Kemitraan Sponsor & Iklan Tertarget (Fase 4)
+- **Undangan Mitra Sponsor**: Moderator atau administrator dapat mengundang mitra sponsor baru secara langsung melalui menu dasbor admin. Akun langsung disahkan aktif untuk login instan.
+- **Dasbor Portal Sponsor (`sponsor-dashboard.html`)**: Portal interaktif eksklusif sponsor yang menyajikan data visual lengkap:
+  - **Overview Metrics**: Total investasi iklan harian, tayangan (impressions), klik aktif, dan rasio klik (CTR).
+  - **Form Pembuat Iklan & Simulator Biaya**: Sponsor menentukan judul, poster/gambar, URL target, target penayangan halaman (Dashboard, Direktori Lomba, Matchmaking, atau Cari Tim), serta rentang kalender penayangan. Biaya kampanye dihitung secara dinamis dan transparan.
+  - **Historical Pricing Resolving**: Tarif harga harian disimpan secara historis. Sistem secara dinamis mencari harga aktif berdasarkan tanggal mulai kampanye (`effective_date <= start_date`) demi integritas kalkulasi biaya yang adil.
+  - **Audit Log Penyesuaian Biaya**: Total biaya dapat disesuaikan secara manual oleh moderator (misal: pemberian diskon khusus), namun wajib menyertakan alasan penyesuaian tertulis yang dicatat secara permanen dalam database audit log.
+- **E2E Widget Banner (Mahasiswa-Facing)**:
+  - Banner dinamis berestetika *glassmorphism* terpasang di 4 halaman mahasiswa.
+  - Jika terdapat kampanye iklan aktif, sistem memuat iklan secara acak berimbang, mencatat tayangan secara otomatis di backend, dan melacak persentase klik (CTR) jika diakses.
+  - Jika tidak ada iklan aktif, sistem secara dinamis menampilkan fallback promosi premium internal SideQuest **"Sidekick AI Assistant"**.
+
 ---
 
 ## 4. Detail Fitur, Peta Situs (Site Map) & Hak Akses Peran
@@ -213,6 +225,43 @@ CREATE TABLE platform_settings (
   key VARCHAR(100) PRIMARY KEY,
   value VARCHAR(255) NOT NULL
 );
+
+-- Konfigurasi Tarif Harga Iklan Historis
+CREATE TABLE sponsorship_pricing_rates (
+  id SERIAL PRIMARY KEY,
+  page_key VARCHAR(50) NOT NULL, -- 'dashboard', 'competitions', 'matchmaking', 'teams'
+  price_per_day DECIMAL(12, 2) NOT NULL,
+  effective_date DATE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Kampanye Iklan Kemitraan Sponsor
+CREATE TABLE sponsorships (
+  id SERIAL PRIMARY KEY,
+  sponsor_id INT REFERENCES users(id) ON DELETE CASCADE,
+  title VARCHAR(150) NOT NULL,
+  target_url TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  pages VARCHAR(50)[] NOT NULL, -- Array target page keys
+  start_date DATE NOT NULL,
+  end_date DATE NOT NULL,
+  total_cost DECIMAL(12, 2) NOT NULL,
+  impressions INT DEFAULT 0,
+  clicks INT DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Audit Log Penyesuaian Biaya Iklan oleh Moderator
+CREATE TABLE sponsorship_cost_logs (
+  id SERIAL PRIMARY KEY,
+  sponsorship_id INT REFERENCES sponsorships(id) ON DELETE CASCADE,
+  modified_by INT REFERENCES users(id) ON DELETE CASCADE,
+  old_cost DECIMAL(12, 2) NOT NULL,
+  new_cost DECIMAL(12, 2) NOT NULL,
+  reason TEXT NOT NULL,
+  modified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
 ---
@@ -320,9 +369,11 @@ SideQuest mempersiapkan pilar monetisasi premium terpadu yang dapat diaktifkan s
 - **Stateless Intent Engine**: Kueri asinkron database untuk mencari lomba, mahasiswa bertalenta, atau FAQ dari pesan teks.
 - **Rich Cards Chat**: Kartu detail lomba dan tombol "Hubungkan" rekat dari dalam thread chat.
 
-### Fase 4: Pengembangan Bisnis & Monetisasi (Sedang Berjalan)
+### Fase 4: Pengembangan Bisnis & Monetisasi (Selesai)
 - **Dasbor KPI GWA**: Implementasi statistik pemantauan Growth, Watch, dan Aware di panel superadmin.
-- **Gerbang Monetisasi (Monetization Gates)**: Pengembangan skema database transaksi premium tim spotlight, verified badges, dan log langganan EO.
+- **Kemitraan Sponsor & Iklan (Sponsorship)**: Integrasi penuh dasbor sponsor premium (`sponsor-dashboard.html`), formulir pembuat ad kampanye, visual simulator biaya historis date-effective asinkron, log penyesuaian biaya, dan dashboard moderasi admin.
+- **E2E Widget Banner Iklan Tertarget**: Pemasangan banner glassmorphism di 4 halaman mahasiswa dengan impressions & clicks analytics tracking dan fallback cerdas ke Sidekick AI assistant.
+- **E2E Integration Tests**: Pengujian komprehensif `run_sponsor_test.js` lulus sukses 100%.
 
 ### Fase 5: Chat Real-Time & WebSockets (Backlog Masa Depan)
 - **Komponen Instant Messaging Chat**: Membuat tabel `chat_rooms` dan `messages` di database. Mengganti toast pesan masuk dengan sidebar obrolan pesan aktif fungsional.

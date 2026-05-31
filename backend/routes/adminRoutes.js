@@ -8,7 +8,13 @@ const {
   toggleModeratorStatus,
   updateFeatureSettings,
   updateMaintenanceSettings,
-  approveOrganizer
+  approveOrganizer,
+  inviteSponsor,
+  getAllSponsorships,
+  toggleSponsorshipStatus,
+  updateSponsorshipCost,
+  addPricingRate,
+  getCostLogs
 } = require('../controllers/adminController');
 
 const authMiddleware = require('../middleware/auth');
@@ -20,6 +26,12 @@ router.get('/data', authMiddleware, isModeratorOrAdmin, getModeratorData);
 router.patch('/toggle/:type/:id', authMiddleware, isModeratorOrAdmin, toggleActiveStatus);
 router.post('/scrape', authMiddleware, isModeratorOrAdmin, simulateWebScraping);
 router.patch('/approve-organizer/:id', authMiddleware, isModeratorOrAdmin, approveOrganizer);
+router.post('/invite-sponsor', authMiddleware, isModeratorOrAdmin, inviteSponsor);
+router.get('/sponsorships', authMiddleware, isModeratorOrAdmin, getAllSponsorships);
+router.patch('/sponsorships/:id/toggle', authMiddleware, isModeratorOrAdmin, toggleSponsorshipStatus);
+router.patch('/sponsorships/:id/cost', authMiddleware, isModeratorOrAdmin, updateSponsorshipCost);
+router.post('/sponsorship-pricing', authMiddleware, isModeratorOrAdmin, addPricingRate);
+router.get('/sponsorships/:id/logs', authMiddleware, isModeratorOrAdmin, getCostLogs);
 
 // 2. Superadmin exclusive routes
 router.patch('/super/moderator/:id/toggle', authMiddleware, isSuperadmin, toggleModeratorStatus);

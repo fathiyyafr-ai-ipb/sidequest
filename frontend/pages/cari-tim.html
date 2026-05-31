@@ -156,19 +156,24 @@
             Rekrutmen</button></div>
       </div>
       <div id="section-browse">
-        <div class="flex gap-2 overflow-x-auto pb-2 mb-4 no-scrollbar"><button onclick="filterTim(this,'all')"
-            class="tim-chip selected flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-primary bg-primary text-white">Semua</button><button
-            onclick="filterTim(this,'teknologi')"
-            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Teknologi</button><button
-            onclick="filterTim(this,'bisnis')"
-            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Bisnis</button><button
-            onclick="filterTim(this,'desain')"
-            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Desain</button><button
-            onclick="filterTim(this,'sosial')"
-            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Social
-            Impact</button><button onclick="filterTim(this,'sains')"
+        <div class="flex gap-2 overflow-x-auto pb-2 mb-4 no-scrollbar">
+          <button onclick="filterTim(this,'all')"
+            class="tim-chip selected flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-primary bg-primary text-white">Semua</button>
+          <button onclick="filterTim(this,'teknologi')"
+            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Teknologi</button>
+          <button onclick="filterTim(this,'bisnis')"
+            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Bisnis</button>
+          <button onclick="filterTim(this,'desain')"
+            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Desain</button>
+          <button onclick="filterTim(this,'sosial')"
+            class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Social Impact</button>
+          <button onclick="filterTim(this,'sains')"
             class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sains</button>
         </div>
+
+        <!-- ── Sponsorship Banner Widget ── -->
+        <div id="sponsorship-banner" class="mb-4 hidden"></div>
+
         <div class="flex items-center justify-between mb-4">
           <p class="text-xs text-gray-500"><span id="tim-count" class="font-700 text-gray-800">8</span> tim buka
             rekrutmen</p>
@@ -254,7 +259,7 @@
         class="block w-full py-3 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors">Lihat
         S
         <script type="module">
-          import { api, ui, handleApiError, token } from '../js/api.js';
+          import { api, ui, handleApiError, token, renderSponsorshipAd } from '../js/api.js';
           import { initSession, bindLogout } from '../js/auth.js';
 
           let currentCat = "all";
@@ -450,6 +455,7 @@
               ui.loading(false);
             }
 
+            await renderSponsorshipAd('teams', 'sponsorship-banner');
             loadCompetitions();
           });
         </script>

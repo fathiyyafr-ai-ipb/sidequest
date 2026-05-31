@@ -8,6 +8,7 @@ const competitionRoutes = require('./routes/competitionRoutes');
 const userRoutes = require('./routes/userRoutes');
 const matchmakingRoutes = require('./routes/matchmakingRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
+const sponsorRoutes = require('./routes/sponsorRoutes');
 
 const app = express();
 app.use(cors());
@@ -88,6 +89,7 @@ const connectionRoutes = require('./routes/connectionRoutes');
 app.use('/api/connections', connectionRoutes);
 const sidekickRoutes = require('./routes/sidekickRoutes');
 app.use('/api/sidekick', sidekickRoutes);
+app.use('/api/sponsor', sponsorRoutes);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
