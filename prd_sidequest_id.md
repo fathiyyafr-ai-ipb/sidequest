@@ -108,30 +108,33 @@ Berikut adalah hierarki navigasi halaman publik dan panel dasbor pengguna pada p
 - **Dasbor Penyelenggara Kompetisi / EO (`pages/organizer-dashboard.html` & sub-menu)**
   - Dashboard EO (`organizer-dashboard.html`) -> Statistik Pendaftar, Kelola Kompetisi yang Dipublikasikan
   - Publikasikan Lomba (`posting-lomba.html`) -> Form Pembuatan Lomba Baru (Hosted vs Non-Hosted, Batas Anggota)
+- **Dasbor Mitra Sponsor / Brand (`pages/sponsor-dashboard.html` & sub-menu)**
+  - Konsol Utama Sponsor (`sponsor-dashboard.html`) -> Pengelolaan Promosi Iklan Banner, Voucher Bootcamp/Alat Pengembangan, Promosi Kemitraan Kompetisi.
 - **Dasbor Administrator / Staf (`pages/admin-dashboard.html`)**
-  - Ringkasan Statistik Sistem -> Total Pengguna Aktif, Transaksi Tim, Metrik Keaktifan
-  - Roster Pengawasan Pengguna -> List Moderator, Organizer, Peserta (Slider Aktif/Tangguhkan Akun)
+  - Ringkasan Statistik Sistem -> Total Pengguna Aktif, Transaksi Tim, Metrik Keaktifan, Roster Sponsor Aktif
+  - Roster Pengawasan Pengguna -> List Moderator, Organizer, Sponsor, Peserta (Slider Aktif/Tangguhkan Akun)
   - Konsol AI Scraper Instagram -> Impor Data Kompetisi Otomatis via Scrape Log Retro
   - Pengendali Flags Modul & Maintenance -> Tombol On/Off Fitur Platform & Master Sakelar Maintenance Mode
 
 ### 4.2. Matriks Hak Akses Peran (Role Access Matrix)
 
-Sistem otorisasi stateless JWT memetakan tingkat akses dari keempat peran pengguna sebagai berikut:
+Sistem otorisasi stateless JWT memetakan tingkat akses dari kelima peran pengguna sebagai berikut:
 
-| Modul Fitur | Tamu / Guest | Peserta (Student) | Penyelenggara (EO) | Moderator / Superadmin |
-| :--- | :---: | :---: | :---: | :---: |
-| **Melihat Landing Page & FAQ** | **Lihat (Read-Only)** | **Lihat** | **Lihat** | **Lihat** |
-| **Membaca Direktori Lomba** | **Lihat (Read-Only)** | **Lihat & Daftar** | **Lihat** | **Lihat & Kelola** |
-| **Memposting & Edit Lomba** | Tidak Ada Akses | Tidak Ada Akses | **Penuh (Milik Sendiri)** | **Penuh (Moderasi Semua)** |
-| **Rekomendasi AI Matchmaking**| Tidak Ada Akses | **Penuh (Melihat & Connect)** | Tidak Ada Akses | Tidak Ada Akses |
-| **Membuat Tim & Kelola Pelamar**| Tidak Ada Akses | **Penuh (Milik Sendiri)** | Tidak Ada Akses | Tidak Ada Akses |
-| **Melamar & Bergabung ke Tim**| Tidak Ada Akses | **Penuh** | Tidak Ada Akses | Tidak Ada Akses |
-| **SideKick AI Assistant** | Tidak Ada Akses | **Penuh** | Tidak Ada Akses | Tidak Ada Akses |
-| **Pengelolaan Portofolio Diri**| Tidak Ada Akses | **Penuh** | Tidak Ada Akses | Tidak Ada Akses |
-| **Verifikasi Pendaftar Lomba**| Tidak Ada Akses | Tidak Ada Akses | **Penuh (Lomba Sendiri)** | Tidak Ada Akses |
-| **Scraping Lomba AI Instagram**| Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | **Penuh** |
-| **Tangguhkan Akun & Modul** | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | **Penuh** |
-| **Kelola Akun Moderator Staf**| Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | **Hanya Superadmin** |
+| Modul Fitur | Tamu / Guest | Peserta (Student) | Penyelenggara (EO) | Mitra Sponsor | Moderator / Superadmin |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Melihat Landing Page & FAQ** | **Lihat (Read-Only)** | **Lihat** | **Lihat** | **Lihat** | **Lihat** |
+| **Membaca Direktori Lomba** | **Lihat (Read-Only)** | **Lihat & Daftar** | **Lihat** | **Lihat** | **Lihat & Kelola** |
+| **Memposting & Edit Lomba** | Tidak Ada Akses | Tidak Ada Akses | **Penuh (Milik Sendiri)** | Tidak Ada Akses | **Penuh (Moderasi Semua)** |
+| **Rekomendasi AI Matchmaking**| Tidak Ada Akses | **Penuh (Melihat & Connect)** | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses |
+| **Membuat Tim & Kelola Pelamar**| Tidak Ada Akses | **Penuh (Milik Sendiri)** | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses |
+| **Melamar & Bergabung ke Tim**| Tidak Ada Akses | **Penuh** | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses |
+| **SideKick AI Assistant** | Tidak Ada Akses | **Penuh** | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses |
+| **Pengelolaan Portofolio Diri**| Tidak Ada Akses | **Penuh** | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses |
+| **Verifikasi Pendaftar Lomba**| Tidak Ada Akses | Tidak Ada Akses | **Penuh (Lomba Sendiri)** | Tidak Ada Akses | Tidak Ada Akses |
+| **Kelola Kampanye & Iklan**| Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | **Penuh (Milik Sendiri)** | **Penuh (Moderasi Semua)** |
+| **Scraping Lomba AI Instagram**| Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | **Penuh** |
+| **Tangguhkan Akun & Modul** | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | **Penuh** |
+| **Kelola Akun Moderator Staf**| Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | Tidak Ada Akses | **Hanya Superadmin** |
 
 ---
 
@@ -287,12 +290,16 @@ SideQuest menerapkan kerangka kerja metrik GWA (*Growth, Watch, and Aware*) untu
 
 ### 7.2. Model Fitur Berbayar & Monetisasi (Monetization Gates)
 
-SideQuest mempersiapkan empat pilar monetisasi premium yang dapat diaktifkan secara otomatis setelah platform melampaui ambang pertumbuhan tertentu (misalnya, mencapai target **10.000 MAU** dan **100+ Mitra Event Organizer terverifikasi**):
+SideQuest mempersiapkan pilar monetisasi premium terpadu yang dapat diaktifkan secara otomatis setelah platform melampaui ambang pertumbuhan tertentu (misalnya, mencapai target **10.000 MAU** dan **100+ Mitra Event Organizer terverifikasi**):
 
 * **Premium Team Spotlight (Sorotan Rekrutmen Tim)**: Mahasiswa inisiator tim dapat membayar biaya mikro-transaksi untuk menyematkan (*pin*) tim rekrutmen mereka di posisi teratas halaman "Cari Tim" dengan lencana emas berkilau guna menjaring pelamar bertalenta lebih cepat.
 * **Premium Organizer Analytics Deck (Analisis EO Eksklusif)**: Penyelenggara lomba dapat beralih ke akun berbayar untuk mengakses modul analitik canggih yang menyajikan data demografis pendaftar, asal universitas, sebaran *skillset*, serta talent scoring mahasiswa berprestasi.
 * **SideKick AI Copilot Plus**: Fitur asisten AI berbayar untuk mahasiswa yang membantu membedah isi berkas CV/Portfolio PDF secara instan, membuat draf surat motivasi (*motivation letter*) secara otomatis sesuai konteks kompetisi, serta menyimulasikan sesi wawancara latihan.
 * **Verified Talent Badge (Lencana Portofolio Terverifikasi)**: Penilaian mikro bagi mahasiswa untuk memverifikasi sertifikat juara kompetisi masa lalu mereka secara resmi di profil menggunakan peninjauan manual tim operasional, menampilkan tanda centang biru premium pada kartu *matchmaking*.
+* **Targeted Brands Sponsorship (Program Kemitraan Sponsor)**: Mengaktifkan peran pengguna khusus `sponsor` untuk pihak luar (seperti vendor alat pengembangan software, penyedia komputasi cloud, penyelenggara pelatihan keahlian/bootcamp, dll.) untuk beriklan atau bermitra secara langsung:
+  - *Sponsor Banner Promosi*: Menampilkan banner promosi bootcamp/pelatihan di halaman direktori kompetisi relevan.
+  - *Giveaway & Discount Kampanye*: Menyebarkan kode promo diskon penggunaan *tools* pengembang (seperti lisensi perangkat lunak, cloud credits gratis) langsung ke panel tim mahasiswa aktif untuk menunjang pengerjaan lomba.
+  - *Sponsorship Turnamen*: Bekerja sama dengan Event Organizer untuk mendanai lomba tertentu dan menaruh promosi brand sponsor pada laman detail lomba.
 
 ---
 

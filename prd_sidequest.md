@@ -108,9 +108,11 @@ Below is the structured navigation flow representing both the public-facing page
 - **Event Organizer (EO) Dashboard (`pages/organizer-dashboard.html` & sub-sections)**
   - EO Home (`organizer-dashboard.html`) -> Active Contest Submissions list, Registered Teams KPI
   - Post Competition (`posting-lomba.html`) -> Hosted/Non-Hosted Contest Publisher with member quota limits
+- **Sponsor / Brand Partner Dashboard (`pages/sponsor-dashboard.html` & sub-menu)**
+  - Sponsor Console (`sponsor-dashboard.html`) -> Management of Promotional Ad Banners, Bootcamp/Development Tool Vouchers, and Tournament Sponsorship Campaigns.
 - **Staff Control Console (`pages/admin-dashboard.html`)**
-  - Master KPI Overview -> Platform total users metrics, database statuses, system flag toggles
-  - Roster Moderator & Users -> Users lists with slider switch to instantly ban/restore accounts
+  - Master KPI Overview -> Platform total users metrics, database statuses, system flag toggles, active Sponsor listings
+  - Roster Moderator & Users -> Users lists with slider switch to instantly ban/restore student, organizer, or sponsor accounts
   - Retro Scraper Logs Console -> AI Web scraper simulator from instagram URLs
   - System Flags & Maintenance -> Master toggles for modules and maintenance bypass mode
 
@@ -118,20 +120,21 @@ Below is the structured navigation flow representing both the public-facing page
 
 The stateless JWT security engine dictates feature levels based on the user's authenticated role structure:
 
-| Functional Module | Guest / Anonymous | Student (Peserta) | Organizer (EO) | Staff (Moderator/Super) |
-| :--- | :---: | :---: | :---: | :---: |
-| **Browse Landing Page & FAQ** | **Read-Only** | **Full Access** | **Full Access** | **Full Access** |
-| **Browse Competition Directory**| **Read-Only** | **Full Access & Join** | **Read-Only** | **Manage & Moderate** |
-| **Create & Edit Competitions**| No Access | No Access | **Full (Own Listing)** | **Full (Moderate All)** |
-| **AI Partner Matchmaking** | No Access | **Full (Browse & Connect)**| No Access | No Access |
-| **Create Team & Manage ATS** | No Access | **Full (Own Team)** | No Access | No Access |
-| **Apply & Join Active Teams**| No Access | **Full** | No Access | No Access |
-| **SideKick AI Assistant** | No Access | **Full** | No Access | No Access |
-| **Edit Skills & Portfolio** | No Access | **Full** | No Access | No Access |
-| **Review Competition Roster** | No Access | No Access | **Full (Own Event)** | No Access |
-| **Instagram AI Web Scraping**| No Access | No Access | No Access | **Full** |
-| **Ban Account & Toggle Flags**| No Access | No Access | No Access | **Full** |
-| **Toggle Staff/Moderator Ban**| No Access | No Access | No Access | **Superadmin Only** |
+| Functional Module | Guest / Anonymous | Student (Peserta) | Organizer (EO) | Brand Sponsor | Staff (Moderator/Super) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Browse Landing Page & FAQ** | **Read-Only** | **Full Access** | **Full Access** | **Full Access** | **Full Access** |
+| **Browse Competition Directory**| **Read-Only** | **Full Access & Join** | **Read-Only** | **Read-Only** | **Manage & Moderate** |
+| **Create & Edit Competitions**| No Access | No Access | **Full (Own Listing)** | No Access | **Full (Moderate All)** |
+| **AI Partner Matchmaking** | No Access | **Full (Browse & Connect)**| No Access | No Access | No Access |
+| **Create Team & Manage ATS** | No Access | **Full (Own Team)** | No Access | No Access | No Access |
+| **Apply & Join Active Teams**| No Access | **Full** | No Access | No Access | No Access |
+| **SideKick AI Assistant** | No Access | **Full** | No Access | No Access | No Access |
+| **Edit Skills & Portfolio** | No Access | **Full** | No Access | No Access | No Access |
+| **Review Competition Roster** | No Access | No Access | **Full (Own Event)** | No Access | No Access |
+| **Manage Campaigns & Ads** | No Access | No Access | No Access | **Full (Own Listing)** | **Full (Moderate All)** |
+| **Instagram AI Web Scraping**| No Access | No Access | No Access | No Access | **Full** |
+| **Ban Account & Toggle Flags**| No Access | No Access | No Access | No Access | **Full** |
+| **Toggle Staff/Moderator Ban**| No Access | No Access | No Access | No Access | **Superadmin Only** |
 
 ---
 
@@ -285,14 +288,18 @@ SideQuest utilizes the GWA (*Growth, Watch, and Aware*) metrics hierarchy to eva
    - **PostgreSQL Pool & CPU Utilization**: Relational database connection pool load under intense multi-table joins.
    - **Email Verification Speed**: Average onboarding turnaround time from initial registration to email token verification completion.
 
-### 7.2. Monetization Tiers & Premium Features (Monetization Gates)
+### 7.2. Model Fitur Berbayar & Monetisasi (Monetization Gates)
 
-SideQuest is architected with four core monetization modules designed to be automatically unlocked when platform growth hits a predefined threshold (e.g., **10,000 MAU** and **100+ verified active Event Organizers**):
+SideQuest is architected with premium monetization modules designed to be automatically unlocked when platform growth hits a predefined threshold (e.g., **10,000 MAU** and **100+ verified active Event Organizers**):
 
 * **Premium Team Spotlight (Recruitment Boost)**: Team initiators can purchase a micro-transaction boost to pin their team recruitment cards at the top of the "Cari Tim" feed. Pinned posts feature a premium golden-glowing border and badge for accelerated applicant discovery.
 * **Premium Event Organizer Analytics Console**: Competition organizers pay a recurring subscription to unlock advanced dashboard panels, offering detailed demographics on registrants, university representation, skill-gap analysis, and talent scores.
 * **SideKick AI Copilot Plus**: A premium tier for student participants that grants access to advanced AI copilot capabilities, including automatic PDF CV parsing, automated motivation letter generation tailored to selected competitions, and mock AI interview simulations.
 * **Verified Talent Badge**: A micro-fee verification service where students submit past competition certificates for manual auditing by the SideQuest team, displaying a verified blue badge on their matchmaking and profile cards.
+* **Targeted Brands Sponsorship (Program Kemitraan Sponsor)**: Activates a dedicated user role `sponsor` for third-party partners (such as developer tools vendors, cloud computing providers, skill-bootcamp coordinators, etc.) to advertise or form targeted partnerships directly:
+  - *Sponsor Promotional Ad Banners*: Render promotional banners for relevant bootcamp or training programs inside competition feeds.
+  - *Giveaways & Discount Campaigns*: Issue cloud credits, software licenses, or tool discounts directly to active student teams to aid their hackathon or case challenge development.
+  - *Competition Co-Sponsorship*: Partner with Event Organizers to fund contests, embedding the sponsor's branding seamlessly inside target listing details.
 
 ---
 
