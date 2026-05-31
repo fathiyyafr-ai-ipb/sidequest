@@ -260,12 +260,48 @@ sequenceDiagram
 
 ---
 
-## 7. Peta Jalan Produk (Roadmap) & Backlog
+## 7. Pengembangan Bisnis & Monetisasi (Business Development)
+
+Untuk memastikan keberlanjutan operasional, pertumbuhan jangka panjang, dan kelayakan finansial SideQuest, platform ini mengintegrasikan strategi pemantauan kinerja berbasis metrik kuantitatif dan mempersiapkan fitur-fitur berbayar (*monetization gates*) yang siap diaktifkan saat pertumbuhan pengguna mencapai target tertentu.
+
+### 7.1. Metrik Pemantauan Sistem GWA (Growth, Watch & Aware)
+
+SideQuest menerapkan kerangka kerja metrik GWA (*Growth, Watch, and Aware*) untuk memantau kesehatan ekosistem platform secara *real-time*:
+
+1. **Metrik Pertumbuhan (Growth Metrics)**: Indikator utama keberhasilan ekspansi, tingkat adopsi pengguna, dan keaktifan kolaborasi.
+   - **Monthly Active Users (MAU) & Daily Active Users (DAU)**: Jumlah unik mahasiswa dan penyelenggara kompetisi yang aktif berinteraksi di platform.
+   - **Tingkat Keberhasilan Tim (Team Formation Success Rate)**: Total tim bentukan mahasiswa yang berhasil melengkapi kuota anggotanya dan mendaftar ke kompetisi.
+   - **Jumlah Kompetisi Aktif yang Dipublikasikan**: Total event yang aktif didaftarkan oleh penyelenggara (EO) resmi di direktori.
+   - **Tingkat Retensi Pengguna (User Retention)**: Rasio kembalinya mahasiswa untuk mencari kompetisi/rekan baru setelah menyelesaikan turnamen sebelumnya.
+
+2. **Metrik Pengawasan (Watch Metrics)**: Indikator operasional dan kenyamanan fitur yang harus dipantau secara berkala untuk menjaga retensi.
+   - **Skor Kompatibilitas AI Rata-Rata**: Memastikan algoritma *matchmaking* memberikan rekomendasi yang akurat (menghindari skor di bawah batas wajar 60%).
+   - **Rasio Konversi Rekrutmen (ATS Conversion Rate)**: Jumlah pelamar yang disetujui bergabung dibagi total pengaju lamaran keanggotaan tim.
+   - **Volume Interaksi SideKick AI**: Jumlah total kueri dan persentase keberhasilan asisten *floating* SideKick AI mengembalikan *Rich Cards* yang relevan.
+   - **Tingkat Suspensi & Moderasi**: Rasio penangguhan akun melanggar (`is_active = false`) oleh moderator untuk memastikan keamanan platform.
+
+3. **Metrik Kesadaran (Aware Metrics)**: Indikator infrastruktur teknis dasar untuk mendeteksi potensi degradasi sistem.
+   - **Server Latency & API Response Time**: Kecepatan server memproses respons REST API dan AI scoring.
+   - **Database Connection Pool & CPU Usage**: Penggunaan sumber daya PostgreSQL di bawah beban tinggi kueri multi-table joins.
+   - **Rasio Verifikasi Email**: Durasi waktu yang dibutuhkan pengguna baru dari pendaftaran hingga verifikasi token sukses.
+
+### 7.2. Model Fitur Berbayar & Monetisasi (Monetization Gates)
+
+SideQuest mempersiapkan empat pilar monetisasi premium yang dapat diaktifkan secara otomatis setelah platform melampaui ambang pertumbuhan tertentu (misalnya, mencapai target **10.000 MAU** dan **100+ Mitra Event Organizer terverifikasi**):
+
+* **Premium Team Spotlight (Sorotan Rekrutmen Tim)**: Mahasiswa inisiator tim dapat membayar biaya mikro-transaksi untuk menyematkan (*pin*) tim rekrutmen mereka di posisi teratas halaman "Cari Tim" dengan lencana emas berkilau guna menjaring pelamar bertalenta lebih cepat.
+* **Premium Organizer Analytics Deck (Analisis EO Eksklusif)**: Penyelenggara lomba dapat beralih ke akun berbayar untuk mengakses modul analitik canggih yang menyajikan data demografis pendaftar, asal universitas, sebaran *skillset*, serta talent scoring mahasiswa berprestasi.
+* **SideKick AI Copilot Plus**: Fitur asisten AI berbayar untuk mahasiswa yang membantu membedah isi berkas CV/Portfolio PDF secara instan, membuat draf surat motivasi (*motivation letter*) secara otomatis sesuai konteks kompetisi, serta menyimulasikan sesi wawancara latihan.
+* **Verified Talent Badge (Lencana Portofolio Terverifikasi)**: Penilaian mikro bagi mahasiswa untuk memverifikasi sertifikat juara kompetisi masa lalu mereka secara resmi di profil menggunakan peninjauan manual tim operasional, menampilkan tanda centang biru premium pada kartu *matchmaking*.
+
+---
+
+## 8. Peta Jalan Produk (Roadmap) & Backlog
 
 ### Fase 1: Autentikasi & Landing Page Publik (Selesai)
 - **LinkedIn-Style Landing Page**: Built split grid layout dengan Dual CTAs dan live stats.
 - **Registrasi Multi-Peran & Lupa Sandi**: Penanganan form dinamis prodi/instansi dan database-backed recovery sandi.
-- **Tentang Kami & FAQ**: Grid kartu profilAqilah, Fathiyya, Gilbran, dan accordion transisi tinggi yang halus.
+- **Tentang Kami & FAQ**: Grid kartu profil Aqilah, Fathiyya, Gilbran, dan accordion transisi tinggi yang halus.
 
 ### Fase 2: AI Matchmaking & Rekomendasi Celah Keahlian (Selesai)
 - **AI Scoring Engine**: Skoring multidimensi logis prodi/skills/kampus.
@@ -277,6 +313,10 @@ sequenceDiagram
 - **Stateless Intent Engine**: Kueri asinkron database untuk mencari lomba, mahasiswa bertalenta, atau FAQ dari pesan teks.
 - **Rich Cards Chat**: Kartu detail lomba dan tombol "Hubungkan" rekat dari dalam thread chat.
 
-### Fase 4: Chat Real-Time & WebSockets (Backlog Masa Depan)
+### Fase 4: Pengembangan Bisnis & Monetisasi (Sedang Berjalan)
+- **Dasbor KPI GWA**: Implementasi statistik pemantauan Growth, Watch, dan Aware di panel superadmin.
+- **Gerbang Monetisasi (Monetization Gates)**: Pengembangan skema database transaksi premium tim spotlight, verified badges, dan log langganan EO.
+
+### Fase 5: Chat Real-Time & WebSockets (Backlog Masa Depan)
 - **Komponen Instant Messaging Chat**: Membuat tabel `chat_rooms` dan `messages` di database. Mengganti toast pesan masuk dengan sidebar obrolan pesan aktif fungsional.
 - **WebSocket Integration**: Memasang koneksi soket real-time untuk pengiriman pesan instan dan notifikasi desktop.

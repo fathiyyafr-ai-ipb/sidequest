@@ -260,7 +260,43 @@ sequenceDiagram
 
 ---
 
-## 7. Product Roadmap & Backlog
+## 7. Business Development & Monetization
+
+To ensure financial sustainability, long-term ecosystem vitality, and solid platform valuation, SideQuest incorporates a metrics-driven system performance framework and outlines monetization features ready to activate upon hitting specific growth targets.
+
+### 7.1. GWA System Performance Monitoring (Growth, Watch & Aware)
+
+SideQuest utilizes the GWA (*Growth, Watch, and Aware*) metrics hierarchy to evaluate the real-time health of the co-competition platform:
+
+1. **Growth Metrics**: Primary indicators of platform expansion, adoption speed, and match-seeking activities.
+   - **Monthly Active Users (MAU) & Daily Active Users (DAU)**: Unique active participant students and verified organizers on the platform.
+   - **Team Formation Success Rate**: Total percentage of created student groups that successfully complete their rosters and register for contests.
+   - **Total Active Competition Listings**: The cumulative number of active academic/non-academic competitions hosted by verified organizers.
+   - **User Lifetime Value (Retention)**: The rate at which students return to seek new teams or competitions after completing a tournament cycle.
+
+2. **Watch Metrics**: Quality and features performance indicators to be audited constantly to maintain user retention.
+   - **Average Matchmaking Proximity Score**: Ensures the deterministic AI matchmaking engine serves high-value complementary suggestions (avoiding scores dropping under 60%).
+   - **ATS Recruitment Conversion Rate**: The ratio of approved team members relative to the total applications received by team owners.
+   - **SideKick AI Conversational Load**: Total query volume and parsing accuracy of the SideKick assistant in delivering contextual *Rich Cards*.
+   - **Account Disabling Rate (Moderation Metrics)**: The volume of user/team bans (`is_active = false`) logged to audit community safety.
+
+3. **Aware Metrics**: Baseline operational and hardware statuses to preemptively identify system bottlenecking.
+   - **API Response Latency**: Server speed in rendering pages, scoring compatibility, and processing NLP sidekick payloads.
+   - **PostgreSQL Pool & CPU Utilization**: Relational database connection pool load under intense multi-table joins.
+   - **Email Verification Speed**: Average onboarding turnaround time from initial registration to email token verification completion.
+
+### 7.2. Monetization Tiers & Premium Features (Monetization Gates)
+
+SideQuest is architected with four core monetization modules designed to be automatically unlocked when platform growth hits a predefined threshold (e.g., **10,000 MAU** and **100+ verified active Event Organizers**):
+
+* **Premium Team Spotlight (Recruitment Boost)**: Team initiators can purchase a micro-transaction boost to pin their team recruitment cards at the top of the "Cari Tim" feed. Pinned posts feature a premium golden-glowing border and badge for accelerated applicant discovery.
+* **Premium Event Organizer Analytics Console**: Competition organizers pay a recurring subscription to unlock advanced dashboard panels, offering detailed demographics on registrants, university representation, skill-gap analysis, and talent scores.
+* **SideKick AI Copilot Plus**: A premium tier for student participants that grants access to advanced AI copilot capabilities, including automatic PDF CV parsing, automated motivation letter generation tailored to selected competitions, and mock AI interview simulations.
+* **Verified Talent Badge**: A micro-fee verification service where students submit past competition certificates for manual auditing by the SideQuest team, displaying a verified blue badge on their matchmaking and profile cards.
+
+---
+
+## 8. Product Roadmap & Backlog
 
 ### Phase 1: Authentication & Public Onboarding (Completed)
 - **LinkedIn-Style Landing Page**: Built split grid layout with CTA redirection.
@@ -277,6 +313,10 @@ sequenceDiagram
 - **NLP Intent Engine**: Chat messages processed to query database for users, competitions, and FAQ.
 - **Interactive Chat Cards**: Direct matchmaking connections and details link rendered from within conversation bubbles.
 
-### Phase 4: Instant Messaging & WebSockets (Future Backlog)
+### Phase 4: Business Development & Monetization (In Progress)
+- **GWA Dashboard Integration**: Building analytics modules to visualize Growth, Watch, and Aware indicators in the superadmin deck.
+- **Monetization Gates Development**: Structuring premium team spotlight, verified badges, and subscription schema models in the PostgreSQL layer.
+
+### Phase 5: Instant Messaging & WebSockets (Future Backlog)
 - **Real-Time Messaging Widget**: Chat rooms and messages tables in DB. Replace the placeholder toast `"💬 Fitur pesan masuk segera hadir!"` with a functional socket-backed sidebar.
 - **WebSocket Integration**: Establish a socket connection for real-time chat delivery and instant head-up desktop notifications.
