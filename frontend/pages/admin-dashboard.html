@@ -1011,6 +1011,7 @@
 
     // Page Initialisation
     document.addEventListener('DOMContentLoaded', async () => {
+      window.closeSidebar(); // Force close mobile drawer & overlay on load
       if (!requireAuth()) return;
       const profile = await initSession();
 
