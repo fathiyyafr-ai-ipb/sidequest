@@ -3,7 +3,10 @@
  * Central HTTP client — import in every page.
  */
 // Konfigurasi URL API Dinamis
-const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+const API_BASE = window.location.hostname === 'localhost' || 
+                 window.location.hostname === '127.0.0.1' || 
+                 window.location.hostname === '' || 
+                 window.location.protocol === 'file:'
   ? 'http://localhost:3001/api'
   : 'https://sidequest-backend-3930.onrender.com/api';
 
@@ -172,11 +175,14 @@ export const api = {
     async mine() { const res = await _get('/teams/me'); return res.data; },
     async candidates() { const res = await _get('/teams/candidates'); return res.data; },
     async create(p) { const res = await _post('/teams', p); return res.data; },
-    async list(cat = 'all') { const res = await _get(`/teams?cat=${cat}`); return res.data; },
+    async list(cat = 'all', type = 'all') { const res = await _get(`/teams?cat=${cat}&type=${type}`); return res.data; },
     async apply(id) { const res = await _post(`/teams/${id}/apply`); return res; },
     async respond(id, applicantId, action) { const res = await _post(`/teams/${id}/respond`, { applicantId, action }); return res; },
     leave(id) { return _del(`/teams/${id}/leave`); },
     invite(id, userId) { return _post(`/teams/${id}/invite`, { userId }); },
+    async respondInvite(id, action) { const res = await _post(`/teams/${id}/respond-invite`, { action }); return res; },
+    async getById(id) { const res = await _get(`/teams/${id}`); return res.data; },
+    async update(id, payload) { const res = await _put(`/teams/${id}`, payload); return res.data; },
   },
 
   admin: {
@@ -208,9 +214,37 @@ export const api = {
     trackImpression(adIds) { return _post('/sponsor/ads/impression', { adIds }); },
     trackClick(id) { return _post(`/sponsor/ads/${id}/click`); }
   },
+
+  premium: {
+    // Admin
+    async getSettings() { const res = await _get('/premium/admin/settings'); return _unwrap(res); },
+    async updateSettings(payload) { const res = await _post('/premium/admin/settings', payload); return _unwrap(res); },
+    
+    // Organizer
+    async getStatus() { const res = await _get('/premium/organizer/status'); return _unwrap(res); },
+    async getEventSettings(compId) { const res = await _get(`/premium/organizer/settings/${compId}`); return _unwrap(res); },
+    async saveEventSettings(compId, payload) { const res = await _post(`/premium/organizer/settings/${compId}`, payload); return _unwrap(res); },
+    async getCustomFields(compId) { const res = await _get(`/premium/organizer/fields/${compId}`); return _unwrap(res); },
+    async saveCustomFields(compId, payload) { const res = await _post(`/premium/organizer/fields/${compId}`, payload); return _unwrap(res); },
+    async getSubmissions(compId) { const res = await _get(`/premium/organizer/submissions/${compId}`); return _unwrap(res); },
+    async getJudges(compId) { const res = await _get(`/premium/organizer/judges/${compId}`); return _unwrap(res); },
+    async addJudge(compId, payload) { const res = await _post(`/premium/organizer/judges/${compId}`, payload); return _unwrap(res); },
+    async getAnalytics(compId) { const res = await _get(`/premium/organizer/analytics/${compId}`); return _unwrap(res); },
+
+    // Judges
+    async judgeLogin(token) { const res = await _get(`/premium/judge/auth?token=${token}`); return _unwrap(res); },
+    async getJudgeSubmissions(token) { const res = await _get(`/premium/judge/submissions?token=${token}`); return _unwrap(res); },
+    async saveGrade(token, payload) { const res = await _post(`/premium/judge/grade?token=${token}`, payload); return _unwrap(res); },
+
+    // Participants
+    async getParticipantFields(compId) { const res = await _get(`/premium/participant/fields/${compId}`); return _unwrap(res); },
+    async submitAsset(compId, payload) { const res = await _post(`/premium/participant/submit/${compId}`, payload); return _unwrap(res); }
+  }
 };
 
 // ── helpers ───────────────────────────────────────────────────────
+const _unwrap = (res) => (res && res.data !== undefined) ? res.data : res;
+
 function _store(data) {
   if (!data) return;
   if (data.accessToken) token.set(data.accessToken);
@@ -339,6 +373,75 @@ export const ui = {
       document.querySelectorAll('[href*="posting-lomba.html"]').forEach(el => {
         el.style.display = '';
       });
+    }
+
+    // Auto-inject User Guide header icon button
+    const headerRight = document.querySelector('header.hidden.lg\\:flex .flex.items-center.gap-3, header.hidden.lg\\:flex .flex.items-center.gap-4');
+    if (headerRight && !document.getElementById('sq-guide-btn-desktop')) {
+      const guideLink = document.createElement('a');
+      guideLink.id = 'sq-guide-btn-desktop';
+      guideLink.className = 'relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light text-primary transition-colors flex items-center justify-center flex-shrink-0';
+      
+      if (role === 'organizer') {
+        guideLink.href = 'panduan-organizer.html';
+        guideLink.title = 'Panduan Penyelenggara';
+      } else if (role === 'sponsor') {
+        guideLink.href = 'panduan-sponsor.html';
+        guideLink.title = 'Panduan Sponsor';
+        guideLink.className = 'relative p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-primary transition-colors flex items-center justify-center flex-shrink-0';
+      } else {
+        guideLink.href = 'panduan-mahasiswa.html';
+        guideLink.title = 'Panduan Mahasiswa';
+      }
+      
+      guideLink.innerHTML = `
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+      `;
+      
+      headerRight.insertBefore(guideLink, headerRight.firstChild);
+    }
+
+    // Auto-inject User Guide header icon button for mobile
+    const mobileContainer = document.querySelector('header.lg\\:hidden .flex.items-center.gap-1\\.5') || 
+                            document.querySelector('header.lg\\:hidden');
+    if (mobileContainer && !document.getElementById('sq-guide-btn-mobile')) {
+      const guideLink = document.createElement('a');
+      guideLink.id = 'sq-guide-btn-mobile';
+      
+      if (role === 'organizer') {
+        guideLink.href = 'panduan-organizer.html';
+        guideLink.title = 'Panduan Penyelenggara';
+      } else if (role === 'sponsor') {
+        guideLink.href = 'panduan-sponsor.html';
+        guideLink.title = 'Panduan Sponsor';
+      } else {
+        guideLink.href = 'panduan-mahasiswa.html';
+        guideLink.title = 'Panduan Mahasiswa';
+      }
+      
+      if (mobileContainer.classList.contains('flex-row') || mobileContainer.tagName === 'HEADER') {
+        guideLink.className = 'p-2 rounded-xl hover:bg-gray-100 text-primary transition-colors flex items-center justify-center ml-auto mr-2';
+        guideLink.innerHTML = `
+          <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+        `;
+        const profileEl = mobileContainer.querySelector('a[href="profil.html"]') || mobileContainer.querySelector('#mobile-avatar') || mobileContainer.lastElementChild;
+        mobileContainer.insertBefore(guideLink, profileEl);
+      } else {
+        guideLink.className = 'p-2 rounded-xl hover:bg-gray-100 text-primary transition-colors flex items-center justify-center';
+        guideLink.innerHTML = `
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+        `;
+        mobileContainer.insertBefore(guideLink, mobileContainer.firstChild);
+      }
     }
 
     // Auto-inject SideKick chatbot bubble for logged-in participants (not on maintenance)

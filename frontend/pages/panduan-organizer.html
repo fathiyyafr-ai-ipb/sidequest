@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panduan Penyelenggara — SideQuest</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6C63FF',
+            'primary-dark': '#5A52E0',
+            'primary-light': '#EDE9FF',
+            accent: '#FF6B35',
+            'accent-light': '#FFF1EB',
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          boxShadow: {
+            card: '0 4px 20px rgba(108,99,255,0.08)',
+            'card-hover': '0 8px 30px rgba(108,99,255,0.15)',
+            topbar: '0 2px 16px rgba(108,99,255,0.12)',
+          },
+        },
+      },
+    };
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/styles.css" />
+  <style>
+    body {
+      background-color: #FFF8F8;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(108, 99, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+  <!-- Topbar Back Header -->
+  <header class="fixed top-0 left-0 right-0 z-30 bg-white/90 backdrop-blur border-b border-gray-100 px-6 py-4 flex items-center justify-between shadow-sm">
+    <div class="flex items-center gap-3">
+      <a href="organizer-dashboard.html" class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-primary-light hover:text-primary transition-all text-gray-500">
+        <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <div>
+        <h1 class="text-sm font-800 text-gray-800">Panduan Pengguna</h1>
+        <p class="text-[10px] text-gray-400 mt-0.5">Khusus Penyelenggara Lomba / Organizer 🏆</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-2">
+      <img src="../assets/logo.png" alt="SideQuest Logo" class="h-6 w-auto object-contain" />
+      <span class="font-extrabold text-primary text-sm tracking-tight">SideQuest</span>
+    </div>
+  </header>
+
+  <main class="max-w-4xl mx-auto pt-24 pb-16 px-4">
+    <!-- Hero Banner with gradient -->
+    <div class="grad-header rounded-3xl p-6 lg:p-8 text-white mb-8 relative overflow-hidden shadow-card">
+      <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl">🏆</div>
+      <h2 class="text-xl lg:text-2xl font-800 mb-2">Selamat Datang di Console Penyelenggara!</h2>
+      <p class="text-white/80 text-xs lg:text-sm max-w-2xl leading-relaxed">
+        Kelola kompetisi Anda secara digital dari satu konsol terpadu. Jangkau ribuan bakat mahasiswa bertalenta tinggi, 
+        audit pendaftaran pendaftar, kelola tahapan lomba, serta broadcast pengumuman penting secara instan.
+      </p>
+    </div>
+
+    <!-- Core Steps grid -->
+    <div class="space-y-6">
+      
+      <!-- STEP 1 -->
+      <div class="glass-card rounded-3xl p-6 lg:p-7 shadow-card space-y-4 hover:shadow-card-hover transition-all duration-300">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center text-primary text-xs font-800">1</span>
+          <h3 class="font-800 text-gray-800 text-sm lg:text-base">Menerbitkan Lomba / Kompetisi</h3>
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed pl-11">
+          Gunakan tombol <strong>Posting Lomba</strong> di panel sidebar untuk mendaftarkan lomba baru Anda. Isi informasi detail 
+          seperti judul kompetisi, cakupan (nasional/regional/lokal), model pendaftaran (registrasi langsung di portal atau link eksternal), 
+          kategori tema utama, deadline, hingga deskripsi lengkap tata cara partisipasi.
+        </p>
+        <div class="bg-gray-50 rounded-2xl p-4 text-[11px] text-gray-600 border border-gray-100/50 leading-relaxed ml-11">
+          ℹ️ <strong>Catatan Approval:</strong> Setiap lomba yang baru dibuat akan dikirimkan ke administrator operator untuk diverifikasi. 
+          Lomba Anda akan berstatus <em>"Pending Review"</em> dan otomatis terbit ke direktori publik setelah disetujui admin.
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="glass-card rounded-3xl p-6 lg:p-7 shadow-card space-y-4 hover:shadow-card-hover transition-all duration-300">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-accent/10 flex items-center justify-center text-accent text-xs font-800">2</span>
+          <h3 class="font-800 text-gray-800 text-sm lg:text-base">Audit & Manajemen Pendaftaran Tim</h3>
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed pl-11">
+          Pada tab <strong>Manajemen Lomba</strong> di dashboard organizer, pilih salah satu kompetisi aktif untuk mengaudit pendaftar. 
+          Anda dapat melihat detail formulir pengisian pendaftar, tautan berkas persyaratan, serta status pembayaran pendaftaran. 
+          Berikan status **Approve** (Disetujui) atau **Reject** (Ditolak dengan menyertakan catatan koreksi dokumen).
+        </p>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="glass-card rounded-3xl p-6 lg:p-7 shadow-card space-y-4 hover:shadow-card-hover transition-all duration-300">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-green-50 flex items-center justify-center text-green-600 text-xs font-800">3</span>
+          <h3 class="font-800 text-gray-800 text-sm lg:text-base">Menyiarkan Pengumuman (Broadcast Announcement)</h3>
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed pl-11">
+          Butuh menyampaikan perpanjangan waktu pengumpulan, rilis panduan teknis, atau jadwal TM? Gunakan panel **Kirim Pengumuman** 
+          yang tersedia di halaman manajemen masing-masing kompetisi. Pengumuman Anda akan langsung muncul di panel notifikasi 
+          dashboard setiap peserta yang telah terdaftar ke kompetisi Anda.
+        </p>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="glass-card rounded-3xl p-6 lg:p-7 shadow-card space-y-4 hover:shadow-card-hover transition-all duration-300">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 text-xs font-800">4</span>
+          <h3 class="font-800 text-gray-800 text-sm lg:text-base">Merilis Hasil & Mengumumkan Pemenang</h3>
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed pl-11">
+          Saat penjurian selesai, Anda dapat mengunggah file pengumuman pemenang, menyunting tautan pengumuman, serta merilis secara resmi 
+          daftar juara 1, 2, 3, dan kategori favorit di SideQuest. Peserta akan langsung mendapatkan notifikasi perayaan kemenangan 
+          di profil masing-masing.
+        </p>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="glass-card rounded-3xl p-6 lg:p-7 shadow-card space-y-4 hover:shadow-card-hover transition-all duration-300">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 text-xs font-800">5</span>
+          <h3 class="font-800 text-gray-800 text-sm lg:text-base">Penyelenggaraan Lomba Terpadu (Hosted Event)</h3>
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed pl-11">
+          SideQuest menawarkan integrasi pendaftaran digital penuh melalui model **Hosted Event**. Jika Anda menyalakan opsi 
+          <em>"Registrasi Terpadu (Hosted)"</em> saat posting lomba, seluruh alur pendaftaran—mulai dari pembentukan tim, pengunggahan 
+          dokumen administrasi, hingga verifikasi biaya pendaftaran—akan dikelola penuh di dalam sistem SideQuest. Hal ini memangkas 
+          kebutuhan Google Forms manual dan memudahkan peserta melacak status mereka secara transparan.
+        </p>
+      </div>
+
+      <!-- STEP 6 -->
+      <div class="glass-card rounded-3xl p-6 lg:p-7 shadow-card space-y-4 hover:shadow-card-hover transition-all duration-300">
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 text-xs font-800">6</span>
+          <h3 class="font-800 text-gray-800 text-sm lg:text-base">Analitik & Metrik Pendaftaran Real-time</h3>
+        </div>
+        <p class="text-xs text-gray-500 leading-relaxed pl-11">
+          Pantau kesehatan perlombaan Anda melalui panel analitik yang andal di Dashboard Organizer. Anda dapat memantau visualisasi 
+          metrik penting secara langsung: jumlah total tim pendaftar, jumlah tim yang sukses terverifikasi administrasi, persentase 
+          pembayaran terkonfirmasi, serta analisis demografi universitas asal peserta. Informasi analitik ini sangat berguna untuk 
+          mengukur keefektifan promosi perlombaan Anda.
+        </p>
+      </div>
+      
+      
+    </div>
+
+    <!-- FAQ Accordion Footer -->
+    <div class="mt-12 space-y-4">
+      <h3 class="font-800 text-gray-800 text-base flex items-center gap-2">❓ Pertanyaan Sering Ditanyakan (FAQ)</h3>
+      <div class="space-y-3">
+        <div class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-1">
+          <span class="text-xs font-800 text-gray-800 block">Q: Berapa lama waktu peninjauan proposal lomba oleh administrator?</span>
+          <span class="text-[11px] text-gray-500 leading-relaxed block">A: Biasanya peninjauan berlangsung dalam waktu 1x24 jam sejak perlombaan diunggah. Kami akan meninjau kelayakan penyelenggara demi keamanan mahasiswa.</span>
+        </div>
+        <div class="p-4 bg-white rounded-2xl border border-gray-100 shadow-sm space-y-1">
+          <span class="text-xs font-800 text-gray-800 block">Q: Bagaimana cara ekspor berkas peserta untuk kebutuhan penjurian internal?</span>
+          <span class="text-[11px] text-gray-500 leading-relaxed block">A: Anda dapat mengunduh daftar lengkap tim beserta berkas pendaftarannya dalam format CSV melalui tombol "Ekspor Roster" pada panel masing-masing kompetisi yang Anda kelola.</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

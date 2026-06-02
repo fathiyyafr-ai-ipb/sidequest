@@ -74,7 +74,7 @@
     </a>
     <a href="cari-tim.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Cari Tim</span>
+      <span class="text-sm font-600">Direktori Tim</span>
     </a>
     <a href="profil.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></span>
@@ -323,7 +323,7 @@
                   stroke-linecap="round" />
               </svg>
             </div>
-            <span class="text-xs font-700 text-gray-700">Cari Tim</span>
+            <span class="text-xs font-700 text-gray-700">Direktori Tim</span>
           </a>
           <button onclick="alert('Fitur Posting Tim segera hadir!')"
             class="feat-btn bg-white rounded-2xl shadow-card p-4 flex flex-col items-center gap-2.5 hover:shadow-card-hover w-full">
@@ -535,6 +535,52 @@
     }
   };
 
+  // Tampilkan Modal Undangan Lomba untuk Mahasiswa yang di-invite
+  window.viewInvitation = async (teamId, title, message) => {
+    const modal = document.getElementById('profile-modal');
+    const content = document.getElementById('profile-modal-content');
+    modal.classList.remove('hidden');
+    
+    content.innerHTML = `
+      <div class="text-center pb-4 border-b border-gray-100">
+        <div class="w-12 h-12 rounded-2xl bg-primary-light flex items-center justify-center text-xl text-primary mx-auto mb-3">📩</div>
+        <h3 class="font-800 text-gray-800 text-base">${title}</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Undangan Bergabung Tim Kelompok</p>
+      </div>
+      
+      <div class="space-y-4 mt-4 text-center sm:text-left">
+        <p class="text-xs text-gray-600 leading-relaxed">${message}</p>
+        
+        <div class="flex gap-3 pt-4 mt-4 border-t border-gray-100">
+          <button onclick="respondInviteRequest(${teamId}, 'approve')" class="flex-1 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-700 transition-all shadow-sm cursor-pointer border-0">
+            Terima Undangan
+          </button>
+          <button onclick="respondInviteRequest(${teamId}, 'reject')" class="flex-1 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-xs font-700 transition-all cursor-pointer border-0">
+            Tolak Undangan
+          </button>
+        </div>
+      </div>
+    `;
+  };
+
+  // Kirim respons terima/tolak undangan
+  window.respondInviteRequest = async (teamId, action) => {
+    ui.loading(true);
+    try {
+      await api.teams.respondInvite(teamId, action);
+      const actionMsg = action === 'approve' ? 'diterima! Anda telah bergabung dalam tim.' : 'ditolak.';
+      ui.toast(`✅ Undangan berhasil ${actionMsg}`, 'success');
+      
+      window.closeProfileModal();
+      await loadMyTeamWidget();
+      await updateNotificationState();
+    } catch(e) {
+      handleApiError(e, 'Gagal memproses undangan tim');
+    } finally {
+      ui.loading(false);
+    }
+  };
+
   // Muat Widget Tim
   async function loadMyTeamWidget() {
     const container = document.getElementById('widget-my-team');
@@ -555,7 +601,7 @@
             </div>
             <div class="flex gap-2 flex-shrink-0 w-full sm:w-auto justify-center">
               <a href="cari-tim.html" class="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-xl text-xs font-700 transition-colors shadow-sm text-center no-underline">
-                Cari Tim
+                Direktori Tim
               </a>
               <a href="cari-tim.html?tab=post" class="px-4 py-2 border-2 border-primary text-primary hover:bg-primary hover:text-white rounded-xl text-xs font-700 transition-colors text-center no-underline">
                 Buka Rekrutmen
@@ -587,6 +633,16 @@
                   </span>
                 </h3>
                 <p class="text-xs text-gray-400 mt-1">Kompetisi: <strong class="text-gray-600">${team.competition.title}</strong></p>
+                ${isOwner ? `
+                  <div class="mt-2.5 flex flex-wrap gap-2">
+                    <a href="matchmaking.html?invite_team_id=${team.id}" class="inline-flex items-center gap-1.5 bg-primary/10 hover:bg-primary hover:text-white text-primary text-[10px] font-800 px-3 py-1.5 rounded-xl transition-all no-underline">
+                      🔍 Rekrut Anggota via Matchmaking
+                    </a>
+                    <button onclick="openEditTeamModal(${team.id})" class="inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-[10px] font-800 px-3 py-1.5 rounded-xl transition-all shadow-sm">
+                      ⚙️ Edit Detail Tim
+                    </button>
+                  </div>
+                ` : ''}
               </div>
             </div>
             
@@ -701,15 +757,22 @@
             return;
           }
           list.innerHTML = res.map(notif => {
-            const isClickableProfile = !!notif.applicantId;
-            const clickHandler = isClickableProfile 
-              ? `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId || 'null'})"` 
-              : '';
-            const cursorClass = isClickableProfile ? 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]' : '';
+            let clickHandler = '';
+            let cursorClass = '';
+            
+            if (notif.title === 'Undangan Bergabung Tim') {
+              clickHandler = `onclick="viewInvitation(${notif.teamId}, '${notif.title}', '${notif.message}')"`;
+              cursorClass = 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]';
+            } else if (notif.applicantId) {
+              clickHandler = `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId || 'null'})"`;
+              cursorClass = 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]';
+            }
             
             const isPendingJoin = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
             const isPendingConnection = !notif.teamId && notif.applicantId && notif.connectionStatus === 'pending';
-            const isPending = isPendingJoin || isPendingConnection;
+            const isPendingInvite = notif.teamId && notif.memberStatus === 'invited' && notif.title === 'Undangan Bergabung Tim';
+            const isPending = isPendingJoin || isPendingConnection || isPendingInvite;
+            
             const pendingBadge = isPending 
               ? `<span class="bg-orange-100 text-orange-700 text-[9px] font-700 px-1.5 py-0.5 rounded-md uppercase flex-shrink-0">Pending</span>` 
               : '';
@@ -784,7 +847,132 @@
       console.warn('Gagal memuat notifikasi:', e.message);
     }
   }
+
+  // ==========================================
+  // EDIT TEAM MODAL HANDLERS (DASHBOARD)
+  // ==========================================
+  window.openEditTeamModal = async (teamId) => {
+    const err = document.getElementById('edit-team-err');
+    err?.classList.add('hidden');
+    ui.loading(true);
+    try {
+      const team = await api.teams.getById(teamId);
+      document.getElementById('edit-team-id').value = team.id;
+      document.getElementById('edit-team-name').value = team.name;
+      document.getElementById('edit-team-desc').value = team.description;
+      document.getElementById('edit-team-max').value = team.maxMembers;
+      document.getElementById('edit-team-contact').value = team.contact;
+      document.getElementById('edit-team-require-conn').checked = team.requireConnectionToApply;
+
+      const modal = document.getElementById('edit-team-modal');
+      const box = document.getElementById('edit-team-modal-box');
+      modal.classList.remove('invisible', 'opacity-0');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+    } catch (ex) {
+      handleApiError(ex, 'Gagal mengambil detail tim');
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  window.closeEditTeamModal = () => {
+    const modal = document.getElementById('edit-team-modal');
+    const box = document.getElementById('edit-team-modal-box');
+    modal.classList.add('invisible', 'opacity-0');
+    box.classList.remove('scale-100');
+    box.classList.add('scale-95');
+  };
+
+  document.getElementById('edit-team-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('edit-team-submit');
+    const err = document.getElementById('edit-team-err');
+    btn.textContent = 'Menyimpan…';
+    btn.disabled = true;
+    err?.classList.add('hidden');
+
+    const teamId = document.getElementById('edit-team-id').value;
+    const payload = {
+      name: document.getElementById('edit-team-name').value.trim(),
+      description: document.getElementById('edit-team-desc').value.trim(),
+      max_members: parseInt(document.getElementById('edit-team-max').value, 10),
+      contact: document.getElementById('edit-team-contact').value.trim(),
+      require_connection_to_apply: document.getElementById('edit-team-require-conn').checked
+    };
+
+    try {
+      await api.teams.update(teamId, payload);
+      ui.toast('✅ Detail tim berhasil diperbarui!', 'success');
+      closeEditTeamModal();
+      await loadMyTeamWidget();
+    } catch (ex) {
+      if (err) {
+        err.textContent = ex.message || 'Gagal menyimpan detail tim.';
+        err.classList.remove('hidden');
+      }
+    } finally {
+      btn.textContent = 'Simpan Perubahan';
+      btn.disabled = false;
+    }
+  });
   </script>
+
+  <!-- Modal Edit Tim (Glassmorphism Premium) -->
+  <div id="edit-team-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm opacity-0 invisible transition-all duration-300">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-card border border-gray-100 transform scale-95 transition-all duration-300" id="edit-team-modal-box">
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-50">
+        <div>
+          <h3 class="text-base font-800 text-gray-800">⚙️ Edit Detail Tim</h3>
+          <p class="text-[11px] text-gray-400 mt-0.5">Perbarui informasi rekrutmen tim Anda</p>
+        </div>
+        <button onclick="closeEditTeamModal()" class="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors text-gray-400">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div id="edit-team-err" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600"></div>
+
+      <form id="edit-team-form" class="space-y-4">
+        <input type="hidden" id="edit-team-id" />
+        <div>
+          <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Nama Tim</label>
+          <input type="text" id="edit-team-name" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+        </div>
+        <div>
+          <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Deskripsi Rekrutmen</label>
+          <textarea id="edit-team-desc" rows="3" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Slot Anggota (Max)</label>
+            <input type="number" id="edit-team-max" min="2" max="10" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Kontak (Telegram / WA)</label>
+            <input type="text" id="edit-team-contact" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+        </div>
+        <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+          <div class="flex-1 pr-4">
+            <p class="text-xs font-700 text-gray-800">Wajibkan Koneksi Pertemanan 🔒</p>
+            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">
+              Hanya orang yang berteman dengan minimal satu anggota tim yang dapat melamar.
+            </p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+            <input type="checkbox" id="edit-team-require-conn" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+          </label>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeEditTeamModal()" class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl text-xs font-700 transition-colors">Batal</button>
+          <button type="submit" id="edit-team-submit" class="flex-[2] py-3 bg-primary hover:bg-primary-dark text-white rounded-2xl text-xs font-700 transition-colors shadow-md">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script src="../js/data.js"></script>
   <script src="../js/app.js"></script>
 </body>

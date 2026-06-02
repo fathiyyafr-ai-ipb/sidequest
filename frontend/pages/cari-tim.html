@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-  <title>Cari Tim — SideQuest</title>
+  <title>Direktori Tim — SideQuest</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -82,7 +82,7 @@
             <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2" />
             <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" />
-          </svg></span><span class="text-sm font-600">Cari Tim</span></a><a
+          </svg></span><span class="text-sm font-600">Direktori Tim</span></a><a
         href="profil.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer"><span
           class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24">
             <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2"
@@ -116,7 +116,7 @@
   <header
     class="hidden lg:flex fixed top-0 right-0 left-64 z-20 bg-white/95 backdrop-blur shadow-topbar px-6 py-3.5 items-center justify-between">
     <div>
-      <h2 class="text-base font-800 text-gray-800">Cari Tim</h2>
+      <h2 class="text-base font-800 text-gray-800">Direktori Tim</h2>
       <p class="text-xs text-gray-400 mt-0.5">Temukan atau buka rekrutmen anggota tim 🤝</p>
     </div>
     <div class="flex items-center gap-3">
@@ -147,11 +147,11 @@
   <div class="lg:ml-64">
     <main class="main-content pt-16 lg:pt-20 pb-20 lg:pb-8 px-4 lg:px-8 max-w-6xl mx-auto">
       <div class="grad-header rounded-2xl p-5 mt-4 mb-5">
-        <h1 class="text-xl font-800 text-white mb-1">🤝 Cari Tim & Rekrutmen</h1>
+        <h1 class="text-xl font-800 text-white mb-1">🤝 Direktori Tim & Rekrutmen</h1>
         <p class="text-white/70 text-sm mb-4">Tim yang butuh anggota, atau cari tim untuk lomba favoritmu</p>
         <div class="flex gap-2"><button onclick="switchTab(this,'browse')" id="tab-browse"
             class="tab-active px-4 py-2 rounded-xl text-sm font-700 bg-white text-primary shadow-sm transition-all">🔍
-            Cari Tim</button><button onclick="switchTab(this,'post')" id="tab-post"
+            Direktori Tim</button><button onclick="switchTab(this,'post')" id="tab-post"
             class="px-4 py-2 rounded-xl text-sm font-700 bg-white/20 text-white transition-all">➕ Buka
             Rekrutmen</button></div>
       </div>
@@ -169,6 +169,16 @@
             class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Social Impact</button>
           <button onclick="filterTim(this,'sains')"
             class="tim-chip flex-shrink-0 text-xs font-700 px-4 py-2 rounded-full border border-gray-200 text-gray-600">Sains</button>
+        </div>
+
+        <!-- Filter Jenis Tim -->
+        <div class="flex border-b border-gray-100 mb-5 gap-6 overflow-x-auto no-scrollbar">
+          <button onclick="filterType(this,'all')" id="type-filter-all"
+            class="type-filter-btn active pb-3 text-sm font-700 text-primary border-b-2 border-primary transition-all whitespace-nowrap">Semua Rekrutmen</button>
+          <button onclick="filterType(this,'my-teams')" id="type-filter-my"
+            class="type-filter-btn pb-3 text-sm font-600 text-gray-500 hover:text-gray-800 transition-all whitespace-nowrap">Tim Saya 👥</button>
+          <button onclick="filterType(this,'other-teams')" id="type-filter-other"
+            class="type-filter-btn pb-3 text-sm font-600 text-gray-500 hover:text-gray-800 transition-all whitespace-nowrap">Tim Lain 🔍</button>
         </div>
 
         <!-- ── Sponsorship Banner Widget ── -->
@@ -238,6 +248,10 @@
                   placeholder="contoh: wa.me/628123456789"
                   class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary focus:bg-white transition-all" />
               </div>
+              <div class="flex items-center gap-3 pt-2">
+                <input type="checkbox" id="inp-tim-require-connection" class="w-4 h-4 rounded text-primary focus:ring-primary border-gray-300 cursor-pointer" />
+                <label for="inp-tim-require-connection" class="text-xs font-700 text-gray-600 uppercase tracking-wide cursor-pointer">Wajibkan Pelamar Terkoneksi dengan Anggota Tim 🔒</label>
+              </div>
             </div>
           </div>
           <div class="flex gap-3 pb-4"><button type="button"
@@ -254,11 +268,71 @@
     <div class="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl">
       <div class="text-6xl mb-4">🎉</div>
       <h3 class="text-xl font-800 text-gray-800 mb-2">Rekrutmen Berhasil Dibuka!</h3>
-      <p class="text-gray-500 text-sm mb-6">Ribuan mahasiswa sudah bisa melihat timmu dan bergabung.</p><button
+      <p class="text-gray-500 text-sm mb-6">Ribuan mahasiswa sudah bisa melihat timmu dan bergabung.</p>
+      <button
         onclick="document.getElementById('success-modal').classList.add('hidden');switchTab(document.getElementById('tab-browse'),'browse')"
-        class="block w-full py-3 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors">Lihat
-        S
-        <script type="module">
+        class="block w-full py-3 rounded-2xl bg-primary text-white font-700 text-sm hover:bg-primary-dark transition-colors">
+        Lihat Semua Rekrutmen
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal Edit Tim (Glassmorphism Premium) -->
+  <div id="edit-team-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm opacity-0 invisible transition-all duration-300">
+    <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-card border border-gray-100 transform scale-95 transition-all duration-300" id="edit-team-modal-box">
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-50">
+        <div>
+          <h3 class="text-base font-800 text-gray-800">⚙️ Edit Detail Tim</h3>
+          <p class="text-[11px] text-gray-400 mt-0.5">Perbarui informasi rekrutmen tim Anda</p>
+        </div>
+        <button onclick="closeEditTeamModal()" class="w-8 h-8 rounded-xl bg-gray-50 flex items-center justify-center hover:bg-red-50 hover:text-red-500 transition-colors text-gray-400">
+          <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <div id="edit-team-err" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600"></div>
+
+      <form id="edit-team-form" class="space-y-4">
+        <input type="hidden" id="edit-team-id" />
+        <div>
+          <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Nama Tim</label>
+          <input type="text" id="edit-team-name" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+        </div>
+        <div>
+          <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Deskripsi Rekrutmen</label>
+          <textarea id="edit-team-desc" rows="3" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Slot Anggota (Max)</label>
+            <input type="number" id="edit-team-max" min="2" max="10" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+          <div>
+            <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Kontak (Telegram / WA)</label>
+            <input type="text" id="edit-team-contact" required class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-2.5 text-xs focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+          </div>
+        </div>
+        <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+          <div class="flex-1 pr-4">
+            <p class="text-xs font-700 text-gray-800">Wajibkan Koneksi Pertemanan 🔒</p>
+            <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">
+              Hanya orang yang berteman dengan minimal satu anggota tim yang dapat melamar.
+            </p>
+          </div>
+          <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+            <input type="checkbox" id="edit-team-require-conn" class="sr-only peer">
+            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+          </label>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button type="button" onclick="closeEditTeamModal()" class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-2xl text-xs font-700 transition-colors">Batal</button>
+          <button type="submit" id="edit-team-submit" class="flex-[2] py-3 bg-primary hover:bg-primary-dark text-white rounded-2xl text-xs font-700 transition-colors shadow-md">Simpan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
           import { api, ui, handleApiError, token, renderSponsorshipAd } from '../js/api.js';
           import { initSession, bindLogout } from '../js/auth.js';
 
@@ -291,6 +365,8 @@
             }
           };
 
+          let currentType = "all";
+
           window.filterTim = async (el, cat) => {
             document.querySelectorAll(".tim-chip").forEach(c => {
               c.classList.remove("selected", "bg-primary", "text-white", "border-primary");
@@ -300,9 +376,25 @@
             el.classList.remove("border-gray-200", "text-gray-600");
 
             currentCat = cat;
+            await window.loadTeams();
+          };
+
+          window.filterType = async (el, type) => {
+            document.querySelectorAll(".type-filter-btn").forEach(btn => {
+              btn.classList.remove("active", "text-primary", "border-b-2", "border-primary", "font-700");
+              btn.classList.add("text-gray-500", "font-600");
+            });
+            el.classList.add("active", "text-primary", "border-b-2", "border-primary", "font-700");
+            el.classList.remove("text-gray-500", "font-600");
+
+            currentType = type;
+            await window.loadTeams();
+          };
+
+          window.loadTeams = async () => {
             ui.loading(true, document.getElementById('tim-list'));
             try {
-              const data = await api.teams.list(cat);
+              const data = await api.teams.list(currentCat, currentType);
               activeTeams = data;
               renderTim(data);
             } catch (e) {
@@ -325,6 +417,72 @@
             }
           };
 
+          window.openEditTeamModal = async (teamId) => {
+            const err = document.getElementById('edit-team-err');
+            err?.classList.add('hidden');
+            ui.loading(true);
+            try {
+              const team = await api.teams.getById(teamId);
+              document.getElementById('edit-team-id').value = team.id;
+              document.getElementById('edit-team-name').value = team.name;
+              document.getElementById('edit-team-desc').value = team.description;
+              document.getElementById('edit-team-max').value = team.maxMembers;
+              document.getElementById('edit-team-contact').value = team.contact;
+              document.getElementById('edit-team-require-conn').checked = team.requireConnectionToApply;
+
+              const modal = document.getElementById('edit-team-modal');
+              const box = document.getElementById('edit-team-modal-box');
+              modal.classList.remove('invisible', 'opacity-0');
+              box.classList.remove('scale-95');
+              box.classList.add('scale-100');
+            } catch (ex) {
+              handleApiError(ex, 'Gagal mengambil detail tim');
+            } finally {
+              ui.loading(false);
+            }
+          };
+
+          window.closeEditTeamModal = () => {
+            const modal = document.getElementById('edit-team-modal');
+            const box = document.getElementById('edit-team-modal-box');
+            modal.classList.add('invisible', 'opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+          };
+
+          document.getElementById('edit-team-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('edit-team-submit');
+            const err = document.getElementById('edit-team-err');
+            btn.textContent = 'Menyimpan…';
+            btn.disabled = true;
+            err?.classList.add('hidden');
+
+            const teamId = document.getElementById('edit-team-id').value;
+            const payload = {
+              name: document.getElementById('edit-team-name').value.trim(),
+              description: document.getElementById('edit-team-desc').value.trim(),
+              max_members: parseInt(document.getElementById('edit-team-max').value, 10),
+              contact: document.getElementById('edit-team-contact').value.trim(),
+              require_connection_to_apply: document.getElementById('edit-team-require-conn').checked
+            };
+
+            try {
+              await api.teams.update(teamId, payload);
+              ui.toast('✅ Detail tim berhasil diperbarui!', 'success');
+              closeEditTeamModal();
+              await window.loadTeams();
+            } catch (ex) {
+              if (err) {
+                err.textContent = ex.message || 'Gagal menyimpan detail tim.';
+                err.classList.remove('hidden');
+              }
+            } finally {
+              btn.textContent = 'Simpan Perubahan';
+              btn.disabled = false;
+            }
+          });
+
           function renderTim(data) {
             const list = document.getElementById("tim-list");
             const count = document.getElementById("tim-count");
@@ -336,7 +494,74 @@
               return;
             }
 
-            list.innerHTML = data.map(t => `
+            list.innerHTML = data.map(t => {
+              const connectionBadge = t.hasConnectionWithMember ? `<span class="flex-shrink-0 text-[10px] font-800 bg-purple-50 text-primary px-2.5 py-0.5 rounded-full border border-primary/20">✨ Terkoneksi</span>` : "";
+              const hotBadge = t.urgency === "hot" ? `<span class="flex-shrink-0 text-xs font-700 bg-red-50 text-red-500 px-2 py-0.5 rounded-full">🔥 Hot</span>` : "";
+
+              let lockHtml = "";
+              let btnDisabled = "";
+              let btnClass = "bg-primary text-white hover:bg-primary-dark";
+
+              if (t.requireConnectionToApply) {
+                if (t.hasConnectionWithMember) {
+                  lockHtml = `<div class="mb-3 flex items-center gap-1.5 text-[10px] font-800 text-green-600 bg-green-50/70 border border-green-200/50 rounded-xl px-2.5 py-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-ping"></span> 🔒 Koneksi Terpenuhi ✨</div>`;
+                } else {
+                  lockHtml = `<div class="mb-3 flex items-center gap-1.5 text-[10px] font-800 text-red-600 bg-red-50/70 border border-red-200/50 rounded-xl px-2.5 py-1.5">🔒 Hanya Koneksi Anggota</div>`;
+                  btnDisabled = "disabled";
+                  btnClass = "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed";
+                }
+              }
+
+              let actionRowHtml = "";
+              if (t.isJoined) {
+                // Skenario A: Sudah tergabung (Owner atau Member)
+                let editBtnHtml = "";
+                if (t.isOwner) {
+                  editBtnHtml = `
+                    <button onclick="openEditTeamModal(${t.id})" class="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-700 transition-colors shadow-sm flex items-center justify-center gap-1.5">
+                      ⚙️ Edit Detail Tim
+                    </button>
+                  `;
+                } else {
+                  editBtnHtml = `
+                    <span class="flex-1 py-2.5 text-center text-xs font-700 text-green-600 bg-green-50 rounded-xl border border-green-200/50 flex items-center justify-center gap-1">
+                      ✔️ Sudah Bergabung
+                    </span>
+                  `;
+                }
+
+                actionRowHtml = `
+                  <div class="flex items-center justify-between gap-3 mt-2 pt-3 border-t border-gray-50">
+                    ${editBtnHtml}
+                    <div class="flex -space-x-2 overflow-hidden flex-shrink-0">
+                      ${(t.anggotaList || []).map(m => {
+                        const initials = m.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                        return `
+                          <div class="inline-block h-8 w-8 rounded-full border-2 border-white ${m.avatarColor} flex items-center justify-center text-white text-[9px] font-800 shadow-sm" title="${m.name}">
+                            ${initials}
+                          </div>
+                        `;
+                      }).join("")}
+                    </div>
+                  </div>
+                `;
+              } else {
+                // Skenario B: Belum bergabung (Tampilkan tombol Gabung & Chat)
+                actionRowHtml = `
+                  <div class="flex gap-2">
+                    <button onclick="joinTeam(${t.id}, '${t.nama}')" ${btnDisabled} class="flex-1 py-2.5 rounded-xl ${btnClass} text-xs font-700 transition-colors">
+                      Gabung Tim
+                    </button>
+                    <a href="${t.kontak && t.kontak.startsWith('http') ? t.kontak : 'https://' + t.kontak}" target="_blank" class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center hover:bg-primary group transition-colors flex-shrink-0">
+                      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" class="group-hover:stroke-white transition-colors">
+                        <path d="M21 15a2 2 0 01-2-2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
+                      </svg>
+                    </a>
+                  </div>
+                `;
+              }
+
+              return `
     <div class="bg-white rounded-2xl shadow-card overflow-hidden hover:shadow-card-hover transition-shadow">
       <div class="p-4">
         <div class="flex items-start gap-3 mb-3">
@@ -349,7 +574,10 @@
                 <h3 class="font-800 text-gray-800 text-sm">${t.nama}</h3>
                 <p class="text-xs text-primary font-600 mt-0.5 truncate">${t.lomba}</p>
               </div>
-              ${t.urgency === "hot" ? `<span class="flex-shrink-0 text-xs font-700 bg-red-50 text-red-500 px-2 py-0.5 rounded-full">🔥 Hot</span>` : ""}
+              <div class="flex flex-col gap-1 items-end">
+                ${hotBadge}
+                ${connectionBadge}
+              </div>
             </div>
           </div>
         </div>
@@ -362,19 +590,12 @@
           <span class="font-700 ${t.slot <= 1 ? "text-red-500" : "text-gray-500"}">${t.slot} slot tersisa</span>
           <span>⏰ ${t.deadline}</span>
         </div>
-        <div class="flex gap-2">
-          <button onclick="joinTeam(${t.id}, '${t.nama}')" class="flex-1 py-2.5 rounded-xl bg-primary text-white text-xs font-700 hover:bg-primary-dark transition-colors">
-            Gabung Tim
-          </button>
-          <a href="${t.kontak && t.kontak.startsWith('http') ? t.kontak : 'https://' + t.kontak}" target="_blank" class="w-10 h-10 rounded-xl bg-primary-light flex items-center justify-center hover:bg-primary group transition-colors">
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24" class="group-hover:stroke-white transition-colors">
-              <path d="M21 15a2 2 0 01-2-2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-          </a>
-        </div>
+        ${lockHtml}
+        ${actionRowHtml}
       </div>
     </div>
-  `).join("");
+  `;
+            }).join("");
           }
 
           // Populate competition options dynamically
@@ -407,6 +628,7 @@
               const description = document.getElementById("inp-tim-desc").value.trim();
               const deadlineVal = document.getElementById("inp-tim-deadline").value;
               const contact = document.getElementById("inp-tim-kontak").value.trim();
+              const require_connection_to_apply = document.getElementById("inp-tim-require-connection").checked;
 
               const skills_needed = skillsInput ? skillsInput.split(",").map(s => s.trim()) : ["Anggota"];
               const max_members = slot + 1; // 1 owner + slot members
@@ -420,7 +642,8 @@
                 recruitment_deadline,
                 contact,
                 max_members,
-                category
+                category,
+                require_connection_to_apply
               };
 
               await api.teams.create(payload);
@@ -430,7 +653,7 @@
               document.getElementById("success-modal").classList.remove("hidden");
 
               // Refresh teams list
-              window.filterTim(document.querySelector('.tim-chip'), 'all');
+              await window.loadTeams();
             } catch (err) {
               handleApiError(err, 'Gagal membuat rekrutmen tim');
             } finally {
@@ -443,18 +666,7 @@
           document.addEventListener('DOMContentLoaded', async () => {
             await initSession();
             bindLogout();
-
-            ui.loading(true, document.getElementById('tim-list'));
-            try {
-              const data = await api.teams.list('all');
-              activeTeams = data;
-              renderTim(data);
-            } catch (e) {
-              handleApiError(e, 'Gagal memuat rekrutmen tim');
-            } finally {
-              ui.loading(false);
-            }
-
+            await window.loadTeams();
             await renderSponsorshipAd('teams', 'sponsorship-banner');
             loadCompetitions();
           });

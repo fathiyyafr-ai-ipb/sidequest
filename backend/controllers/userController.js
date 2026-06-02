@@ -5,7 +5,7 @@ const getProfile = async (req, res) => {
     const userId = req.params.id || req.userId; // Support params or auth middleware
     
     // Ambil data user
-    const userRes = await pool.query('SELECT id, name, email, university, prodi, avatar_color, bio, role, experience, achievements FROM users WHERE id = $1', [userId]);
+    const userRes = await pool.query('SELECT id, name, email, university, prodi, avatar_color, bio, role, experience, achievements, only_allow_connection_invites FROM users WHERE id = $1', [userId]);
     if (userRes.rows.length === 0) return res.status(404).send("User not found");
 
     // Ambil skill user
@@ -192,7 +192,8 @@ const getProfile = async (req, res) => {
       prestasi,
       deadlines,
       connectionStatus,
-      connectionId
+      connectionId,
+      onlyAllowConnectionInvites: user.only_allow_connection_invites
     };
     res.json({ data: userData });
   } catch (err) {
@@ -204,18 +205,29 @@ const getProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const userId = req.userId || 1; 
-    const { name, university, prodi, bio } = req.body;
+    const { name, fullName, university, studyProgram, prodi, bio, onlyAllowConnectionInvites } = req.body;
+
+    const finalName = name || fullName;
+    const finalProdi = prodi || studyProgram;
 
     const updateQuery = `
       UPDATE users 
       SET name = COALESCE($1, name),
           university = COALESCE($2, university),
           prodi = COALESCE($3, prodi),
-          bio = COALESCE($4, bio)
-      WHERE id = $5 RETURNING id, name, email, university, prodi, bio
+          bio = COALESCE($4, bio),
+          only_allow_connection_invites = COALESCE($5, only_allow_connection_invites)
+      WHERE id = $6 RETURNING id, name, email, university, prodi, bio, only_allow_connection_invites
     `;
 
-    const result = await pool.query(updateQuery, [name, university, prodi, bio, userId]);
+    const result = await pool.query(updateQuery, [
+      finalName !== undefined ? finalName : null,
+      university !== undefined ? university : null,
+      finalProdi !== undefined ? finalProdi : null,
+      bio !== undefined ? bio : null,
+      onlyAllowConnectionInvites !== undefined ? onlyAllowConnectionInvites : null,
+      userId
+    ]);
     
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
@@ -253,7 +265,8 @@ const updateProfile = async (req, res) => {
       bio: updatedUser.bio,
       initials: updatedUser.name ? updatedUser.name.split(' ').map(n => n[0]).join('') : 'U',
       skills: [],
-      stats: { lombaIkuti, timAktif, undangan: 0, matchRate }
+      stats: { lombaIkuti, timAktif, undangan: 0, matchRate },
+      onlyAllowConnectionInvites: updatedUser.only_allow_connection_invites
     };
 
     res.json({ message: "Profile updated successfully", data: userData });

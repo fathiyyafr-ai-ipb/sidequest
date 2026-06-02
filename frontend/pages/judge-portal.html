@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Portal Penilaian Dewan Juri — SideQuest</title>
+  
+  <!-- Modern Typography -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#6C63FF',
+            'primary-dark': '#5A52E0',
+            'primary-light': '#EDE9FF',
+            accent: '#FF6B35',
+            'dark-bg': '#0F172A',
+            'card-bg': 'rgba(30, 41, 59, 0.7)'
+          },
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          boxShadow: {
+            glass: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
+            'glow-primary': '0 0 15px rgba(108, 99, 255, 0.4)',
+            'glow-success': '0 0 15px rgba(34, 197, 94, 0.4)'
+          }
+        }
+      }
+    };
+  </script>
+  
+  <style>
+    body {
+      background-color: #0B0F19;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 107, 53, 0.05) 0%, transparent 40%);
+      color: #F8FAFC;
+    }
+
+    .glass-card {
+      background: rgba(17, 24, 39, 0.7);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .neon-input {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .neon-input:focus {
+      border-color: #6C63FF;
+      box-shadow: 0 0 10px rgba(108, 99, 255, 0.3);
+      outline: none;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(108, 99, 255, 0.2);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(108, 99, 255, 0.4);
+    }
+    
+    @keyframes sq-spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+  <!-- Loading State Panel -->
+  <div id="portal-loading" class="flex flex-col items-center gap-4 py-12">
+    <div class="w-12 h-12 rounded-full border-4 border-slate-700 border-t-primary" style="animation: sq-spin .8s linear infinite"></div>
+    <span class="text-sm text-primary font-700 tracking-wider uppercase animate-pulse">Mengotentikasi Token Juri...</span>
+  </div>
+
+  <!-- Invalid Token State Panel (Hidden by default) -->
+  <div id="portal-invalid" class="hidden max-w-md w-full glass-card rounded-3xl p-8 text-center space-y-6 shadow-glass">
+    <div class="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center text-3xl mx-auto">🚨</div>
+    <div class="space-y-2">
+      <h3 class="font-800 text-lg text-white">Token Akses Juri Tidak Sah</h3>
+      <p class="text-xs text-slate-400 leading-relaxed">Tautan penilaian ini tidak valid, tidak lengkap, atau telah kedaluwarsa. Mohon hubungi panitia penyelenggara lomba untuk mendapatkan tautan direct token juri yang baru.</p>
+    </div>
+    <button onclick="window.close()" class="w-full py-3 rounded-2xl bg-slate-800 hover:bg-slate-750 text-white font-700 text-xs transition-colors border-0 cursor-pointer">
+      Tutup Halaman
+    </button>
+  </div>
+
+  <!-- Active Evaluation Console (Hidden by default) -->
+  <div id="portal-active" class="hidden w-full max-w-5xl space-y-6">
+    
+    <!-- Portal Header Banner -->
+    <header class="glass-card rounded-3xl p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 shadow-glass">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[9px] font-800 bg-primary/20 border border-primary/30 text-primary uppercase tracking-wider">Direct Access</span>
+          <span id="comp-title-banner" class="text-xs font-700 text-slate-400">Nama Kompetisi</span>
+        </div>
+        <h2 id="comp-title" class="text-xl md:text-2xl font-800 text-white leading-tight">Mini Web Designer Hackathon</h2>
+        <p class="text-xs text-slate-400 font-500">Penyelenggara: <span id="comp-organizer" class="text-slate-200 font-700">Organizer Name</span></p>
+      </div>
+
+      <div class="flex items-center gap-3.5 bg-slate-800/40 p-4 rounded-2xl border border-white/5">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white font-extrabold text-sm shadow-md">
+          JD
+        </div>
+        <div>
+          <p id="judge-name" class="text-xs font-850 text-white">Dewan Juri</p>
+          <p id="judge-email" class="text-[10px] text-slate-400 mt-0.5">juri@email.com</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Evaluation Workspace Split -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Left Column: Submissions Board (5/12) -->
+      <section class="lg:col-span-5 space-y-4">
+        <h3 class="text-sm font-800 text-white flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-primary shadow-glow-primary"></span>
+          Berkas Pengumpulan Mahasiswa
+        </h3>
+
+        <div id="submissions-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-1">
+          <!-- Loaded dynamically -->
+        </div>
+      </section>
+
+      <!-- Right Column: Grading Portal Panel (7/12) -->
+      <section class="lg:col-span-7 space-y-4">
+        <h3 class="text-sm font-800 text-white flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 shadow-glow-success"></span>
+          Formulir Penilaian & Evaluasi
+        </h3>
+
+        <!-- Placeholder when no submission selected -->
+        <div id="grading-placeholder" class="text-center py-24 glass-card rounded-3xl p-6 shadow-glass flex flex-col items-center justify-center gap-3">
+          <span class="text-5xl">👈</span>
+          <p class="font-800 text-white text-sm">Pilih Submisi Terlebih Dahulu</p>
+          <p class="text-xs text-slate-400 max-w-xs leading-relaxed">Klik salah satu berkas submisi peserta pada daftar kiri untuk membuka panel pengisian nilai dan masukan.</p>
+        </div>
+
+        <!-- Active Grading Card -->
+        <div id="grading-card" class="hidden glass-card rounded-3xl p-6 md:p-8 shadow-glass space-y-6">
+          <div class="border-b border-white/5 pb-4">
+            <span class="text-[10px] font-800 text-primary uppercase tracking-wider block">Tim yang Dinilai</span>
+            <h4 id="grading-team-name" class="font-800 text-white text-base leading-snug">Tim Alpha IPB</h4>
+            <p id="grading-submitted-at" class="text-[10px] text-slate-400 mt-1">Diserahkan pada: -</p>
+          </div>
+
+          <!-- Submission Assets Box -->
+          <div class="bg-slate-900/60 border border-white/5 p-4 rounded-2xl space-y-3">
+            <span class="text-[9px] font-800 text-slate-400 uppercase tracking-wide">Aset Hasil Karya:</span>
+            <div class="flex items-center justify-between gap-4">
+              <a id="grading-asset-url" href="#" target="_blank" class="text-primary hover:text-primary-light font-800 text-xs truncate no-underline flex items-center gap-1.5">
+                <span>Buka Link Aset Karya Peserta</span> 🔗
+              </a>
+              <span class="text-[10px] text-slate-400 italic whitespace-nowrap">Format eksternal</span>
+            </div>
+            <div class="h-px bg-white/5"></div>
+            <div class="space-y-1">
+              <span class="text-[9px] font-800 text-slate-400 uppercase tracking-wide block">Catatan Tambahan Peserta:</span>
+              <p id="grading-notes" class="text-[11px] text-slate-300 italic font-500 leading-normal">"Tidak ada catatan khusus."</p>
+            </div>
+          </div>
+
+          <!-- Rating Form -->
+          <form onsubmit="window.submitEvaluation(event)" class="space-y-5">
+            <input type="hidden" id="grading-submission-id" />
+            
+            <div class="space-y-2">
+              <label class="flex justify-between items-baseline">
+                <span class="text-[10px] font-700 text-slate-300 uppercase tracking-wide">Input Skor Penilaian (0-100)</span>
+                <span id="score-live-val" class="text-xl font-800 text-primary">85</span>
+              </label>
+              <div class="flex gap-4 items-center">
+                <input type="range" id="grading-score-range" min="0" max="100" value="85" oninput="document.getElementById('score-live-val').textContent = this.value; document.getElementById('grading-score-num').value = this.value" class="flex-1 accent-primary h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer" />
+                <input type="number" id="grading-score-num" min="0" max="100" value="85" oninput="document.getElementById('score-live-val').textContent = this.value; document.getElementById('grading-score-range').value = this.value" class="w-16 neon-input text-center rounded-xl py-2 font-800 text-sm text-white" />
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-[10px] font-700 text-slate-300 uppercase tracking-wide">Ulasan & Umpan Balik (Feedback)</label>
+              <textarea id="grading-feedback" rows="5" required placeholder="Tulis masukan konstruktif untuk karya ini..." class="w-full neon-input rounded-2xl px-4 py-3 text-xs text-white placeholder-slate-500 transition-all resize-none"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-primary to-primary-dark hover:from-primary-dark hover:to-primary text-white font-800 text-xs rounded-2xl transition-all shadow-md shadow-primary/20 border-0 cursor-pointer flex items-center justify-center gap-1.5">
+              <span>Publikasikan Nilai & Masukan</span> 💾
+            </button>
+          </form>
+        </div>
+
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- Application JS Code (ES Module) -->
+  <script type="module">
+    import { api, ui, handleApiError } from '../js/api.js';
+
+    let judgeToken = null;
+    let submissions = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const q = new URLSearchParams(window.location.search);
+      judgeToken = q.get('token');
+
+      if (!judgeToken) {
+        showInvalidState();
+        return;
+      }
+
+      try {
+        // 1. Authenticate Judge
+        const judge = await api.premium.judgeLogin(judgeToken);
+        
+        document.getElementById('comp-title-banner').textContent = judge.competition_title;
+        document.getElementById('comp-title').textContent = judge.competition_title;
+        document.getElementById('comp-organizer').textContent = judge.organizer_name;
+        document.getElementById('judge-name').textContent = judge.judge_name;
+        document.getElementById('judge-email').textContent = judge.judge_email;
+
+        // 2. Load Submissions
+        await loadSubmissions();
+
+        // Reveal workspace
+        document.getElementById('portal-loading').classList.add('hidden');
+        document.getElementById('portal-active').classList.remove('hidden');
+
+      } catch (err) {
+        showInvalidState();
+      }
+    });
+
+    function showInvalidState() {
+      document.getElementById('portal-loading').classList.add('hidden');
+      document.getElementById('portal-invalid').classList.remove('hidden');
+    }
+
+    async function loadSubmissions() {
+      const container = document.getElementById('submissions-list');
+      if (!container) return;
+
+      try {
+        submissions = await api.premium.getJudgeSubmissions(judgeToken);
+        
+        if (submissions.length === 0) {
+          container.innerHTML = `
+            <div class="glass-card rounded-3xl p-6 text-center text-xs text-slate-400">
+              Belum ada berkas terkumpul untuk perlombaan ini.
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = submissions.map(s => {
+          const isGraded = s.score !== null;
+          const statusCls = isGraded 
+            ? 'bg-green-500/10 border-green-500/20 text-green-400' 
+            : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400';
+          const statusText = isGraded ? 'Graded' : 'Pending';
+          const scoreBadge = isGraded ? `<span class="bg-primary/20 text-primary font-800 text-[10px] px-2 py-0.5 rounded-lg border border-primary/30">${s.score} pts</span>` : '';
+
+          const teamLabel = s.team_name ? s.team_name : s.participant_name;
+
+          return `
+            <div onclick="window.selectSubmission(${s.id})" class="p-4 rounded-2xl glass-card hover:border-primary/40 cursor-pointer transition-all duration-300 flex items-center justify-between gap-4">
+              <div class="min-w-0 space-y-1">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-2 py-0.5 rounded-full text-[8px] font-800 border ${statusCls}">${statusText}</span>
+                  ${scoreBadge}
+                </div>
+                <h4 class="font-850 text-white text-xs leading-snug truncate">${teamLabel}</h4>
+                <p class="text-[9px] text-slate-400 truncate">Oleh: ${s.participant_name}</p>
+              </div>
+              <span class="text-slate-400 text-xs">➔</span>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        container.innerHTML = `
+          <div class="glass-card rounded-3xl p-6 text-center text-xs text-red-400">
+            Gagal memuat daftar berkas.
+          </div>
+        `;
+      }
+    }
+
+    window.selectSubmission = (subId) => {
+      const sub = submissions.find(x => x.id === subId);
+      if (!sub) return;
+
+      document.getElementById('grading-placeholder').classList.add('hidden');
+      
+      const card = document.getElementById('grading-card');
+      card.classList.remove('hidden');
+
+      // Populate grading card fields
+      document.getElementById('grading-submission-id').value = sub.id;
+      document.getElementById('grading-team-name').textContent = sub.team_name ? sub.team_name : sub.participant_name;
+      document.getElementById('grading-submitted-at').textContent = `Diserahkan pada: ${new Date(sub.submitted_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+      
+      const assetLink = document.getElementById('grading-asset-url');
+      assetLink.href = sub.submission_url;
+      assetLink.textContent = sub.submission_url;
+      
+      document.getElementById('grading-notes').textContent = sub.notes ? `"${sub.notes}"` : '"Tidak ada catatan khusus."';
+      
+      // Populate range and inputs
+      const currentScore = sub.score !== null ? sub.score : 85;
+      document.getElementById('grading-score-range').value = currentScore;
+      document.getElementById('grading-score-num').value = currentScore;
+      document.getElementById('score-live-val').textContent = currentScore;
+      
+      document.getElementById('grading-feedback').value = sub.feedback || '';
+    };
+
+    window.submitEvaluation = async (event) => {
+      event.preventDefault();
+      
+      const subId = parseInt(document.getElementById('grading-submission-id').value, 10);
+      const score = parseInt(document.getElementById('grading-score-num').value, 10);
+      const feedback = document.getElementById('grading-feedback').value.trim();
+
+      ui.loading(true);
+      try {
+        await api.premium.saveGrade(judgeToken, {
+          submission_id: subId,
+          score,
+          feedback
+        });
+
+        ui.toast('✅ Hasil penilaian & ulasan berhasil disimpan!', 'success');
+        
+        // Reload submissions list
+        await loadSubmissions();
+        
+        // Refresh grading view with updated data
+        window.selectSubmission(subId);
+
+      } catch (err) {
+        handleApiError(err);
+      } finally {
+        ui.loading(false);
+      }
+    };
+  </script>
+</body>
+</html>

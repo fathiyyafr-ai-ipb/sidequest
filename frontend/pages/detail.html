@@ -246,6 +246,11 @@
             <!-- Teks validasi kapasitas tim (Eror deskriptif / Indikator Sukses) -->
             <p id="team-validation-error" class="text-[11px] font-600 text-red-600 mt-1 leading-snug hidden"></p>
             <p id="team-validation-success" class="text-[11px] font-600 text-green-600 mt-1 leading-snug hidden"></p>
+            <div class="mt-2">
+              <button type="button" id="btn-recruit-members" class="hidden w-full py-2.5 bg-primary-light text-primary text-[10px] font-800 rounded-xl hover:bg-primary hover:text-white transition-all border-0 cursor-pointer">
+                🔍 Rekrut Anggota via Matchmaking
+              </button>
+            </div>
           </div>
 
           <div class="space-y-4" id="form-inputs-container">
@@ -468,6 +473,7 @@
           const dropdown = document.getElementById('reg-team-dropdown');
           const newErrEl = document.getElementById('team-validation-error');
           const newSuccEl = document.getElementById('team-validation-success');
+          const recruitBtn = document.getElementById('btn-recruit-members');
 
           loadingText.classList.remove('hidden');
           dropdown.classList.add('hidden');
@@ -510,6 +516,7 @@
                 const val = dropdown.value;
                 newErrEl.classList.add('hidden');
                 newSuccEl.classList.add('hidden');
+                recruitBtn.classList.add('hidden');
                 submitBtn.disabled = false;
 
                 if (!val) {
@@ -522,6 +529,11 @@
                 const selectedTeam = ownerTeams.find(t => t.id === selectedTeamId);
                 
                 if (selectedTeam) {
+                  recruitBtn.classList.remove('hidden');
+                  recruitBtn.onclick = () => {
+                    window.location.href = `matchmaking.html?invite_team_id=${selectedTeamId}`;
+                  };
+
                   const membersCount = selectedTeam.members.length;
                   if (membersCount < comp.minMembers || membersCount > comp.maxMembers) {
                     // Descriptive error as requested

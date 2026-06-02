@@ -69,12 +69,12 @@ const getMine = async (req, res) => {
         });
       }
 
-      // 5. Ambil calon anggota (applicants) yang berstatus 'applied'
+      // 5. Ambil calon anggota (applicants) yang berstatus 'applied' atau 'invited'
       const applicantsRes = await pool.query(
-        `SELECT u.id, u.name, u.email, u.university, u.prodi, u.avatar_color, u.bio
+        `SELECT u.id, u.name, u.email, u.university, u.prodi, u.avatar_color, u.bio, tm.status as member_status
          FROM team_members tm
          JOIN users u ON tm.user_id = u.id
-         WHERE tm.team_id = $1 AND tm.status = 'applied'`,
+         WHERE tm.team_id = $1 AND tm.status IN ('applied', 'invited')`,
         [team_id]
       );
 
@@ -98,7 +98,8 @@ const getMine = async (req, res) => {
           prodi: applicant.prodi,
           avatarColor: applicant.avatar_color || 'bg-blue-500',
           bio: applicant.bio || 'Siap berkolaborasi!',
-          skills: skillsRes.rows.map(s => s.label)
+          skills: skillsRes.rows.map(s => s.label),
+          status: applicant.member_status
         });
       }
 
@@ -177,28 +178,68 @@ const getCandidates = async (req, res) => {
   }
 };
 
-/**
- * Mendapatkan daftar seluruh tim yang membuka rekrutmen
- * Menerima query parameter: cat (kategori)
- */
 const getTeams = async (req, res) => {
-  const { cat } = req.query;
+  const { cat, type } = req.query;
+  const userId = req.userId || null;
   try {
     let query = `
       SELECT t.*, c.title as competition_title, c.organizer as competition_organizer, 
-             c.emoji as competition_emoji, cat.slug as category_slug
+             c.emoji as competition_emoji, cat.slug as category_slug,
+             COALESCE((
+               SELECT COUNT(*) 
+               FROM team_members tm
+               JOIN connections conn ON 
+                 ((conn.sender_id = tm.user_id AND conn.receiver_id = $1) OR (conn.receiver_id = tm.user_id AND conn.sender_id = $1))
+               WHERE tm.team_id = t.id AND tm.status = 'joined' AND conn.status = 'accepted'
+             ), 0) as connection_count,
+             EXISTS(
+               SELECT 1 
+               FROM team_members tm
+               JOIN connections conn ON 
+                 ((conn.sender_id = tm.user_id AND conn.receiver_id = $1) OR (conn.receiver_id = tm.user_id AND conn.sender_id = $1))
+               WHERE tm.team_id = t.id AND tm.status = 'joined' AND conn.status = 'accepted'
+             ) as has_connection_with_member,
+             EXISTS(
+               SELECT 1
+               FROM team_members tm
+               WHERE tm.team_id = t.id AND tm.user_id = $1 AND tm.role = 'owner' AND tm.status = 'joined'
+             ) as is_owner,
+             EXISTS(
+               SELECT 1
+               FROM team_members tm
+               WHERE tm.team_id = t.id AND tm.user_id = $1 AND tm.status = 'joined'
+             ) as is_joined
       FROM teams t
       JOIN competitions c ON t.competition_id = c.id
       JOIN categories cat ON c.category_id = cat.id
     `;
-    let values = [];
+    let values = [userId];
+    let whereClauses = [];
 
     if (cat && cat !== 'all') {
-      query += ` WHERE cat.slug = $1`;
+      whereClauses.push(`cat.slug = $${whereClauses.length + 2}`);
       values.push(cat);
     }
 
-    query += ' ORDER BY t.created_at DESC';
+    if (userId) {
+      if (type === 'my-teams') {
+        whereClauses.push(`EXISTS (
+          SELECT 1 FROM team_members tm 
+          WHERE tm.team_id = t.id AND tm.user_id = $1 AND tm.status = 'joined'
+        )`);
+      } else if (type === 'other-teams') {
+        whereClauses.push(`NOT EXISTS (
+          SELECT 1 FROM team_members tm 
+          WHERE tm.team_id = t.id AND tm.user_id = $1 AND tm.status = 'joined'
+        )`);
+      }
+    }
+
+    if (whereClauses.length > 0) {
+      query += ' WHERE ' + whereClauses.join(' AND ');
+    }
+
+    query += ' ORDER BY connection_count DESC, t.created_at DESC';
 
     const result = await pool.query(query, values);
 
@@ -210,6 +251,22 @@ const getTeams = async (req, res) => {
         [row.id]
       );
       const membersCount = parseInt(membersCountRes.rows[0].count) || 0;
+
+      // Ambil nama dan warna avatar dari seluruh anggota tim yang tergabung
+      const membersRes = await pool.query(
+        `SELECT u.id, u.name, u.avatar_color
+         FROM team_members tm
+         JOIN users u ON tm.user_id = u.id
+         WHERE tm.team_id = $1 AND tm.status = 'joined'
+         ORDER BY tm.role DESC`,
+        [row.id]
+      );
+      
+      const membersList = membersRes.rows.map(m => ({
+        id: m.id,
+        name: m.name,
+        avatarColor: m.avatar_color || 'bg-primary'
+      }));
 
       formattedTeams.push({
         id: row.id,
@@ -225,7 +282,12 @@ const getTeams = async (req, res) => {
         desc: row.description,
         avatarColor: row.avatar_color,
         emoji: row.emoji,
-        urgency: row.urgency
+        urgency: row.urgency,
+        requireConnectionToApply: row.require_connection_to_apply || false,
+        hasConnectionWithMember: row.has_connection_with_member || false,
+        isOwner: row.is_owner || false,
+        isJoined: row.is_joined || false,
+        anggotaList: membersList
       });
     }
 
@@ -236,12 +298,9 @@ const getTeams = async (req, res) => {
   }
 };
 
-/**
- * Membuat rekrutmen tim baru oleh user yang terotentikasi
- */
 const createTeam = async (req, res) => {
   const userId = req.userId;
-  const { name, competition_id, description, skills_needed, recruitment_deadline, contact, max_members, category } = req.body;
+  const { name, competition_id, description, skills_needed, recruitment_deadline, contact, max_members, category, require_connection_to_apply } = req.body;
 
   try {
     // 1. Validasi input wajib
@@ -269,8 +328,8 @@ const createTeam = async (req, res) => {
 
     // 3. Masukkan tim baru ke database
     const teamRes = await pool.query(
-      `INSERT INTO teams (name, competition_id, created_by, description, skills_needed, recruitment_deadline, contact, max_members, avatar_color, emoji)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `INSERT INTO teams (name, competition_id, created_by, description, skills_needed, recruitment_deadline, contact, max_members, avatar_color, emoji, require_connection_to_apply)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
        RETURNING *`,
       [
         name,
@@ -282,7 +341,8 @@ const createTeam = async (req, res) => {
         contact || '',
         max_members || 5,
         color,
-        emoji
+        emoji,
+        require_connection_to_apply || false
       ]
     );
 
@@ -305,9 +365,6 @@ const createTeam = async (req, res) => {
   }
 };
 
-/**
- * Mengajukan bergabung ke rekrutmen tim oleh user terotentikasi (status = applied)
- */
 const applyTeam = async (req, res) => {
   const userId = req.userId;
   const teamId = parseInt(req.params.id, 10);
@@ -317,6 +374,25 @@ const applyTeam = async (req, res) => {
     const teamCheck = await pool.query('SELECT * FROM teams WHERE id = $1', [teamId]);
     if (teamCheck.rows.length === 0) {
       return res.status(404).json({ message: 'Tim tidak ditemukan' });
+    }
+    const team = teamCheck.rows[0];
+
+    // Cek proteksi koneksi pelamar
+    if (team.require_connection_to_apply) {
+      const connectionCheck = await pool.query(
+        `SELECT EXISTS (
+          SELECT 1 
+          FROM team_members tm
+          JOIN connections c ON 
+            ((c.sender_id = tm.user_id AND c.receiver_id = $1) OR (c.receiver_id = tm.user_id AND c.sender_id = $1))
+          WHERE tm.team_id = $2 AND tm.status = 'joined' AND c.status = 'accepted'
+        ) as has_connection`,
+        [userId, teamId]
+      );
+      
+      if (!connectionCheck.rows[0].has_connection) {
+        return res.status(400).json({ message: 'Owner tim mewajibkan pelamar memiliki koneksi dengan salah satu anggota tim.' });
+      }
     }
 
     // 2. Cek apakah user sudah terdaftar di tim tersebut (baik owner, member, applied, dll.)
@@ -349,7 +425,7 @@ const applyTeam = async (req, res) => {
     // 4. Kirim notifikasi ke semua anggota tim yang sudah bergabung
     const applicantNameRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);
     const applicantName = applicantNameRes.rows[0].name;
-    const teamName = teamCheck.rows[0].name;
+    const teamName = team.name;
 
     const membersToNotify = await pool.query(
       `SELECT user_id FROM team_members WHERE team_id = $1 AND status = 'joined'`,
@@ -488,5 +564,302 @@ module.exports = {
   getTeams,
   createTeam,
   applyTeam,
-  respondApplicant
+  respondApplicant,
+  inviteMember,
+  respondInvitation,
+  getTeamById,
+  updateTeam
 };
+
+/**
+ * Mengundang mahasiswa untuk bergabung ke tim oleh owner tim
+ */
+async function inviteMember(req, res) {
+  const ownerId = req.userId;
+  const teamId = parseInt(req.params.id, 10);
+  const { userId } = req.body; // target student being invited
+
+  try {
+    if (!userId) {
+      return res.status(400).json({ message: 'UserId target wajib disertakan' });
+    }
+
+    // 1. Cek apakah tim ada
+    const teamRes = await pool.query('SELECT * FROM teams WHERE id = $1', [teamId]);
+    if (teamRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Tim tidak ditemukan' });
+    }
+    const team = teamRes.rows[0];
+
+    // 2. Cek apakah pengundang adalah owner tim
+    const ownerCheck = await pool.query(
+      `SELECT * FROM team_members WHERE team_id = $1 AND user_id = $2 AND role = 'owner' AND status = 'joined'`,
+      [teamId, ownerId]
+    );
+    if (ownerCheck.rows.length === 0) {
+      return res.status(403).json({ message: 'Hanya owner tim yang dapat mengundang anggota baru' });
+    }
+
+    // 3. Cek apakah target mahasiswa ada dan role peserta
+    const targetRes = await pool.query('SELECT name, role, only_allow_connection_invites FROM users WHERE id = $1', [userId]);
+    if (targetRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Target mahasiswa tidak ditemukan' });
+    }
+    const targetUser = targetRes.rows[0];
+    if (targetUser.role !== 'peserta') {
+      return res.status(400).json({ message: 'Hanya pengguna mahasiswa (peserta) yang dapat diundang ke dalam tim' });
+    }
+
+    // 4. Cek apakah target sudah bergabung/diundang/melamar ke tim
+    const memberCheck = await pool.query(
+      'SELECT status FROM team_members WHERE team_id = $1 AND user_id = $2',
+      [teamId, userId]
+    );
+    if (memberCheck.rows.length > 0) {
+      const status = memberCheck.rows[0].status;
+      if (status === 'joined') {
+        return res.status(400).json({ message: 'Pengguna tersebut sudah tergabung dalam tim' });
+      } else if (status === 'invited') {
+        return res.status(400).json({ message: 'Pengguna tersebut sudah diundang sebelumnya' });
+      } else if (status === 'applied') {
+        return res.status(400).json({ message: 'Pengguna tersebut sudah melamar ke tim ini. Silakan setujui lamarannya di dashboard.' });
+      }
+    }
+
+    // 5. Cek privasi target: jika only_allow_connection_invites = true
+    if (targetUser.only_allow_connection_invites) {
+      const connectionCheck = await pool.query(
+        `SELECT EXISTS (
+          SELECT 1 
+          FROM team_members tm
+          JOIN connections c ON 
+            ((c.sender_id = tm.user_id AND c.receiver_id = $1) OR (c.receiver_id = tm.user_id AND c.sender_id = $1))
+          WHERE tm.team_id = $2 AND tm.status = 'joined' AND c.status = 'accepted'
+        ) as has_connection`,
+        [userId, teamId]
+      );
+
+      if (!connectionCheck.rows[0].has_connection) {
+        return res.status(400).json({ 
+          message: 'Pengguna ini mengonfigurasi agar hanya menerima undangan dari tim yang salah satu anggotanya sudah terkoneksi dengannya.' 
+        });
+      }
+    }
+
+    // 6. Masukkan undangan ke database
+    await pool.query(
+      `INSERT INTO team_members (team_id, user_id, role, status) VALUES ($1, $2, 'member', 'invited')`,
+      [teamId, userId]
+    );
+
+    // 7. Ambil nama kompetisi
+    const compRes = await pool.query('SELECT title FROM competitions WHERE id = $1', [team.competition_id]);
+    const compTitle = compRes.rows[0].title;
+
+    // 8. Kirim notifikasi ke mahasiswa target
+    await pool.query(
+      `INSERT INTO notifications (user_id, title, message, team_id, applicant_id) VALUES ($1, $2, $3, $4, $5)`,
+      [
+        userId,
+        'Undangan Bergabung Tim',
+        `Anda diundang oleh owner untuk bergabung dengan tim "${team.name}" untuk kompetisi "${compTitle}"!`,
+        teamId,
+        ownerId
+      ]
+    );
+
+    res.status(201).json({ message: 'Undangan bergabung berhasil dikirim!' });
+
+  } catch (err) {
+    console.error('[teamController.inviteMember]', err);
+    res.status(500).json({ message: 'Gagal mengirimkan undangan bergabung' });
+  }
+}
+
+/**
+ * Merespons undangan bergabung dari owner tim (approve/reject)
+ */
+async function respondInvitation(req, res) {
+  const userId = req.userId;
+  const teamId = parseInt(req.params.id, 10);
+  const { action } = req.body; // 'approve' atau 'reject'
+
+  try {
+    if (!action || !['approve', 'reject'].includes(action)) {
+      return res.status(400).json({ message: 'Action (approve/reject) wajib diisi' });
+    }
+
+    // 1. Cek apakah ada undangan aktif
+    const inviteCheck = await pool.query(
+      `SELECT * FROM team_members WHERE team_id = $1 AND user_id = $2 AND status = 'invited'`,
+      [teamId, userId]
+    );
+    if (inviteCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Undangan tidak ditemukan atau tidak aktif' });
+    }
+
+    // 2. Ambil informasi tim & nama user
+    const teamRes = await pool.query('SELECT name, created_by, competition_id FROM teams WHERE id = $1', [teamId]);
+    const team = teamRes.rows[0];
+    const userRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);
+    const userName = userRes.rows[0].name;
+
+    if (action === 'approve') {
+      // Ubah status undangan menjadi joined
+      await pool.query(
+        `UPDATE team_members SET status = 'joined' WHERE team_id = $1 AND user_id = $2`,
+        [teamId, userId]
+      );
+
+      // Kirim notifikasi ke owner tim
+      await pool.query(
+        `INSERT INTO notifications (user_id, title, message, team_id, applicant_id) VALUES ($1, $2, $3, $4, $5)`,
+        [
+          team.created_by,
+          'Undangan Tim Diterima',
+          `${userName} menerima undangan dan bergabung dengan tim Anda, ${team.name}!`,
+          teamId,
+          userId
+        ]
+      );
+
+      // Kirim notifikasi ke seluruh anggota tim lainnya
+      const otherMembers = await pool.query(
+        `SELECT user_id FROM team_members WHERE team_id = $1 AND status = 'joined' AND user_id != $2 AND user_id != $3`,
+        [teamId, userId, team.created_by]
+      );
+
+      for (const member of otherMembers.rows) {
+        await pool.query(
+          `INSERT INTO notifications (user_id, title, message, team_id, applicant_id) VALUES ($1, $2, $3, $4, $5)`,
+          [
+            member.user_id,
+            'Anggota Baru Bergabung',
+            `${userName} telah bergabung dengan tim Anda, ${team.name}!`,
+            teamId,
+            userId
+          ]
+        );
+      }
+
+      res.json({ message: 'Berhasil menyetujui undangan dan bergabung dengan tim!' });
+
+    } else if (action === 'reject') {
+      // Hapus baris undangan dari database
+      await pool.query(
+        `DELETE FROM team_members WHERE team_id = $1 AND user_id = $2 AND status = 'invited'`,
+        [teamId, userId]
+      );
+
+      // Kirim notifikasi penolakan ke owner tim
+      await pool.query(
+        `INSERT INTO notifications (user_id, title, message) VALUES ($1, $2, $3)`,
+        [
+          team.created_by,
+          'Undangan Tim Ditolak',
+          `Mohon maaf, ${userName} menolak undangan Anda untuk bergabung dengan tim ${team.name}.`
+        ]
+      );
+
+      res.json({ message: 'Undangan berhasil ditolak.' });
+    }
+
+  } catch (err) {
+    console.error('[teamController.respondInvitation]', err);
+    res.status(500).json({ message: 'Gagal merespons undangan tim' });
+  }
+}
+
+/**
+ * Mendapatkan detail tim berdasarkan ID (Hanya jika terdaftar/login)
+ */
+async function getTeamById(req, res) {
+  const { id } = req.params;
+  try {
+    const teamRes = await pool.query(
+      `SELECT t.*, c.title as competition_title, c.organizer as competition_organizer, c.emoji as competition_emoji
+       FROM teams t
+       LEFT JOIN competitions c ON t.competition_id = c.id
+       WHERE t.id = $1`,
+      [id]
+    );
+
+    if (teamRes.rows.length === 0) {
+      return res.status(404).json({ message: 'Tim tidak ditemukan' });
+    }
+
+    const team = teamRes.rows[0];
+    res.json({
+      data: {
+        id: team.id,
+        name: team.name,
+        description: team.description,
+        contact: team.contact,
+        maxMembers: team.max_members,
+        requireConnectionToApply: team.require_connection_to_apply || false,
+        competitionId: team.competition_id,
+        competitionTitle: team.competition_title,
+        competitionOrganizer: team.competition_organizer
+      }
+    });
+  } catch (err) {
+    console.error('[teamController.getTeamById]', err);
+    res.status(500).json({ message: 'Gagal mengambil detail tim' });
+  }
+}
+
+/**
+ * Memperbarui informasi tim (Hanya oleh Owner tim)
+ */
+async function updateTeam(req, res) {
+  const { id } = req.params;
+  const userId = req.userId;
+  const { name, description, max_members, contact, require_connection_to_apply } = req.body;
+
+  try {
+    // 1. Pastikan tim ada
+    const teamCheck = await pool.query('SELECT created_by FROM teams WHERE id = $1', [id]);
+    if (teamCheck.rows.length === 0) {
+      return res.status(404).json({ message: 'Tim tidak ditemukan' });
+    }
+
+    // 2. Verifikasi kepemilikan (hanya owner)
+    const ownerCheck = await pool.query(
+      `SELECT 1 FROM team_members WHERE team_id = $1 AND user_id = $2 AND role = 'owner' AND status = 'joined'`,
+      [id, userId]
+    );
+
+    if (ownerCheck.rows.length === 0) {
+      return res.status(403).json({ message: 'Anda bukan pemilik tim ini' });
+    }
+
+    // 3. Update tim
+    const updateRes = await pool.query(
+      `UPDATE teams 
+       SET name = COALESCE($1, name),
+           description = COALESCE($2, description),
+           max_members = COALESCE($3, max_members),
+           contact = COALESCE($4, contact),
+           require_connection_to_apply = COALESCE($5, require_connection_to_apply)
+       WHERE id = $6
+       RETURNING *`,
+      [
+        name,
+        description,
+        max_members ? parseInt(max_members, 10) : null,
+        contact,
+        require_connection_to_apply,
+        id
+      ]
+    );
+
+    res.json({
+      message: 'Detail tim berhasil diperbarui',
+      data: updateRes.rows[0]
+    });
+  } catch (err) {
+    console.error('[teamController.updateTeam]', err);
+    res.status(500).json({ message: 'Gagal memperbarui detail tim' });
+  }
+}
+

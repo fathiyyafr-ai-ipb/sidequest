@@ -442,6 +442,25 @@
                   <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
                 </label>
               </div>
+
+              <!-- Feature: Premium Hosted Organizer & Trial Duration -->
+              <div class="flex flex-col gap-3 pt-4.5 border-t border-slate-100">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="text-xs font-700 text-slate-800">Premium Hosted Event & Analytics Console 💎</h4>
+                    <p class="text-[10px] text-slate-400 mt-0.5">Website lomba mini, custom form, manajemen juri, demografis analitik & AI Talent Score.</p>
+                  </div>
+                  <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="feature-premium-organizer-toggle" onchange="togglePremiumOrganizerFeature(this)" class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                  </label>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-100 mt-1" id="premium-trial-duration-config">
+                  <span class="text-[10px] font-800 text-slate-500 uppercase tracking-wider">Durasi Free Trial (Hari)</span>
+                  <input type="number" id="premium-organizer-trial-days-input" min="1" max="365" class="w-20 px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-700 text-slate-800 focus:outline-none focus:border-primary" value="90">
+                  <button onclick="savePremiumTrialDays()" class="px-3.5 py-1.5 bg-slate-850 hover:bg-slate-850 text-white font-800 text-[10px] rounded-xl transition-all shadow-md">Simpan 💾</button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1127,6 +1146,20 @@
           if (matchToggle) matchToggle.checked = statsRes.settings['feature_matchmaking'] === 'active';
         }
 
+        try {
+          const premiumSettings = await api.premium.getSettings();
+          const premToggle = document.getElementById('feature-premium-organizer-toggle');
+          const premTrialInput = document.getElementById('premium-organizer-trial-days-input');
+          if (premToggle) {
+            premToggle.checked = premiumSettings.feature_premium_organizer === 'active';
+          }
+          if (premTrialInput) {
+            premTrialInput.value = premiumSettings.premium_organizer_trial_days || '90';
+          }
+        } catch (err) {
+          console.warn('Gagal memuat pengaturan premium:', err);
+        }
+
         // Fetch rosters
         const dataRes = await api.admin.getData();
         rosters = dataRes;
@@ -1317,6 +1350,43 @@
         ui.toast(res.message, 'success');
       } catch (err) {
         el.checked = !checked;
+        handleApiError(err);
+      }
+    };
+
+    window.togglePremiumOrganizerFeature = async (el) => {
+      const checked = el.checked;
+      const feature_premium_organizer = checked ? 'active' : 'inactive';
+      
+      const trialInput = document.getElementById('premium-organizer-trial-days-input');
+      const premium_organizer_trial_days = trialInput ? trialInput.value : '90';
+
+      try {
+        const res = await api.premium.updateSettings({
+          feature_premium_organizer,
+          premium_organizer_trial_days
+        });
+        ui.toast(res.message || 'Pengaturan premium berhasil disimpan!', 'success');
+      } catch (err) {
+        el.checked = !checked;
+        handleApiError(err);
+      }
+    };
+
+    window.savePremiumTrialDays = async () => {
+      const toggleEl = document.getElementById('feature-premium-organizer-toggle');
+      const feature_premium_organizer = toggleEl && toggleEl.checked ? 'active' : 'inactive';
+      
+      const trialInput = document.getElementById('premium-organizer-trial-days-input');
+      const premium_organizer_trial_days = trialInput ? trialInput.value : '90';
+
+      try {
+        const res = await api.premium.updateSettings({
+          feature_premium_organizer,
+          premium_organizer_trial_days
+        });
+        ui.toast(res.message || 'Durasi uji coba berhasil disimpan!', 'success');
+      } catch (err) {
         handleApiError(err);
       }
     };

@@ -56,9 +56,13 @@
     </div>
   </div>
   <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-    <a href="organizer-dashboard.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary-light/50 text-primary">
+    <a href="#" onclick="window.switchMainTab('dashboard')" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary-light/50 text-primary">
       <span class="nav-icon text-primary w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke="currentColor" stroke-width="2"/></svg></span>
       <span class="text-sm font-700">Dashboard Saya</span>
+    </a>
+    <a id="nav-link-hosted-event" href="#" onclick="window.switchMainTab('hosted')" class="nav-link hidden flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors">
+      <span class="nav-icon text-gray-400 w-5 text-center">💎</span>
+      <span class="text-sm font-700">Hosted Event & Analitik</span>
     </a>
     <a href="posting-lomba.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-600 hover:bg-gray-50 transition-colors">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
@@ -144,6 +148,23 @@
 <div class="lg:ml-64">
   <main class="main-content pt-16 lg:pt-20 pb-20 lg:pb-8 px-4 lg:px-8 max-w-6xl mx-auto space-y-6">
 
+    <!-- Trial Warning Banner at the top -->
+    <div id="trial-warning-banner" class="hidden bg-gradient-to-r from-amber-500 to-orange-600 text-white px-6 py-3.5 rounded-3xl shadow-lg border border-amber-400 flex items-center justify-between gap-4 transition-all duration-300">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">🎁</span>
+        <div>
+          <p class="font-800 text-sm">Masa Uji Coba Premium Hosted Event Segera Berakhir!</p>
+          <p class="text-xs text-amber-50 opacity-90" id="trial-warning-text">Masa uji coba gratis Anda hanya tersisa beberapa hari lagi. Konfirmasikan kesediaan Anda untuk melanjutkan layanan premium pasca-uji coba.</p>
+        </div>
+      </div>
+      <button onclick="window.confirmPayTransition()" class="bg-white text-orange-600 hover:bg-orange-50 font-800 text-xs px-4 py-2 rounded-xl shadow-md border-0 transition-all cursor-pointer whitespace-nowrap">
+        Konfirmasi Berlangganan
+      </button>
+    </div>
+
+    <!-- Main Dashboard tab section -->
+    <div id="main-dashboard-section" class="space-y-6">
+
     <!-- ── Summary Statistics Cards ── -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
       <div class="bg-white rounded-3xl p-5 shadow-card border border-gray-100/50 flex items-center gap-4">
@@ -192,25 +213,241 @@
             <p class="text-xs text-gray-400">Memuat kompetisi terkelola…</p>
           </div>
         </div>
-      </section>
-
-      <!-- Kolom Kanan: ATS Panel Review Calon Peserta (5/12) -->
-      <section class="lg:col-span-5 space-y-4">
-        <h3 class="text-base font-800 text-gray-800 flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-accent"></span>
-          Review Calon Peserta
-        </h3>
-
-        <div id="applicants-list-container" class="space-y-4">
-          <div class="text-center py-16 bg-white rounded-3xl shadow-card border border-gray-100/50 p-6">
-            <p class="text-3xl mb-2">👈</p>
-            <p class="font-700 text-gray-600 text-sm">Pilih Lomba</p>
-            <p class="text-xs text-gray-400 mt-1">Klik tombol "Review Peserta" pada daftar lomba untuk meninjau pendaftar.</p>
-          </div>
-        </div>
-      </section>
+      </section>      </section>
 
     </div>
+    </div>
+
+    <!-- Premium Hosted Event & Analytics tab section -->
+    <div id="premium-hosted-section" class="hidden space-y-6">
+      <!-- Managed Competitions Dropdown to pick which competition to analyze/manage -->
+      <div class="bg-white rounded-3xl p-6 shadow-card border border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h3 class="font-800 text-gray-800 text-base flex items-center gap-2">
+            <span>💎</span> Hosted Event Console & Analytics
+          </h3>
+          <p class="text-xs text-gray-400 mt-0.5">Pilih salah satu event yang Anda kelola untuk mengaktifkan antarmuka kustomisasi website mini, formulir pendaftaran, juri, dan panel analitik.</p>
+        </div>
+        <div>
+          <select id="premium-comp-selector" onchange="window.selectPremiumCompetition(this.value)" class="bg-gray-50 border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm font-700 text-gray-700 focus:outline-none focus:border-primary focus:bg-white transition-all w-64">
+            <option value="">-- Pilih Kompetisi --</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- If no competition selected, show placeholder -->
+      <div id="premium-placeholder" class="text-center py-20 bg-white rounded-3xl shadow-card border border-gray-100">
+        <p class="text-5xl mb-4">🏆</p>
+        <p class="font-800 text-gray-600 text-sm">Pilih Lomba untuk Memulai</p>
+        <p class="text-xs text-gray-400 mt-1">Gunakan pemilih kompetisi di atas untuk memuat konsol premium Hosted Event & Analitik.</p>
+      </div>
+
+      <!-- Real Premium Console (shown only when a comp is selected) -->
+      <div id="premium-active-console" class="hidden space-y-6">
+        <!-- Tab sub-navigation in the Premium console -->
+        <div class="flex gap-2 bg-gray-100 border border-gray-200/50 p-1 rounded-2xl max-w-md">
+          <button onclick="window.switchPremiumSubTab('planner')" id="sub-tab-planner" class="flex-1 py-2 text-xs font-800 rounded-xl bg-primary text-white transition-all">🏗️ Planner & Juri</button>
+          <button onclick="window.switchPremiumSubTab('analytics')" id="sub-tab-analytics" class="flex-1 py-2 text-xs font-800 rounded-xl text-gray-500 hover:text-gray-800 transition-all">📊 Advanced Analytics</button>
+        </div>
+
+        <!-- SUB-TAB: PLANNER (Website visual, Custom Form, Judge management, Submissions list) -->
+        <div id="premium-planner-panel" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Column: Mini Web Builder & Custom Fields (5/12) -->
+          <div class="lg:col-span-5 space-y-6">
+            <!-- 1. Mini Web Builder -->
+            <div class="bg-white rounded-3xl p-6 shadow-card border border-gray-100 space-y-4">
+              <h4 class="font-800 text-gray-800 text-xs uppercase tracking-wider text-primary border-b border-gray-100 pb-2">🎨 Mini Website Builder</h4>
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Banner URL</label>
+                  <input type="text" id="premium-banner-url" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 focus:outline-none focus:border-primary focus:bg-white" placeholder="https://example.com/banner.jpg" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Accent Color</label>
+                  <div class="flex items-center gap-2">
+                    <input type="color" id="premium-accent-color" class="w-10 h-8 bg-transparent border-0 cursor-pointer block" value="#6C63FF" />
+                    <span class="text-xs text-gray-400">Pilih warna aksen tema visual lomba</span>
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Custom Domain</label>
+                  <input type="text" id="premium-custom-domain" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 focus:outline-none focus:border-primary focus:bg-white" placeholder="lomba-anda.sidequest.id" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-700 text-gray-500 uppercase tracking-wide mb-1">Announcement Text</label>
+                  <textarea id="premium-announcement" rows="3" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2 text-xs text-gray-800 focus:outline-none focus:border-primary focus:bg-white" placeholder="Pengumuman penting acara..."></textarea>
+                </div>
+                <button onclick="window.savePremiumWebsiteSettings()" class="w-full py-2.5 bg-primary hover:bg-primary-dark text-white text-xs font-700 rounded-xl transition-all border-0 shadow-sm cursor-pointer">Simpan Tampilan Web 💾</button>
+              </div>
+            </div>
+
+            <!-- 2. Custom Registration Form Builder -->
+            <div class="bg-white rounded-3xl p-6 shadow-card border border-gray-100 space-y-4">
+              <div class="flex items-center justify-between border-b border-gray-100 pb-2">
+                <h4 class="font-800 text-gray-800 text-xs uppercase tracking-wider text-primary">📝 Form Builder</h4>
+                <button onclick="window.addNewFormField()" class="px-2.5 py-1 bg-primary-light text-primary hover:bg-primary hover:text-white rounded-lg text-[9px] font-800 border-0 transition-all cursor-pointer">➕ Tambah Kolom</button>
+              </div>
+              <div id="premium-fields-container" class="space-y-3">
+                <!-- Loaded dynamically or empty -->
+              </div>
+              <button onclick="window.savePremiumFormFields()" class="w-full py-2.5 bg-primary hover:bg-primary-dark text-white text-xs font-700 rounded-xl transition-all border-0 shadow-sm cursor-pointer">Simpan Formulir Kustom 💾</button>
+            </div>
+          </div>
+
+          <!-- Right Column: Judges Management & Submissions Board (7/12) -->
+          <div class="lg:col-span-7 space-y-6">
+            <!-- 3. Judge Management -->
+            <div class="bg-white rounded-3xl p-6 shadow-card border border-gray-100 space-y-4">
+              <h4 class="font-800 text-gray-800 text-xs uppercase tracking-wider text-primary border-b border-gray-100 pb-2">⚖️ Manajemen Dewan Juri</h4>
+              <form onsubmit="window.inviteNewJudge(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <input type="text" id="premium-judge-name" required placeholder="Nama Lengkap Juri" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2.5 text-xs text-gray-800 focus:outline-none focus:border-primary focus:bg-white" />
+                </div>
+                <div class="flex gap-2">
+                  <input type="email" id="premium-judge-email" required placeholder="Email Juri" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-3 py-2.5 text-xs text-gray-800 focus:outline-none focus:border-primary focus:bg-white" />
+                  <button type="submit" class="px-4 py-2.5 bg-primary hover:bg-primary-dark text-white text-xs font-700 rounded-xl transition-all border-0 shadow-sm cursor-pointer whitespace-nowrap">Undang Juri ➕</button>
+                </div>
+              </form>
+
+              <div class="overflow-x-auto border border-gray-100 rounded-2xl">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="border-b border-gray-100 text-gray-500 font-800 bg-gray-50">
+                      <th class="px-4 py-3">Nama Juri</th>
+                      <th class="px-4 py-3">Email</th>
+                      <th class="px-4 py-3">Direct Link Penilaian</th>
+                    </tr>
+                  </thead>
+                  <tbody id="premium-judges-body" class="divide-y divide-gray-50 text-gray-700 font-600">
+                    <!-- Loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- 4. Submissions Board -->
+            <div class="bg-white rounded-3xl p-6 shadow-card border border-gray-100 space-y-4">
+              <h4 class="font-800 text-gray-800 text-xs uppercase tracking-wider text-primary border-b border-gray-100 pb-2">📤 Papan Pengumpulan & Grading Aset</h4>
+              <div class="overflow-x-auto border border-gray-100 rounded-2xl">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr class="border-b border-gray-100 text-gray-500 font-800 bg-gray-50">
+                      <th class="px-4 py-3">Peserta / Tim</th>
+                      <th class="px-4 py-3">Aset File</th>
+                      <th class="px-4 py-3">Keterangan</th>
+                      <th class="px-4 py-3 text-center">Status</th>
+                      <th class="px-4 py-3 text-center">Skor Akhir</th>
+                    </tr>
+                  </thead>
+                  <tbody id="premium-submissions-body" class="divide-y divide-gray-50 text-gray-700 font-600">
+                    <!-- Loaded dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUB-TAB: ANALYTICS (Charts, Leaderboard, Skill-gap, Talent Scores) -->
+        <div id="premium-analytics-panel" class="hidden space-y-6">
+          <!-- Detailed Demographics Charts -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Universities Demographics Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-card border border-gray-100/50 flex flex-col gap-3">
+              <span class="text-[10px] font-800 text-gray-400 uppercase tracking-wider">Demografi Universitas</span>
+              <div id="demo-unis-list" class="space-y-2 mt-2">
+                <!-- Universities progress meters -->
+              </div>
+            </div>
+            <!-- Majors Demographics Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-card border border-gray-100/50 flex flex-col gap-3">
+              <span class="text-[10px] font-800 text-gray-400 uppercase tracking-wider">Demografi Program Studi</span>
+              <div id="demo-majors-list" class="space-y-2 mt-2">
+                <!-- Majors progress meters -->
+              </div>
+            </div>
+            <!-- Region Demographics Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-card border border-gray-100/50 flex flex-col gap-3">
+              <span class="text-[10px] font-800 text-gray-400 uppercase tracking-wider">Asal Universitas (Wilayah)</span>
+              <div id="demo-regions-list" class="space-y-2 mt-2">
+                <!-- Regions progress meters -->
+              </div>
+            </div>
+            <!-- Gender Demographics Card -->
+            <div class="bg-white rounded-3xl p-5 shadow-card border border-gray-100/50 flex flex-col gap-3">
+              <span class="text-[10px] font-800 text-gray-400 uppercase tracking-wider">Rasio Gender Pendaftar</span>
+              <div class="flex-grow flex flex-col justify-center items-center gap-4 py-4">
+                <!-- Gender visual comparison bar -->
+                <div class="w-full flex h-5 rounded-full overflow-hidden bg-gray-100 border border-gray-200">
+                  <div id="demo-gender-male-bar" class="bg-blue-400 h-full transition-all" style="width: 50%; background-color: #60a5fa;"></div>
+                  <div id="demo-gender-female-bar" class="bg-pink-400 h-full transition-all" style="width: 50%; background-color: #f472b6;"></div>
+                </div>
+                <div class="flex justify-between w-full text-xs font-700 text-gray-600">
+                  <span class="text-blue-500">♂️ Laki-laki: <span id="demo-gender-male-pct">50%</span></span>
+                  <span class="text-pink-500">♀️ Perempuan: <span id="demo-gender-female-pct">50%</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Analytics Row: Skill-gap & Talent Scores & Leaderboard -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Skill-Gap Analysis Board (5/12) -->
+            <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-card border border-gray-100 space-y-4">
+              <h4 class="font-800 text-gray-800 text-xs uppercase tracking-wider text-primary border-b border-gray-100 pb-2">🧬 Neon Skill-Gap Analysis Engine</h4>
+              <div id="premium-skillgap-container" class="space-y-4">
+                <!-- Skill-gaps visual chips -->
+              </div>
+            </div>
+
+            <!-- Talent Scores & University Leaderboard (7/12) -->
+            <div class="lg:col-span-7 space-y-6">
+              <!-- Inter-University Leaderboard -->
+              <div class="bg-white rounded-3xl p-6 shadow-card border border-gray-100 space-y-4">
+                <h4 class="font-800 text-gray-800 text-xs uppercase tracking-wider text-primary border-b border-gray-100 pb-2">🏫 Inter-University Leaderboard</h4>
+                <div class="overflow-x-auto border border-gray-100 rounded-2xl">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr class="border-b border-gray-100 text-gray-500 font-800 bg-gray-50">
+                        <th class="px-4 py-3">Nama Universitas</th>
+                        <th class="px-4 py-3 text-center">Jumlah Pendaftar</th>
+                        <th class="px-4 py-3 text-center">Rata-rata Skor</th>
+                        <th class="px-4 py-3 text-center">Power Index</th>
+                      </tr>
+                    </thead>
+                    <tbody id="premium-leaderboard-body" class="divide-y divide-gray-50 text-gray-700 font-600">
+                      <!-- Loaded dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- AI Talent Scoring Dashboard -->
+              <div class="bg-white rounded-3xl p-6 shadow-card border border-gray-100 space-y-4">
+                <h4 class="font-800 text-gray-800 text-xs uppercase tracking-wider text-primary border-b border-gray-100 pb-2">🤖 AI Talent Scoring Dashboard</h4>
+                <div class="overflow-x-auto border border-gray-100 rounded-2xl">
+                  <table class="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr class="border-b border-gray-100 text-gray-500 font-800 bg-gray-50">
+                        <th class="px-4 py-3">Nama Talenta</th>
+                        <th class="px-4 py-3">Prodi</th>
+                        <th class="px-4 py-3">Tim</th>
+                        <th class="px-4 py-3 text-center">SideQuest Talent Score</th>
+                        <th class="px-4 py-3 text-center">Nilai Juri</th>
+                      </tr>
+                    </thead>
+                    <tbody id="premium-talents-body" class="divide-y divide-gray-50 text-gray-700 font-600">
+                      <!-- Loaded dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -275,7 +512,427 @@
     document.getElementById('sb-user-role').textContent = profile.prodi || 'Event Organizer';
 
     await loadOrganizerDashboard();
+
+    // Check Premium organizer status and configure warnings / premium tab
+    try {
+      const premStatus = await api.premium.getStatus();
+      if (premStatus && (premStatus.premium_status === 'trialing' || premStatus.premium_status === 'active')) {
+        document.getElementById('nav-link-hosted-event')?.classList.remove('hidden');
+
+        if (premStatus.warningActive) {
+          const warningBanner = document.getElementById('trial-warning-banner');
+          const warningText = document.getElementById('trial-warning-text');
+          if (warningBanner) {
+            warningBanner.classList.remove('hidden');
+            if (warningText) {
+              warningText.textContent = `Masa uji coba gratis Anda hanya tersisa ${premStatus.daysLeft} hari lagi. Konfirmasikan kesediaan Anda untuk melanjutkan layanan premium pasca-uji coba.`;
+            }
+          }
+        }
+
+        await initPremiumSelectors();
+      }
+    } catch (err) {
+      console.warn('Gagal memuat status premium:', err);
+    }
   });
+
+  window.confirmPayTransition = async () => {
+    ui.confirm(
+      'Konfirmasi Berlangganan',
+      'Apakah Anda setuju untuk mengaktifkan fase berbayar pasca-uji coba Hosted Event Premium seharga Rp 499.000 / bulan?',
+      'Ya, Berlangganan',
+      async () => {
+        ui.toast('Terima kasih! Lisensi premium Anda telah dikonfirmasi dan akan aktif berkelanjutan.', 'success');
+        document.getElementById('trial-warning-banner')?.classList.add('hidden');
+      },
+      false
+    );
+  };
+
+  window.switchMainTab = (tab) => {
+    const mainSection = document.getElementById('main-dashboard-section');
+    const premSection = document.getElementById('premium-hosted-section');
+    const sidebarLinks = document.querySelectorAll('#sidebar .nav-link');
+    
+    sidebarLinks.forEach(link => {
+      link.classList.remove('active', 'bg-primary-light/50', 'text-primary');
+      link.classList.add('text-gray-600', 'hover:bg-gray-50');
+    });
+
+    if (tab === 'dashboard') {
+      mainSection.classList.remove('hidden');
+      premSection.classList.add('hidden');
+      const activeLink = document.querySelector('#sidebar .nav-link[href="organizer-dashboard.html"]');
+      if (activeLink) {
+        activeLink.classList.add('active', 'bg-primary-light/50', 'text-primary');
+        activeLink.classList.remove('text-gray-600', 'hover:bg-gray-50');
+      }
+    } else if (tab === 'hosted') {
+      mainSection.classList.add('hidden');
+      premSection.classList.remove('hidden');
+      const activeLink = document.getElementById('nav-link-hosted-event');
+      if (activeLink) {
+        activeLink.classList.add('active', 'bg-primary-light/50', 'text-primary');
+        activeLink.classList.remove('text-gray-600', 'hover:bg-gray-50');
+      }
+    }
+  };
+
+  async function initPremiumSelectors() {
+    const selector = document.getElementById('premium-comp-selector');
+    if (!selector) return;
+
+    try {
+      const comps = await api.competitions.getOrganizerCompetitions();
+      selector.innerHTML = '<option value="">-- Pilih Kompetisi --</option>' + 
+        comps.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+    } catch (err) {
+      console.warn('Gagal memuat selector kompetisi premium:', err);
+    }
+  }
+
+  window.selectPremiumCompetition = async (compId) => {
+    const consoleDiv = document.getElementById('premium-active-console');
+    const placeholderDiv = document.getElementById('premium-placeholder');
+    
+    if (!compId) {
+      consoleDiv.classList.add('hidden');
+      placeholderDiv.classList.remove('hidden');
+      return;
+    }
+
+    placeholderDiv.classList.add('hidden');
+    consoleDiv.classList.remove('hidden');
+
+    ui.loading(true);
+    try {
+      await loadPlannerData(compId);
+      await loadAnalyticsData(compId);
+    } catch (err) {
+      handleApiError(err);
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  async function loadPlannerData(compId) {
+    try {
+      const settings = await api.premium.getEventSettings(compId);
+      document.getElementById('premium-banner-url').value = settings.banner_url || '';
+      document.getElementById('premium-accent-color').value = settings.accent_color || '#6C63FF';
+      document.getElementById('premium-custom-domain').value = settings.custom_domain || '';
+      document.getElementById('premium-announcement').value = settings.announcement_text || '';
+    } catch (err) {
+      console.warn('Website settings empty, using default.', err);
+    }
+
+    try {
+      const fields = await api.premium.getCustomFields(compId);
+      const container = document.getElementById('premium-fields-container');
+      container.innerHTML = '';
+      if (fields && fields.length > 0) {
+        fields.forEach(f => {
+          addNewFormField(f.field_name, f.field_type, f.required);
+        });
+      }
+    } catch (err) {
+      console.warn('Gagal memuat custom fields:', err);
+    }
+
+    try {
+      const judges = await api.premium.getJudges(compId);
+      const tbody = document.getElementById('premium-judges-body');
+      const origin = window.location.origin;
+      tbody.innerHTML = judges.length === 0 
+        ? '<tr><td colspan="3" class="px-4 py-4 text-center text-gray-400">Belum ada juri ditugaskan.</td></tr>'
+        : judges.map(j => {
+            const link = `${origin}/pages/judge-portal.html?token=${j.access_token}`;
+            return `
+              <tr class="hover:bg-gray-50/50">
+                <td class="px-4 py-3 font-800 text-gray-800">${j.judge_name}</td>
+                <td class="px-4 py-3 text-gray-500">${j.judge_email}</td>
+                <td class="px-4 py-3 font-700 text-primary">
+                  <div class="flex items-center gap-2">
+                    <input type="text" readonly value="${link}" class="bg-gray-50 border border-gray-200 rounded px-2 py-1 text-[10px] w-48 text-gray-600 focus:outline-none" onclick="this.select()" />
+                    <button onclick="navigator.clipboard.writeText('${link}'); ui.toast('Tautan disalin!', 'success')" class="px-2 py-1 bg-primary text-white text-[9px] rounded border-0 cursor-pointer">Salin</button>
+                  </div>
+                </td>
+              </tr>
+            `;
+          }).join('');
+    } catch (err) {
+      console.warn('Gagal memuat daftar juri:', err);
+    }
+
+    try {
+      const subs = await api.premium.getSubmissions(compId);
+      const tbody = document.getElementById('premium-submissions-body');
+      
+      tbody.innerHTML = subs.length === 0
+        ? '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-400">Belum ada berkas terkumpul dari peserta.</td></tr>'
+        : subs.map(s => {
+            const statusLabel = s.status === 'graded' 
+              ? '<span class="bg-green-100 text-green-700 text-[9px] font-800 px-2 py-0.5 rounded-md uppercase">Graded</span>'
+              : '<span class="bg-yellow-100 text-yellow-700 text-[9px] font-800 px-2 py-0.5 rounded-md uppercase">Pending</span>';
+              
+            const scoreVal = s.score !== null ? `<strong class="text-primary text-sm">${s.score}</strong>` : '-';
+            const participantLabel = s.team_name ? `${s.participant_name} <div class="text-[9px] text-primary">👥 ${s.team_name}</div>` : s.participant_name;
+
+            return `
+              <tr class="hover:bg-gray-50/50">
+                <td class="px-4 py-3 font-700 text-gray-800">${participantLabel}</td>
+                <td class="px-4 py-3">
+                  <a href="${s.submission_url}" target="_blank" class="text-primary font-800 no-underline hover:underline flex items-center gap-1">
+                    Buka Aset 🔗
+                  </a>
+                </td>
+                <td class="px-4 py-3 text-gray-500 italic truncate max-w-[120px] font-500">${s.notes || '-'}</td>
+                <td class="px-4 py-3 text-center">${statusLabel}</td>
+                <td class="px-4 py-3 text-center">${scoreVal}</td>
+              </tr>
+            `;
+          }).join('');
+    } catch (err) {
+      console.warn('Gagal memuat papan pengumpulan:', err);
+    }
+  }
+
+  window.addNewFormField = (name = '', type = 'text', required = true) => {
+    const container = document.getElementById('premium-fields-container');
+    if (!container) return;
+
+    const row = document.createElement('div');
+    row.className = 'premium-field-row bg-gray-50 p-3 rounded-2xl border border-gray-150 flex gap-2 items-center';
+    row.innerHTML = `
+      <input type="text" placeholder="Nama Kolom (contoh: WhatsApp)" value="${name}" required class="flex-1 bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs text-gray-800 focus:outline-none focus:border-primary" />
+      <select class="bg-white border border-gray-200 rounded-xl px-2 py-1.5 text-xs font-700 text-gray-700 focus:outline-none w-28">
+        <option value="text" ${type === 'text' ? 'selected' : ''}>Text</option>
+        <option value="textarea" ${type === 'textarea' ? 'selected' : ''}>Textarea</option>
+        <option value="number" ${type === 'number' ? 'selected' : ''}>Number</option>
+        <option value="file" ${type === 'file' ? 'selected' : ''}>File (URL)</option>
+      </select>
+      <label class="flex items-center gap-1 text-[10px] font-700 text-gray-500 cursor-pointer">
+        <input type="checkbox" ${required ? 'checked' : ''} class="w-3.5 h-3.5 text-primary border-gray-300 rounded" />
+        Wajib
+      </label>
+      <button onclick="this.parentElement.remove()" class="px-2 py-1 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg text-xs font-800 border-0 transition-all cursor-pointer">✕</button>
+    `;
+    container.appendChild(row);
+  };
+
+  window.savePremiumWebsiteSettings = async () => {
+    const compId = document.getElementById('premium-comp-selector').value;
+    if (!compId) return;
+
+    const banner_url = document.getElementById('premium-banner-url').value.trim();
+    const accent_color = document.getElementById('premium-accent-color').value;
+    const custom_domain = document.getElementById('premium-custom-domain').value.trim();
+    const announcement_text = document.getElementById('premium-announcement').value.trim();
+
+    ui.loading(true);
+    try {
+      await api.premium.saveEventSettings(compId, { banner_url, accent_color, custom_domain, announcement_text });
+      ui.toast('✅ Pengaturan kustom website mini berhasil disimpan!', 'success');
+    } catch (err) {
+      handleApiError(err);
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  window.savePremiumFormFields = async () => {
+    const compId = document.getElementById('premium-comp-selector').value;
+    if (!compId) return;
+
+    const rows = document.querySelectorAll('.premium-field-row');
+    const fields = Array.from(rows).map(row => {
+      const inputs = row.querySelectorAll('input');
+      const select = row.querySelector('select');
+      return {
+        field_name: inputs[0].value.trim(),
+        field_type: select.value,
+        required: inputs[1].checked
+      };
+    });
+
+    if (fields.some(f => !f.field_name)) {
+      ui.toast('Nama kolom pendaftaran kustom tidak boleh kosong!', 'warning');
+      return;
+    }
+
+    ui.loading(true);
+    try {
+      await api.premium.saveCustomFields(compId, { fields });
+      ui.toast('✅ Formulir registrasi kustom berhasil disimpan!', 'success');
+    } catch (err) {
+      handleApiError(err);
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  window.inviteNewJudge = async (event) => {
+    event.preventDefault();
+    const compId = document.getElementById('premium-comp-selector').value;
+    if (!compId) return;
+
+    const nameEl = document.getElementById('premium-judge-name');
+    const emailEl = document.getElementById('premium-judge-email');
+    const judge_name = nameEl.value.trim();
+    const judge_email = emailEl.value.trim();
+
+    ui.loading(true);
+    try {
+      const res = await api.premium.addJudge(compId, { judge_name, judge_email });
+      ui.toast(res.message || 'Juri berhasil diundang!', 'success');
+      nameEl.value = '';
+      emailEl.value = '';
+      await loadPlannerData(compId);
+    } catch (err) {
+      handleApiError(err);
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  async function loadAnalyticsData(compId) {
+    try {
+      const analytics = await api.premium.getAnalytics(compId);
+      
+      const uniList = document.getElementById('demo-unis-list');
+      const majorList = document.getElementById('demo-majors-list');
+      const regionList = document.getElementById('demo-regions-list');
+
+      const buildDemoHtml = (arr, color = 'bg-primary') => {
+        if (!arr || arr.length === 0) {
+          return '<p class="text-center text-[10px] text-gray-400 py-4">Belum ada data pendaftar.</p>';
+        }
+        const maxVal = Math.max(...arr.map(x => x.count));
+        return arr.map(item => {
+          const pct = maxVal > 0 ? Math.round((item.count / maxVal) * 100) : 0;
+          return `
+            <div class="space-y-1">
+              <div class="flex justify-between text-[10px] font-800 text-gray-600">
+                <span class="truncate max-w-[120px]">${item.name}</span>
+                <span>${item.count} orang</span>
+              </div>
+              <div class="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
+                <div class="${color} h-full rounded-full transition-all duration-500" style="width: ${pct}%;"></div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      };
+
+      uniList.innerHTML = buildDemoHtml(analytics.demographics.universities, 'bg-primary');
+      majorList.innerHTML = buildDemoHtml(analytics.demographics.majors, 'bg-indigo-500');
+      regionList.innerHTML = buildDemoHtml(analytics.demographics.regions, 'bg-orange-500');
+
+      const maleCount = analytics.demographics.gender.male || 0;
+      const femaleCount = analytics.demographics.gender.female || 0;
+      const totalGender = maleCount + femaleCount;
+      const malePct = totalGender > 0 ? Math.round((maleCount / totalGender) * 100) : 50;
+      const femalePct = totalGender > 0 ? Math.round((femaleCount / totalGender) * 100) : 50;
+
+      document.getElementById('demo-gender-male-bar').style.width = `${malePct}%`;
+      document.getElementById('demo-gender-female-bar').style.width = `${femalePct}%`;
+      document.getElementById('demo-gender-male-pct').textContent = `${malePct}%`;
+      document.getElementById('demo-gender-female-pct').textContent = `${femalePct}%`;
+
+      const gapContainer = document.getElementById('premium-skillgap-container');
+      gapContainer.innerHTML = analytics.skillGap.length === 0
+        ? '<p class="text-center text-[10px] text-gray-400 py-4">Belum ada analisis gap keahlian.</p>'
+        : analytics.skillGap.map(sg => {
+            const gapCls = sg.gapPercentage > 60 
+              ? 'bg-red-100 text-red-700 border-red-200' 
+              : sg.gapPercentage > 30 
+                ? 'bg-amber-100 text-amber-700 border-amber-200'
+                : 'bg-green-100 text-green-700 border-green-200';
+            
+            const matchesVal = sg.gapPercentage > 60 ? 'Parah' : sg.gapPercentage > 30 ? 'Sedang' : 'Cukup';
+
+            return `
+              <div class="space-y-2 p-3.5 bg-gray-50 border border-gray-150 rounded-2xl">
+                <div class="flex justify-between items-center">
+                  <span class="font-800 text-gray-800 text-xs">${sg.skill}</span>
+                  <span class="px-2 py-0.5 rounded-full text-[9px] font-800 border ${gapCls}">${matchesVal}</span>
+                </div>
+                <div class="flex justify-between text-[9px] font-700 text-gray-500">
+                  <span>Kecocokan Keahlian</span>
+                  <span>${sg.matchPercentage}%</span>
+                </div>
+                <div class="w-full bg-gray-155 h-1.5 rounded-full overflow-hidden">
+                  <div class="bg-primary h-full rounded-full transition-all" style="width: ${sg.matchPercentage}%"></div>
+                </div>
+                <p class="text-[10px] text-gray-500 font-500 leading-relaxed mt-1.5">${sg.recommendation}</p>
+              </div>
+            `;
+          }).join('');
+
+      const leaderboardBody = document.getElementById('premium-leaderboard-body');
+      leaderboardBody.innerHTML = analytics.leaderboard.length === 0
+        ? '<tr><td colspan="4" class="px-4 py-4 text-center text-gray-400">Belum ada leaderboard.</td></tr>'
+        : analytics.leaderboard.map((item, idx) => {
+            const rankEmoji = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '🎓';
+            return `
+              <tr class="hover:bg-gray-50/50">
+                <td class="px-4 py-3 font-800 text-gray-800 flex items-center gap-1.5">
+                  <span>${rankEmoji}</span>
+                  <span>${item.university}</span>
+                </td>
+                <td class="px-4 py-3 text-center text-gray-500">${item.student_count} mahasiswa</td>
+                <td class="px-4 py-3 text-center text-primary font-800">${item.average_score}</td>
+                <td class="px-4 py-3 text-center font-800 text-orange-600">${item.power_index}</td>
+              </tr>
+            `;
+          }).join('');
+
+      const talentsBody = document.getElementById('premium-talents-body');
+      talentsBody.innerHTML = analytics.talentScores.length === 0
+        ? '<tr><td colspan="5" class="px-4 py-4 text-center text-gray-400">Belum ada data skor talenta.</td></tr>'
+        : analytics.talentScores.map(t => {
+            const gradeVal = t.grade !== null ? t.grade : '-';
+            let scoreCls = 'text-green-600';
+            if (t.talent_score < 75) scoreCls = 'text-primary';
+            if (t.talent_score < 60) scoreCls = 'text-amber-500';
+
+            return `
+              <tr class="hover:bg-gray-50/50">
+                <td class="px-4 py-3 font-800 text-gray-800">${t.name}</td>
+                <td class="px-4 py-3 text-gray-500">${t.prodi}</td>
+                <td class="px-4 py-3 text-gray-400 font-500 truncate max-w-[100px]">${t.team_name}</td>
+                <td class="px-4 py-3 text-center font-800 ${scoreCls} text-sm">${t.talent_score}</td>
+                <td class="px-4 py-3 text-center font-700 text-gray-600">${gradeVal}</td>
+              </tr>
+            `;
+          }).join('');
+
+    } catch (err) {
+      console.warn('Gagal memuat analitik:', err);
+    }
+  }
+
+  window.switchPremiumSubTab = (sub) => {
+    const plannerPanel = document.getElementById('premium-planner-panel');
+    const analyticsPanel = document.getElementById('premium-analytics-panel');
+    
+    const btnPlanner = document.getElementById('sub-tab-planner');
+    const btnAnalytics = document.getElementById('sub-tab-analytics');
+
+    btnPlanner.className = 'flex-1 py-2 text-xs font-800 rounded-xl text-gray-500 hover:text-gray-800 transition-all';
+    btnAnalytics.className = 'flex-1 py-2 text-xs font-800 rounded-xl text-gray-500 hover:text-gray-800 transition-all';
+
+    if (sub === 'planner') {
+      plannerPanel.classList.remove('hidden');
+      analyticsPanel.classList.add('hidden');
+      btnPlanner.className = 'flex-1 py-2 text-xs font-800 rounded-xl bg-primary text-white transition-all';
+    } else if (sub === 'analytics') {
+      plannerPanel.classList.add('hidden');
+      analyticsPanel.classList.remove('hidden');
+      btnAnalytics.className = 'flex-1 py-2 text-xs font-800 rounded-xl bg-primary text-white transition-all';
+    }
+  };
 
   // Main Dashboard loader
   async function loadOrganizerDashboard() {

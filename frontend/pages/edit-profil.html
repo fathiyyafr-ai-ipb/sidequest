@@ -58,7 +58,7 @@
     </a>
     <a href="cari-tim.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Cari Tim</span>
+      <span class="text-sm font-600">Direktori Tim</span>
     </a>
     <a href="profil.html" class="nav-link active flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></span>
@@ -209,15 +209,15 @@
         <div>
           <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Status Mencari Tim</label>
           <div class="flex gap-3">
-            <label class="flex-1 flex items-center gap-2 cursor-pointer p-3 rounded-xl border-2 border-primary bg-primary-light transition-all">
-              <input type="radio" name="status" value="aktif" checked class="accent-primary"/>
+            <label id="lbl-aktif" class="flex-1 flex items-center gap-2 cursor-pointer p-3 rounded-xl border-2 border-primary bg-primary-light transition-all">
+              <input type="radio" name="status" id="r-aktif" value="aktif" checked class="accent-primary"/>
               <div>
                 <p class="text-sm font-700 text-primary">Aktif</p>
                 <p class="text-xs text-gray-500">Sedang cari tim</p>
               </div>
             </label>
-            <label class="flex-1 flex items-center gap-2 cursor-pointer p-3 rounded-xl border-2 border-gray-200 hover:border-primary transition-all">
-              <input type="radio" name="status" value="tidak" class="accent-primary"/>
+            <label id="lbl-tidak" class="flex-1 flex items-center gap-2 cursor-pointer p-3 rounded-xl border-2 border-gray-200 hover:border-primary transition-all">
+              <input type="radio" name="status" id="r-tidak" value="tidak" class="accent-primary"/>
               <div>
                 <p class="text-sm font-700 text-gray-700">Tidak</p>
                 <p class="text-xs text-gray-500">Tidak cari tim</p>
@@ -249,33 +249,34 @@
       </div>
     </div>
 
+    <!-- Keamanan & Privasi -->
+    <div class="bg-white rounded-2xl shadow-card p-5 space-y-4">
+      <h3 class="font-700 text-gray-800 text-sm flex items-center gap-2">
+        <span class="w-6 h-6 rounded-lg bg-red-50 flex items-center justify-center text-xs">🔒</span>
+        Keamanan & Privasi
+      </h3>
+      <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100">
+        <div class="flex-1 pr-4">
+          <p class="text-xs font-700 text-gray-800">Batasi Undangan Tim (Koneksi Saja)</p>
+          <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">
+            Hanya tim yang salah satu anggotanya sudah terkoneksi dengan Anda yang dapat mengirimkan undangan bergabung.
+          </p>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+          <input type="checkbox" id="f-allow-conn-invites-only" class="sr-only peer">
+          <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+        </label>
+      </div>
+    </div>
+
     <!-- Buttons -->
     <div class="flex gap-3 pb-4">
       
       
-      <div class="relative group cursor-pointer">
-        <div class="flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
-          <div class="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs" data-sb-init>RA</div>
-          <span class="text-sm font-600 text-gray-700" data-sb-name>Rizki Aditya</span>
-          <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-            <path d="M6 9l6 6 6-6" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        
-        <div class="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-card border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pt-1 pb-1">
-          <div class="p-1.5 flex flex-col gap-1">
-            <a href="profil.html" class="flex items-center gap-2.5 px-3 py-2 text-xs font-700 text-gray-700 hover:text-primary hover:bg-primary-light rounded-lg transition-colors no-underline">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              Profil Saya
-            </a>
-            <a href="#" data-logout class="flex items-center gap-2.5 px-3 py-2 text-xs font-700 text-red-500 hover:bg-red-50 rounded-lg transition-colors no-underline">
-              <svg width="14" height="14" fill="none" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              Keluar
-            </a>
-          </div>
-        </div>
-      </div>
-      <button type="submit" class="flex-[2] py-3.5 rounded-2xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">
+      <a href="profil.html" class="flex-1 py-3.5 rounded-2xl bg-gray-50 border border-gray-200 text-gray-500 text-sm font-700 text-center hover:bg-gray-100 hover:text-gray-700 transition-all shadow-sm no-underline flex items-center justify-center gap-1.5">
+        ❌ Batal
+      </a>
+      <button type="submit" id="btn-save" class="flex-[2] py-3.5 rounded-2xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-md">
         💾 Simpan Perubahan
       </button>
     </div>
@@ -333,6 +334,11 @@ async function load() {
   setVal('f-github',    u.githubUrl);
   setVal('f-portfolio', u.portfolioUrl);
 
+  const onlyAllowConnInvitesCheckbox = document.getElementById('f-allow-conn-invites-only');
+  if (onlyAllowConnInvitesCheckbox) {
+    onlyAllowConnInvitesCheckbox.checked = u.onlyAllowConnectionInvites || false;
+  }
+
   // Status radio
   if (u.isLookingForTeam === false) {
     const rTidak = document.getElementById('r-tidak');
@@ -350,6 +356,29 @@ async function load() {
     const init = ((parts[0]?.[0] || '') + (parts[1]?.[0] || '')).toUpperCase();
     document.querySelectorAll('[data-sb-init]').forEach(el => el.textContent = init);
   }
+
+  // Dynamic radio button styling listeners
+  const rAktif = document.getElementById('r-aktif');
+  const rTidak = document.getElementById('r-tidak');
+  const lblAktif = document.getElementById('lbl-aktif');
+  const lblTidak = document.getElementById('lbl-tidak');
+
+  const updateRadioStyles = () => {
+    if (rAktif?.checked) {
+      lblAktif?.classList.add('border-primary', 'bg-primary-light');
+      lblAktif?.classList.remove('border-gray-200');
+      lblTidak?.classList.remove('border-primary', 'bg-primary-light');
+      lblTidak?.classList.add('border-gray-200');
+    } else if (rTidak?.checked) {
+      lblTidak?.classList.add('border-primary', 'bg-primary-light');
+      lblTidak?.classList.remove('border-gray-200');
+      lblAktif?.classList.remove('border-primary', 'bg-primary-light');
+      lblAktif?.classList.add('border-gray-200');
+    }
+  };
+
+  rAktif?.addEventListener('change', updateRadioStyles);
+  rTidak?.addEventListener('change', updateRadioStyles);
 }
 
 // Save form → PUT /api/users/me
@@ -372,6 +401,7 @@ document.getElementById('edit-form').addEventListener('submit', async (e) => {
     githubUrl:       document.getElementById('f-github')?.value.trim() || null,
     portfolioUrl:    document.getElementById('f-portfolio')?.value.trim() || null,
     isLookingForTeam: document.getElementById('r-aktif')?.checked ?? true,
+    onlyAllowConnectionInvites: document.getElementById('f-allow-conn-invites-only')?.checked ?? false,
   };
 
   try {

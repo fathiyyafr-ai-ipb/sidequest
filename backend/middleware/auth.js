@@ -16,4 +16,22 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
+const optionalAuthMiddleware = (req, res, next) => {
+  const token = req.header('Authorization');
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token.replace('Bearer ', ''), process.env.JWT_SECRET || 'secret_key_sidequest');
+    req.userId = decoded.userId;
+    next();
+  } catch (err) {
+    // Abaikan error token untuk opsi opsional
+    next();
+  }
+};
+
+authMiddleware.optional = optionalAuthMiddleware;
+
 module.exports = authMiddleware;

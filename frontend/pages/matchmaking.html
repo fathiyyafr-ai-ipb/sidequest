@@ -74,7 +74,7 @@
     </a>
     <a href="cari-tim.html" class="nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="2"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
-      <span class="text-sm font-600">Cari Tim</span>
+      <span class="text-sm font-600">Direktori Tim</span>
     </a>
     <a href="profil.html" class="nav-link  flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer">
       <span class="nav-icon text-gray-400 w-5 text-center"><svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/></svg></span>
@@ -210,6 +210,26 @@
       <!-- ── Sponsorship Banner Widget ── -->
       <div id="sponsorship-banner" class="mb-4 hidden"></div>
 
+      <!-- ── Team Invitation Console (Premium Glassmorphism Widget) ── -->
+      <div id="invitation-console-widget" class="hidden relative overflow-hidden rounded-3xl p-5 mb-5 bg-white/85 backdrop-blur border border-primary/10 shadow-card space-y-3">
+        <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-primary/5 rounded-full blur-xl pointer-events-none"></div>
+        <div class="flex items-center gap-3">
+          <span class="w-8 h-8 rounded-xl bg-primary/10 text-primary flex items-center justify-center text-sm font-800">📩</span>
+          <div>
+            <h3 class="font-800 text-gray-800 text-xs uppercase tracking-wider">Konsol Undangan Tim</h3>
+            <p class="text-[10px] text-gray-400 mt-0.5">Pilih tim yang akan digunakan untuk mengirimkan undangan bergabung.</p>
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+          <select id="invite-team-selector" class="flex-1 bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-xs text-gray-700 font-700 focus:outline-none focus:border-primary focus:bg-white transition-all">
+            <option value="">-- Pilih Tim Anda --</option>
+          </select>
+          <button onclick="clearSelectedTeam()" id="btn-clear-invite-team" class="hidden px-4 py-3 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-700 rounded-xl transition-all border-0 cursor-pointer">
+            Batal Rekrut
+          </button>
+        </div>
+      </div>
+
       <!-- Toolbar count -->
       <div class="flex items-center justify-between mb-4">
         <p class="text-xs text-gray-500">
@@ -313,18 +333,91 @@
     import { initSession, bindLogout } from '../js/auth.js';
 
     let currentCategory = 'all';
+    let myOwnedTeams = [];
+    let selectedTeamToInvite = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
       const u = await initSession();
       bindLogout();
 
       if (u) {
+        // Load owned teams for invitation console
+        try {
+          const allTeams = await api.teams.mine();
+          myOwnedTeams = (allTeams || []).filter(t => t.role === 'owner');
+          
+          if (myOwnedTeams.length > 0) {
+            const consoleWidget = document.getElementById('invitation-console-widget');
+            const selector = document.getElementById('invite-team-selector');
+            if (consoleWidget && selector) {
+              consoleWidget.classList.remove('hidden');
+              selector.innerHTML = '<option value="">-- Pilih Tim yang Direkrut --</option>' + 
+                myOwnedTeams.map(t => `<option value="${t.id}">${t.name} (${t.members.length} anggota)</option>`).join('');
+                
+              const params = new URLSearchParams(window.location.search);
+              const inviteTeamUrlParam = params.get('invite_team_id');
+              if (inviteTeamUrlParam) {
+                selectedTeamToInvite = parseInt(inviteTeamUrlParam, 10);
+                selector.value = selectedTeamToInvite;
+                document.getElementById('btn-clear-invite-team')?.classList.remove('hidden');
+              }
+              
+              selector.onchange = async (e) => {
+                const val = e.target.value;
+                if (val) {
+                  selectedTeamToInvite = parseInt(val, 10);
+                  document.getElementById('btn-clear-invite-team').classList.remove('hidden');
+                } else {
+                  selectedTeamToInvite = null;
+                  document.getElementById('btn-clear-invite-team').classList.add('hidden');
+                }
+                await loadMatchmaking(currentCategory);
+              };
+            }
+          }
+        } catch(e) {
+          console.warn('Gagal memuat tim rekrutmen:', e.message);
+        }
+
         // Muat daftar matchmaking pertama kali
         await loadMatchmaking('all');
         await renderSponsorshipAd('matchmaking', 'sponsorship-banner');
         await updateNotificationState();
       }
     });
+
+    window.clearSelectedTeam = async () => {
+      selectedTeamToInvite = null;
+      const selector = document.getElementById('invite-team-selector');
+      if (selector) selector.value = '';
+      document.getElementById('btn-clear-invite-team').classList.add('hidden');
+      await loadMatchmaking(currentCategory);
+    };
+
+    window.inviteToTeam = async (teamId, userId, candidateName, btn) => {
+      ui.loading(true);
+      try {
+        await api.teams.invite(teamId, userId);
+        ui.toast(`✅ Undangan berhasil dikirim ke ${candidateName}!`, 'success');
+        
+        // Ubah status tombol secara asinkron
+        if (btn) {
+          btn.outerHTML = `
+            <button class="flex-1 py-2.5 rounded-xl bg-gray-50 text-gray-400 text-sm font-700 border border-gray-200 cursor-not-allowed" disabled>
+              ⏳ Diundang
+            </button>
+          `;
+        }
+        
+        // Refresh team info silently
+        const allTeams = await api.teams.mine();
+        myOwnedTeams = (allTeams || []).filter(t => t.role === 'owner');
+      } catch(e) {
+        handleApiError(e, 'Gagal mengirimkan undangan');
+      } finally {
+        ui.loading(false);
+      }
+    };
 
     // Togel filter chips
     window.setMatchChip = async (el, skillCat) => {
@@ -419,6 +512,42 @@
           `;
           }
 
+          let inviteBtnHtml = '';
+          if (selectedTeamToInvite) {
+            const selectedTeam = myOwnedTeams.find(t => t.id === selectedTeamToInvite);
+            if (selectedTeam) {
+              const isJoined = selectedTeam.members.some(mem => mem.id === m.id);
+              const isApplied = selectedTeam.applicants.some(app => app.id === m.id && app.status === 'applied');
+              const isInvited = selectedTeam.applicants.some(app => app.id === m.id && app.status === 'invited');
+              
+              if (isJoined) {
+                inviteBtnHtml = `
+                  <button class="flex-1 py-2.5 rounded-xl bg-green-50 text-green-700 text-sm font-700 border-0 flex items-center justify-center gap-1.5 cursor-not-allowed" disabled>
+                    👥 Anggota Tim
+                  </button>
+                `;
+              } else if (isApplied) {
+                inviteBtnHtml = `
+                  <a href="dashboard.html" class="flex-1 py-2.5 rounded-xl bg-orange-50 text-orange-700 text-sm font-700 border border-orange-200 text-center no-underline hover:bg-orange-100 transition-colors">
+                    📋 Melamar (Tinjau)
+                  </a>
+                `;
+              } else if (isInvited) {
+                inviteBtnHtml = `
+                  <button class="flex-1 py-2.5 rounded-xl bg-gray-50 text-gray-400 text-sm font-700 border border-gray-200 cursor-not-allowed" disabled>
+                    ⏳ Diundang
+                  </button>
+                `;
+              } else {
+                inviteBtnHtml = `
+                  <button onclick="inviteToTeam(${selectedTeamToInvite}, ${m.id}, '${m.name}', this)" class="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-700 hover:bg-primary-dark transition-colors shadow-sm cursor-pointer border-0">
+                    📩 Undang Bergabung
+                  </button>
+                `;
+              }
+            }
+          }
+
           return `
           <div class="match-card bg-white rounded-3xl shadow-card overflow-hidden hover:shadow-card-hover transition-all duration-300 border border-gray-100/50">
             <!-- Header -->
@@ -489,6 +618,7 @@
             <!-- Actions -->
             <div class="px-5 pb-5 flex gap-2">
               ${connectBtnHtml}
+              ${inviteBtnHtml}
               <button onclick="ui.toast('💬 Fitur pesan masuk segera hadir!', 'info')" class="w-11 h-10 rounded-xl bg-primary-light flex items-center justify-center hover:bg-primary group transition-colors border-0 cursor-pointer">
                 <svg width="16" height="16" fill="none" viewBox="0 0 24 24" class="group-hover:stroke-white transition-colors">
                   <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
@@ -553,15 +683,22 @@
             return;
           }
           list.innerHTML = res.map(notif => {
-            const isClickableProfile = !!notif.applicantId;
-            const clickHandler = isClickableProfile 
-              ? `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId || 'null'})"` 
-              : '';
-            const cursorClass = isClickableProfile ? 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]' : '';
+            let clickHandler = '';
+            let cursorClass = '';
+            
+            if (notif.title === 'Undangan Bergabung Tim') {
+              clickHandler = `onclick="viewInvitation(${notif.teamId}, '${notif.title}', '${notif.message}')"`;
+              cursorClass = 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]';
+            } else if (notif.applicantId) {
+              clickHandler = `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId || 'null'})"`;
+              cursorClass = 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]';
+            }
             
             const isPendingJoin = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
             const isPendingConnection = !notif.teamId && notif.applicantId && notif.connectionStatus === 'pending';
-            const isPending = isPendingJoin || isPendingConnection;
+            const isPendingInvite = notif.teamId && notif.memberStatus === 'invited' && notif.title === 'Undangan Bergabung Tim';
+            const isPending = isPendingJoin || isPendingConnection || isPendingInvite;
+            
             const pendingBadge = isPending 
               ? `<span class="bg-orange-100 text-orange-700 text-[9px] font-700 px-1.5 py-0.5 rounded-md uppercase flex-shrink-0">Pending</span>` 
               : '';
@@ -807,6 +944,54 @@
       }
     } catch(e) {
       handleApiError(e, 'Gagal memproses permohonan koneksi');
+    } finally {
+      ui.loading(false);
+    }
+  };
+
+  // Tampilkan Modal Undangan Lomba untuk Mahasiswa yang di-invite
+  window.viewInvitation = async (teamId, title, message) => {
+    const modal = document.getElementById('profile-modal');
+    const content = document.getElementById('profile-modal-content');
+    modal.classList.remove('hidden');
+    
+    content.innerHTML = `
+      <div class="text-center pb-4 border-b border-gray-100">
+        <div class="w-12 h-12 rounded-2xl bg-primary-light flex items-center justify-center text-xl text-primary mx-auto mb-3">📩</div>
+        <h3 class="font-800 text-gray-800 text-base">${title}</h3>
+        <p class="text-xs text-gray-400 mt-0.5">Undangan Bergabung Tim Kelompok</p>
+      </div>
+      
+      <div class="space-y-4 mt-4 text-center sm:text-left">
+        <p class="text-xs text-gray-600 leading-relaxed">${message}</p>
+        
+        <div class="flex gap-3 pt-4 mt-4 border-t border-gray-100">
+          <button onclick="respondInviteRequest(${teamId}, 'approve')" class="flex-1 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-700 transition-all shadow-sm cursor-pointer border-0">
+            Terima Undangan
+          </button>
+          <button onclick="respondInviteRequest(${teamId}, 'reject')" class="flex-1 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-xs font-700 transition-all cursor-pointer border-0">
+            Tolak Undangan
+          </button>
+        </div>
+      </div>
+    `;
+  };
+
+  // Kirim respons terima/tolak undangan
+  window.respondInviteRequest = async (teamId, action) => {
+    ui.loading(true);
+    try {
+      await api.teams.respondInvite(teamId, action);
+      const actionMsg = action === 'approve' ? 'diterima! Anda telah bergabung dalam tim.' : 'ditolak.';
+      ui.toast(`✅ Undangan berhasil ${actionMsg}`, 'success');
+      
+      window.closeProfileModal();
+      await updateNotificationState();
+      if (typeof loadMatchmaking === 'function') {
+        await loadMatchmaking(currentCategory);
+      }
+    } catch(e) {
+      handleApiError(e, 'Gagal memproses undangan tim');
     } finally {
       ui.loading(false);
     }
