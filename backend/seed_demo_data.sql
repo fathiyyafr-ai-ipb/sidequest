@@ -133,7 +133,7 @@ UPDATE competitions
 SET min_members = COALESCE(min_members, 1),
     max_members = COALESCE(max_members, 5),
     registration_model = COALESCE(registration_model, 'hosted'),
-    winner_announcement = COALESCE(winner_announcement, deadline + INTERVAL '7 days')
+    winner_announcement = COALESCE(winner_announcement, (deadline + INTERVAL '7 days')::text)
 WHERE min_members IS NULL OR max_members IS NULL OR registration_model IS NULL OR winner_announcement IS NULL;
 
 -- 7. Log success
