@@ -34,6 +34,19 @@ export const currentUser = {
 // ── Core fetch ────────────────────────────────────────────────────
 let _refreshing = false, _queue = [];
 
+// Clear the session and bounce to login, computing a path that works whether
+// we're called from a /pages/ file or the site root.
+function _redirectToLogin() {
+  token.clear();
+  if (typeof currentUser?.clear === 'function') currentUser.clear();
+  if (typeof window !== 'undefined') {
+    _forceClearLoading('redirect-login');
+    if (window.location.pathname.includes('login.html')) return;
+    const dest = window.location.pathname.includes('/pages/') ? 'login.html' : 'pages/login.html';
+    window.location.href = dest;
+  }
+}
+
 async function http(method, path, body = null, opts = {}) {
   const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
   if (token.isPresent() && !opts.skipAuth) headers['Authorization'] = `Bearer ${token.get()}`;
@@ -42,7 +55,9 @@ async function http(method, path, body = null, opts = {}) {
   const cfg = { method, headers, ...(body ? { body: JSON.stringify(body) } : {}) };
   let res = await fetch(url, cfg);
 
-  // 401 → try refresh
+  // 401 → try refresh (only if a refresh token exists AND a refresh endpoint
+  // is available). NOTE: the backend currently issues no refresh token at
+  // login, so this branch is dormant; the `else` path below is what runs.
   if (res.status === 401 && token.getRefresh() && !opts.skipRefresh) {
     if (!_refreshing) {
       _refreshing = true;
@@ -56,10 +71,16 @@ async function http(method, path, body = null, opts = {}) {
           token.setRefresh(rd.data.refreshToken);
           headers['Authorization'] = `Bearer ${rd.data.accessToken}`;
           _queue.forEach(r => r()); _queue = [];
-        } else { token.clear(); window.location.href = '../pages/login.html'; return; }
+        } else { _redirectToLogin(); return; }
       } finally { _refreshing = false; }
     } else { await new Promise(r => _queue.push(r)); }
     res = await fetch(url, { ...cfg, headers });
+  } else if (res.status === 401 && token.isPresent() && !opts.skipAuth && !opts.skipRefresh) {
+    // Expired / invalid session and no refresh available → fail cleanly:
+    // drop the dead token, tear down any loading overlay, and send the user
+    // to login instead of leaving them stuck on a half-broken page.
+    _redirectToLogin();
+    return;
   }
 
   if (res.status === 503 && !window.location.pathname.includes('maintenance.html')) {
@@ -252,6 +273,23 @@ function _store(data) {
   if (data.user) currentUser.set(data.user);
 }
 
+// ── Loading overlay state (reference counted) ─────────────────────
+let _loadCount = 0;
+let _loadTimer = null;
+
+function _forceClearLoading(/* reason */) {
+  _loadCount = 0;
+  clearTimeout(_loadTimer);
+  _loadTimer = null;
+  document.getElementById('sq-loading')?.remove();
+}
+
+// Never let a loading overlay survive a page transition.
+if (typeof window !== 'undefined') {
+  window.addEventListener('pagehide', () => _forceClearLoading('pagehide'));
+  window.addEventListener('pageshow', () => _forceClearLoading('pageshow'));
+}
+
 // ── UI helpers ────────────────────────────────────────────────────
 export const ui = {
   toast(msg, type = 'info', ms = 3000) {
@@ -305,43 +343,77 @@ export const ui = {
     document.getElementById('sq-confirm-yes').onmouseover = function() { this.style.background = btnHover; }
     document.getElementById('sq-confirm-yes').onmouseout = function() { this.style.background = btnBg; }
     
-    requestAnimationFrame(() => { 
-      el.style.opacity = '1'; 
+    // Accessibility: mark as a dialog and move focus into it on open so
+    // keyboard users land on an actionable control (and Esc works).
+    el.setAttribute('role', 'dialog');
+    el.setAttribute('aria-modal', 'true');
+    const _prevFocus = document.activeElement;
+
+    requestAnimationFrame(() => {
+      el.style.opacity = '1';
       document.getElementById('sq-confirm-box').style.transform = 'scale(1)';
+      document.getElementById('sq-confirm-no')?.focus();
     });
     
     const close = () => {
+      document.removeEventListener('keydown', onKey);
       el.style.opacity = '0';
       document.getElementById('sq-confirm-box').style.transform = 'scale(0.95)';
       setTimeout(() => el.remove(), 200);
+      if (_prevFocus && typeof _prevFocus.focus === 'function') _prevFocus.focus();
     };
-    
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+
     document.getElementById('sq-confirm-no').addEventListener('click', close);
     document.getElementById('sq-confirm-yes').addEventListener('click', () => { close(); onConfirm(); });
+    // Dismiss on backdrop click (but not when clicking inside the dialog box).
+    el.addEventListener('click', (e) => { if (e.target === el) close(); });
+    // Dismiss on Escape so the modal can never trap the UI.
+    document.addEventListener('keydown', onKey);
   },
 
+  // Reference-counted global loading overlay.
+  // Multiple concurrent show() calls keep the spinner up until ALL of them
+  // have called hide(); a safety timeout force-clears a stuck overlay so a
+  // single hung/errored request can never permanently block the UI.
   loading(show, container = null) {
     const id = 'sq-loading';
-    if (!show) { document.getElementById(id)?.remove(); return; }
-    if (document.getElementById(id)) return;
-    const el = document.createElement('div'); el.id = id;
-    Object.assign(el.style, {
-      position: container ? 'absolute' : 'fixed', inset: '0',
-      background: 'rgba(255,255,255,.75)', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', zIndex: '8888', borderRadius: 'inherit'
-    });
-    el.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-      <div style="width:32px;height:32px;border:3px solid #EDE9FF;border-top-color:#6C63FF;
-           border-radius:50%;animation:sq-spin .7s linear infinite"></div>
-      <span style="font-size:13px;color:#6C63FF;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600">Memuat…</span>
-    </div>`;
-    if (!document.getElementById('sq-spin-s')) {
-      const s = document.createElement('style'); s.id = 'sq-spin-s';
-      s.textContent = '@keyframes sq-spin{to{transform:rotate(360deg)}}@keyframes sq-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}';
-      document.head.appendChild(s);
+    const SAFETY_MS = 12000;
+
+    if (show) {
+      _loadCount++;
+      let el = document.getElementById(id);
+      if (!el) {
+        el = document.createElement('div'); el.id = id;
+        Object.assign(el.style, {
+          position: container ? 'absolute' : 'fixed', inset: '0',
+          background: 'rgba(255,255,255,.75)', display: 'flex', alignItems: 'center',
+          justifyContent: 'center', zIndex: '8888', borderRadius: 'inherit'
+        });
+        el.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+          <div style="width:32px;height:32px;border:3px solid #EDE9FF;border-top-color:#6C63FF;
+               border-radius:50%;animation:sq-spin .7s linear infinite"></div>
+          <span style="font-size:13px;color:#6C63FF;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600">Memuat…</span>
+        </div>`;
+        if (!document.getElementById('sq-spin-s')) {
+          const s = document.createElement('style'); s.id = 'sq-spin-s';
+          s.textContent = '@keyframes sq-spin{to{transform:rotate(360deg)}}@keyframes sq-shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}';
+          document.head.appendChild(s);
+        }
+        (container || document.body).appendChild(el);
+      }
+      // (Re)arm the safety net every time we show.
+      clearTimeout(_loadTimer);
+      _loadTimer = setTimeout(() => { _forceClearLoading('safety-timeout'); }, SAFETY_MS);
+    } else {
+      _loadCount = Math.max(0, _loadCount - 1);
+      if (_loadCount === 0) _forceClearLoading('balanced');
     }
-    (container || document.body).appendChild(el);
   },
+
+  // Hard-reset the loading overlay regardless of the counter. Useful for
+  // page-init guards and navigation handlers.
+  clearLoading() { _forceClearLoading('manual'); },
 
   skeletons(el, n = 3, h = '120px') {
     if (!el) return;

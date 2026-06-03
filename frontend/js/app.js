@@ -65,13 +65,17 @@ function navigate(page) {
    SIDEBAR (mobile)
    ───────────────────────────────────────────────── */
 function openSidebar() {
-  document.getElementById("sidebar").classList.add("open");
-  document.getElementById("sidebar-overlay").classList.add("open");
+  document.getElementById("sidebar")?.classList.add("open");
+  const ov = document.getElementById("sidebar-overlay");
+  if (ov) { ov.classList.add("open"); ov.classList.remove("hidden"); }
 }
 
 function closeSidebar() {
-  document.getElementById("sidebar").classList.remove("open");
-  document.getElementById("sidebar-overlay").classList.remove("open");
+  document.getElementById("sidebar")?.classList.remove("open");
+  // Support both overlay paradigms: legacy class-based `.open` and the
+  // Tailwind `hidden` toggle used by the admin/sponsor pages.
+  const ov = document.getElementById("sidebar-overlay");
+  if (ov) { ov.classList.remove("open"); ov.classList.add("hidden"); }
 }
 
 /* ─────────────────────────────────────────────────

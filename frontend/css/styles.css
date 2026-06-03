@@ -144,6 +144,19 @@ body {
   .sidebar-overlay.open { display: block; }
 }
 
+/* ── Desktop safety guard ──
+   The sidebar overlay is a MOBILE-only scrim. On desktop it must never be
+   visible regardless of any leftover `.open`/`hidden` state (e.g. opened on
+   mobile, then the window resized up), otherwise it silently traps all clicks.
+   Applies globally so every page is protected, not just admin/sponsor. */
+@media (min-width: 1024px) {
+  #sidebar-overlay,
+  .sidebar-overlay,
+  .sidebar-overlay.open {
+    display: none !important;
+  }
+}
+
 /* ── Stat card hover ── */
 .stat-card {
   transition: transform 0.18s ease, box-shadow 0.18s ease;
