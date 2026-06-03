@@ -169,7 +169,7 @@ const getSavedCompetitions = async (req, res) => {
 const registerCompetition = async (req, res) => {
   const userId = req.userId;
   const compId = req.params.id;
-  const { teamId, portfolioUrl, motivation, contact } = req.body;
+  const { teamId, portfolioUrl, motivation, contact, customResponses } = req.body;
   try {
     // Ambil info kompetisi
     const compRes = await pool.query(
@@ -191,45 +191,78 @@ const registerCompetition = async (req, res) => {
       return res.status(400).json({ message: 'Sudah terdaftar di lomba ini' });
     }
 
-    const isTeamComp = comp.min_members > 1 || comp.max_members > 1;
+    // A team is only REQUIRED when the minimum team size is greater than 1.
+    // Competitions with min_members === 1 allow individual (solo) registration
+    // even if they also permit teams (max_members > 1).
+    const teamRequired = comp.min_members > 1;
 
-    // Jika lomba bertipe kelompok dan hosted, lakukan validasi tim
-    if (comp.registration_model === 'hosted' && isTeamComp) {
-      if (!teamId) {
-        return res.status(400).json({ message: 'Lomba kelompok memerlukan tim untuk didaftarkan.' });
+    if (comp.registration_model === 'hosted') {
+      if (teamRequired && !teamId) {
+        return res.status(400).json({ message: 'Lomba ini wajib didaftarkan sebagai tim.' });
       }
 
-      // 1. Validasi Kepemilikan Tim (Hanya Owner yang boleh mendaftarkan)
-      const ownerCheck = await pool.query(
-        "SELECT * FROM team_members WHERE team_id = $1 AND user_id = $2 AND role = 'owner' AND status = 'joined'",
-        [teamId, userId]
-      );
-      if (ownerCheck.rows.length === 0) {
-        return res.status(403).json({ message: 'Hanya pembuat (owner) tim yang dapat mendaftarkan tim ini ke kompetisi.' });
+      // Validate the team whenever one is supplied (whether required or optional).
+      if (teamId) {
+        // 1. Ownership — only the team owner may register the team.
+        const ownerCheck = await pool.query(
+          "SELECT * FROM team_members WHERE team_id = $1 AND user_id = $2 AND role = 'owner' AND status = 'joined'",
+          [teamId, userId]
+        );
+        if (ownerCheck.rows.length === 0) {
+          return res.status(403).json({ message: 'Hanya pembuat (owner) tim yang dapat mendaftarkan tim ini ke kompetisi.' });
+        }
+
+        // 2. Member count must fall within the competition's bounds.
+        const countRes = await pool.query(
+          "SELECT COUNT(*) FROM team_members WHERE team_id = $1 AND status = 'joined'",
+          [teamId]
+        );
+        const count = parseInt(countRes.rows[0].count, 10) || 0;
+        if (count < comp.min_members || count > comp.max_members) {
+          return res.status(400).json({
+            message: `Jumlah anggota tim masih belum sesuai (Dibutuhkan antara ${comp.min_members} sampai ${comp.max_members} orang, tim Anda saat ini: ${count} orang).`
+          });
+        }
       }
+    }
 
-      // 2. Validasi Jumlah Anggota Tim (Descriptive error)
-      const countRes = await pool.query(
-        "SELECT COUNT(*) FROM team_members WHERE team_id = $1 AND status = 'joined'",
-        [teamId]
+    // Validate organizer-defined custom registration fields BEFORE creating the
+    // registration, so a rejected submission never leaves an orphan row.
+    const customFields = await pool.query(
+      'SELECT id, required, field_name FROM custom_registration_fields WHERE competition_id = $1',
+      [compId]
+    );
+    const responsesToSave = [];
+    if (customFields.rows.length > 0) {
+      const responseMap = new Map(
+        (Array.isArray(customResponses) ? customResponses : []).map((r) => [parseInt(r.fieldId, 10), (r.value ?? '').toString().trim()])
       );
-      const count = parseInt(countRes.rows[0].count, 10) || 0;
-
-      if (count < comp.min_members || count > comp.max_members) {
-        return res.status(400).json({
-          message: `Jumlah anggota tim masih belum sesuai (Dibutuhkan antara ${comp.min_members} sampai ${comp.max_members} orang, tim Anda saat ini: ${count} orang).`
-        });
+      for (const field of customFields.rows) {
+        const value = responseMap.get(field.id) || '';
+        if (field.required && !value) {
+          return res.status(400).json({ message: `Kolom "${field.field_name}" wajib diisi.` });
+        }
+        if (value) responsesToSave.push({ fieldId: field.id, value });
       }
     }
 
     const regStatus = comp.registration_model === 'hosted' ? 'pending' : 'approved';
 
     await pool.query(
-      `INSERT INTO competition_registrations 
-        (user_id, competition_id, status, portfolio_url, motivation, contact, team_id) 
+      `INSERT INTO competition_registrations
+        (user_id, competition_id, status, portfolio_url, motivation, contact, team_id)
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
       [userId, compId, regStatus, portfolioUrl || null, motivation || null, contact || null, teamId || null]
     );
+
+    for (const r of responsesToSave) {
+      await pool.query(
+        `INSERT INTO custom_registration_responses (user_id, competition_id, field_id, response_value)
+         VALUES ($1, $2, $3, $4)
+         ON CONFLICT (user_id, competition_id, field_id) DO UPDATE SET response_value = EXCLUDED.response_value`,
+        [userId, compId, r.fieldId, r.value]
+      );
+    }
 
     // Ambil nama pendaftar untuk pesan notifikasi
     const userRes = await pool.query('SELECT name FROM users WHERE id = $1', [userId]);

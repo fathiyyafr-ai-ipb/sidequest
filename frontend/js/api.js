@@ -146,6 +146,8 @@ export const api = {
     async getSaved() { const res = await _get('/competitions/saved'); return res.data; },
     register(id, payload = null) { return _post(`/competitions/${id}/register`, payload); },
     async getRegistrationStatus(id) { const res = await _get(`/competitions/${id}/registration-status`); return res.data; },
+    // Organizer-defined custom registration fields for this competition (may be empty).
+    async customFields(id) { return await _get(`/premium/participant/fields/${id}`); },
     // Organizer extensions
     async getOrganizerCompetitions() { const res = await _get('/competitions/organizer/mine'); return res.data; },
     create(payload) { return _post('/competitions/organizer/create', payload); },

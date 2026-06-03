@@ -254,18 +254,23 @@
           </div>
 
           <div class="space-y-4" id="form-inputs-container">
-            <div>
-              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Tautan Portofolio / File *</label>
-              <input type="url" id="reg-portfolio" required placeholder="https://github.com/username atau link Google Drive" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+            <!-- Default fields (used when the organizer has NOT configured custom fields) -->
+            <div id="reg-default-fields" class="space-y-4">
+              <div>
+                <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Tautan Portofolio / File *</label>
+                <input type="url" id="reg-portfolio" placeholder="https://github.com/username atau link Google Drive" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+              </div>
+              <div>
+                <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Pernyataan Motivasi / Catatan *</label>
+                <textarea id="reg-motivation" rows="3" placeholder="Mengapa tim/Anda tertarik mengikuti lomba ini?" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
+              </div>
+              <div>
+                <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">No. WhatsApp / Kontak Aktif *</label>
+                <input type="text" id="reg-contact" placeholder="contoh: 081234567890 atau wa.me/..." class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all"/>
+              </div>
             </div>
-            <div>
-              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">Pernyataan Motivasi / Catatan *</label>
-              <textarea id="reg-motivation" required rows="3" placeholder="Mengapa tim/Anda tertarik mengikuti lomba ini?" class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all resize-none"></textarea>
-            </div>
-            <div>
-              <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">No. WhatsApp / Kontak Aktif *</label>
-              <input type="text" id="reg-contact" required placeholder="contoh: 081234567890 atau wa.me/..." class="w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all"/>
-            </div>
+            <!-- Custom fields (rendered when the organizer configured them) -->
+            <div id="reg-custom-fields" class="space-y-4 hidden"></div>
             <button type="submit" id="reg-submit-btn" class="w-full py-3.5 rounded-2xl bg-primary hover:bg-primary-dark text-white font-700 text-sm transition-colors shadow-md border-0 cursor-pointer">
               Kirim Pendaftaran →
             </button>
@@ -292,6 +297,66 @@
 
     let comp = null;
     let selectedTeamId = null;
+    let customFieldDefs = [];
+
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]
+    ));
+
+    // Render the registration inputs: organizer-defined custom fields when the
+    // competition has them, otherwise the default portfolio/motivation/contact.
+    function renderRegistrationFields() {
+      const defaultBox = document.getElementById('reg-default-fields');
+      const customBox = document.getElementById('reg-custom-fields');
+      if (customFieldDefs.length > 0) {
+        defaultBox.classList.add('hidden');
+        customBox.classList.remove('hidden');
+        const base = 'w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all';
+        customBox.innerHTML = customFieldDefs.map((f) => {
+          const reqMark = f.required ? ' *' : '';
+          let input;
+          if (f.field_type === 'textarea') {
+            input = `<textarea data-cf-id="${f.id}" rows="3" placeholder="Jawaban Anda…" class="${base} resize-none"></textarea>`;
+          } else if (f.field_type === 'file' || f.field_type === 'url' || f.field_type === 'link') {
+            input = `<input type="url" data-cf-id="${f.id}" placeholder="https://… (tautan Drive/GitHub/Figma)" class="${base}"/>`;
+          } else {
+            input = `<input type="text" data-cf-id="${f.id}" placeholder="Jawaban Anda…" class="${base}"/>`;
+          }
+          return `<div>
+            <label class="block text-xs font-700 text-gray-600 mb-1.5 uppercase tracking-wide">${esc(f.field_name)}${reqMark}</label>
+            ${input}
+          </div>`;
+        }).join('');
+      } else {
+        customBox.classList.add('hidden');
+        customBox.innerHTML = '';
+        defaultBox.classList.remove('hidden');
+      }
+    }
+
+    // Collect + validate the active registration inputs.
+    // Returns { ok, payload } or { ok:false, error }.
+    function collectRegistrationInputs() {
+      if (customFieldDefs.length > 0) {
+        const responses = [];
+        for (const f of customFieldDefs) {
+          const el = document.querySelector(`#reg-custom-fields [data-cf-id="${f.id}"]`);
+          const value = (el?.value || '').trim();
+          if (f.required && !value) {
+            return { ok: false, error: `Kolom "${f.field_name}" wajib diisi.` };
+          }
+          if (value) responses.push({ fieldId: f.id, value });
+        }
+        return { ok: true, payload: { customResponses: responses } };
+      }
+      const portfolioUrl = document.getElementById('reg-portfolio').value.trim();
+      const motivation = document.getElementById('reg-motivation').value.trim();
+      const contact = document.getElementById('reg-contact').value.trim();
+      if (!portfolioUrl || !motivation || !contact) {
+        return { ok: false, error: 'Mohon lengkapi semua kolom yang wajib diisi.' };
+      }
+      return { ok: true, payload: { portfolioUrl, motivation, contact } };
+    }
 
     // Load dynamic competition info
     if (compId) {
@@ -439,122 +504,111 @@
           return;
         }
 
-        // B. Jika hosted: Tampilkan popup modal formulir pendaftaran
+        // B. Hosted: show the registration form modal.
         document.getElementById('register-comp-title').textContent = comp.title;
         document.getElementById('reg-portfolio').value = '';
         document.getElementById('reg-motivation').value = '';
         document.getElementById('reg-contact').value = '';
-        
-        const isTeamComp = comp.minMembers > 1 || comp.maxMembers > 1;
+
+        // A team is only REQUIRED when min size > 1. When min === 1 the user may
+        // register individually, and may optionally pick a team if max > 1.
+        const teamRequired = comp.minMembers > 1;
+        const teamAllowed = comp.maxMembers > 1;
         const selectContainer = document.getElementById('team-select-container');
         const formInputsContainer = document.getElementById('form-inputs-container');
-        const errEl = document.getElementById('team-validation-error');
-        const succEl = document.getElementById('team-validation-success');
         const submitBtn = document.getElementById('reg-submit-btn');
 
-        errEl.classList.add('hidden');
-        succEl.classList.add('hidden');
         submitBtn.disabled = false;
         formInputsContainer.classList.remove('hidden');
+        selectedTeamId = null;
 
-        if (isTeamComp) {
+        // Render organizer-defined custom fields (or fall back to default fields).
+        try {
+          const fields = await api.competitions.customFields(compId);
+          customFieldDefs = Array.isArray(fields) ? fields : [];
+        } catch (_) { customFieldDefs = []; }
+        renderRegistrationFields();
+
+        if (teamRequired || teamAllowed) {
           selectContainer.classList.remove('hidden');
-          // Reset select container html to default dropdown in case it was replaced by Scenario A previously
+          // Rebuild the selector — note the recruit button is included here so it
+          // is never null when referenced from the change handler.
           selectContainer.innerHTML = `
-            <label class="block text-xs font-700 text-gray-600 uppercase tracking-wide">Pilih Tim Anda *</label>
+            <label class="block text-xs font-700 text-gray-600 uppercase tracking-wide">${teamRequired ? 'Pilih Tim Anda *' : 'Pilih Tim (Opsional)'}</label>
             <div id="team-dropdown-loading" class="text-xs text-gray-400 italic">Mencari daftar tim...</div>
-            <select id="reg-team-dropdown" class="hidden w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-all text-gray-700">
-            </select>
+            <select id="reg-team-dropdown" class="hidden w-full bg-gray-50 border-2 border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 focus:outline-none focus:border-primary focus:bg-white transition-all"></select>
             <p id="team-validation-error" class="text-[11px] font-600 text-red-600 mt-1 leading-snug hidden"></p>
             <p id="team-validation-success" class="text-[11px] font-600 text-green-600 mt-1 leading-snug hidden"></p>
-          `;
+            <div class="mt-2">
+              <button type="button" id="btn-recruit-members" class="hidden w-full py-2.5 bg-primary-light text-primary text-[10px] font-800 rounded-xl hover:bg-primary hover:text-white transition-all border-0 cursor-pointer">🔍 Rekrut Anggota via Matchmaking</button>
+            </div>`;
 
           const loadingText = document.getElementById('team-dropdown-loading');
           const dropdown = document.getElementById('reg-team-dropdown');
-          const newErrEl = document.getElementById('team-validation-error');
-          const newSuccEl = document.getElementById('team-validation-success');
-          const recruitBtn = document.getElementById('btn-recruit-members');
-
-          loadingText.classList.remove('hidden');
-          dropdown.classList.add('hidden');
-          dropdown.innerHTML = '';
-          selectedTeamId = null;
+          const errEl = document.getElementById('team-validation-error');
+          const succEl = document.getElementById('team-validation-success');
 
           try {
-            // Ambil daftar tim saya
             const myTeams = await api.teams.mine();
-            
-            // Saring tim di mana user adalah owner
             const ownerTeams = (myTeams || []).filter(t => t.role === 'owner');
-
             loadingText.classList.add('hidden');
 
-            if (ownerTeams.length === 0) {
-              // Skenario A: Belum punya tim sebagai OWNER untuk kompetisi ini
-              dropdown.classList.add('hidden');
+            if (ownerTeams.length === 0 && teamRequired) {
+              // Team mandatory but the user owns none → block with guidance.
               selectContainer.innerHTML = `
                 <label class="block text-xs font-700 text-gray-600 uppercase tracking-wide">Pilihan Tim Kelompok</label>
                 <div class="p-4 text-center rounded-2xl bg-orange-50 border border-orange-200 mt-1">
-                  <p class="text-xs text-orange-700 font-700 leading-relaxed">
-                    ⚠️ Lomba ini memerlukan tim (minimal ${comp.minMembers} orang, maksimal ${comp.maxMembers} orang). Anda belum memiliki tim sebagai pembuat (owner) untuk kompetisi ini.
-                  </p>
-                  <a href="cari-tim.html" class="inline-block mt-3 px-4 py-2 bg-primary text-white text-[10px] font-800 rounded-xl no-underline hover:bg-primary-dark transition-all">
-                    Buat Tim Baru Sekarang →
-                  </a>
-                </div>
-              `;
+                  <p class="text-xs text-orange-700 font-700 leading-relaxed">⚠️ Lomba ini wajib diikuti sebagai tim (minimal ${comp.minMembers} orang, maksimal ${comp.maxMembers} orang). Anda belum memiliki tim sebagai pembuat (owner).</p>
+                  <a href="cari-tim.html" class="inline-block mt-3 px-4 py-2 bg-primary text-white text-[10px] font-800 rounded-xl no-underline hover:bg-primary-dark transition-all">Buat Tim Baru Sekarang →</a>
+                </div>`;
               formInputsContainer.classList.add('hidden');
               submitBtn.disabled = true;
             } else {
-              // Skenario B: Punya tim sebagai OWNER
               dropdown.classList.remove('hidden');
-              dropdown.innerHTML = '<option value="">-- Pilih Tim yang Didaftarkan --</option>' + 
+              const soloLabel = teamRequired ? '-- Pilih Tim yang Didaftarkan --' : '👤 Daftar sebagai Individu';
+              dropdown.innerHTML = `<option value="">${soloLabel}</option>` +
                 ownerTeams.map(t => `<option value="${t.id}">${t.name} (${t.members.length} anggota)</option>`).join('');
 
-              // Add change event listener for team dropdown
               dropdown.onchange = () => {
+                const recruitBtn = document.getElementById('btn-recruit-members');
                 const val = dropdown.value;
-                newErrEl.classList.add('hidden');
-                newSuccEl.classList.add('hidden');
-                recruitBtn.classList.add('hidden');
-                submitBtn.disabled = false;
+                errEl.classList.add('hidden');
+                succEl.classList.add('hidden');
+                recruitBtn?.classList.add('hidden');
 
                 if (!val) {
+                  // No team chosen: required → must pick; optional → solo is valid.
                   selectedTeamId = null;
-                  submitBtn.disabled = true;
+                  submitBtn.disabled = teamRequired;
                   return;
                 }
 
                 selectedTeamId = parseInt(val, 10);
                 const selectedTeam = ownerTeams.find(t => t.id === selectedTeamId);
-                
                 if (selectedTeam) {
-                  recruitBtn.classList.remove('hidden');
-                  recruitBtn.onclick = () => {
-                    window.location.href = `matchmaking.html?invite_team_id=${selectedTeamId}`;
-                  };
-
-                  const membersCount = selectedTeam.members.length;
-                  if (membersCount < comp.minMembers || membersCount > comp.maxMembers) {
-                    // Descriptive error as requested
-                    newErrEl.textContent = `⚠️ Jumlah anggota tim masih belum sesuai (Dibutuhkan antara ${comp.minMembers} sampai ${comp.maxMembers} orang, tim Anda saat ini: ${membersCount} orang).`;
-                    newErrEl.classList.remove('hidden');
+                  if (recruitBtn) {
+                    recruitBtn.classList.remove('hidden');
+                    recruitBtn.onclick = () => { window.location.href = `matchmaking.html?invite_team_id=${selectedTeamId}`; };
+                  }
+                  const n = selectedTeam.members.length;
+                  if (n < comp.minMembers || n > comp.maxMembers) {
+                    errEl.textContent = `⚠️ Jumlah anggota tim masih belum sesuai (Dibutuhkan antara ${comp.minMembers} sampai ${comp.maxMembers} orang, tim Anda saat ini: ${n} orang).`;
+                    errEl.classList.remove('hidden');
                     submitBtn.disabled = true;
                   } else {
-                    newSuccEl.textContent = `✅ Tim memenuhi syarat (${membersCount} anggota).`;
-                    newSuccEl.classList.remove('hidden');
+                    succEl.textContent = `✅ Tim memenuhi syarat (${n} anggota).`;
+                    succEl.classList.remove('hidden');
                     submitBtn.disabled = false;
                   }
                 }
               };
-
-              // Trigger initial state
               dropdown.onchange();
             }
-          } catch(e) {
+          } catch (e) {
             console.error(e);
-            loadingText.textContent = 'Gagal memuat tim Anda.';
-            submitBtn.disabled = true;
+            loadingText.textContent = 'Gagal memuat daftar tim Anda.';
+            // Don't hard-block a solo-capable competition on a team-load failure.
+            submitBtn.disabled = teamRequired;
           }
         } else {
           selectContainer.classList.add('hidden');
@@ -570,21 +624,19 @@
       e.preventDefault();
       if (!comp) return;
 
-      const portfolioUrl = document.getElementById('reg-portfolio').value.trim();
-      const motivation = document.getElementById('reg-motivation').value.trim();
-      const contact = document.getElementById('reg-contact').value.trim();
-      
+      // Validate + collect either the custom fields or the default fields.
+      const collected = collectRegistrationInputs();
+      if (!collected.ok) {
+        ui.toast('⚠️ ' + collected.error, 'warning');
+        return;
+      }
+
       const submitBtn = document.getElementById('reg-submit-btn');
       submitBtn.disabled = true;
       submitBtn.textContent = 'Mengirim…';
 
       try {
-        const payload = {
-          portfolioUrl,
-          motivation,
-          contact,
-          teamId: selectedTeamId
-        };
+        const payload = { ...collected.payload, teamId: selectedTeamId };
 
         const res = await api.competitions.register(compId, payload);
         ui.toast(res.message || '✅ Berhasil mendaftar lomba hosted!', 'success');
