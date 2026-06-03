@@ -198,7 +198,7 @@ async function viewApplicantFallback(applicantId, teamId = null) {
     if (isTeamRequest) {
       const myTeams = await api.teams.mine();
       const activeTeam = Array.isArray(myTeams) ? myTeams.find((t) => t.id === parseInt(teamId, 10)) : (myTeams && myTeams.id === parseInt(teamId, 10) ? myTeams : null);
-      const applicantPending = activeTeam && activeTeam.role === 'owner' && (activeTeam.applicants || []).some((a) => a.id === parseInt(applicantId, 10));
+      const applicantPending = activeTeam && activeTeam.role === 'owner' && (activeTeam.applicants || []).some((a) => a.id === parseInt(applicantId, 10) && a.status !== 'invited');
       if (applicantPending) {
         actionHtml = `<div class="flex gap-3 pt-4 mt-4 border-t border-gray-100"><button id="sq-app-accept" class="flex-1 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white text-xs font-700 cursor-pointer border-0">Setuju Bergabung</button><button id="sq-app-reject" class="flex-1 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-500 text-xs font-700 cursor-pointer border-0">Tolak Permohonan</button></div>`;
         bind = () => {
