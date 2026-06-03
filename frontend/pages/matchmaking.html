@@ -107,7 +107,7 @@
     <img src="../assets/logo.png" alt="SideQuest Logo" class="h-6 w-auto object-contain" onerror="this.style.display='none';" /><span class="font-extrabold text-primary text-base">SideQuest</span>
   </div>
   <div class="flex items-center gap-1.5">
-    <button id="notif-btn-mobile" class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
+    <button id="notif-btn-mobile" data-notif-btn class="p-2 rounded-xl hover:bg-gray-100 transition-colors relative">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
         <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
                  C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
@@ -115,7 +115,7 @@
                  M15 17a3 3 0 11-6 0"
               stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span id="notif-badge-mobile" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-800 text-white border border-white hidden"></span>
+      <span id="notif-badge-mobile" data-notif-badge class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-800 text-white border border-white hidden"></span>
     </button>
     <a href="profil.html"
        class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs" data-sb-init>RA</a>
@@ -133,7 +133,7 @@
     <p class="text-xs text-gray-400 mt-0.5">Selamat datang kembali, <span data-sb-fname>Rizki</span> 👋</p>
   </div>
   <div class="flex items-center gap-3">
-    <button id="notif-btn-desktop" class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
+    <button id="notif-btn-desktop" data-notif-btn class="relative p-2.5 rounded-xl bg-gray-50 hover:bg-primary-light transition-colors">
       <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
         <path d="M15 17H20L18.595 15.595A1.003 1.003 0 0118 14.869V11
                  C18 7.627 15.726 4.794 12.535 4.136V4a1 1 0 10-2 0v.135
@@ -141,7 +141,7 @@
                  M15 17a3 3 0 11-6 0"
               stroke="#6C63FF" stroke-width="2" stroke-linecap="round"/>
       </svg>
-      <span id="notif-badge-desktop" class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-800 text-white border border-white hidden"></span>
+      <span id="notif-badge-desktop" data-notif-badge class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-800 text-white border border-white hidden"></span>
     </button>
     
       
@@ -248,17 +248,7 @@
   </div>
 
   <!-- ── Notification Panel ── -->
-  <div id="notification-panel" class="hidden fixed top-16 right-4 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 z-50 p-4 animate-fade-in">
-    <div class="flex items-center justify-between border-b border-gray-100 pb-2.5 mb-3">
-      <h3 class="font-800 text-sm text-gray-800">Notifikasi</h3>
-      <button id="mark-all-read-btn" class="text-[10px] font-700 text-primary hover:text-primary-dark transition-colors border-0 bg-transparent cursor-pointer">
-        Tandai dibaca semua
-      </button>
-    </div>
-    <div id="notification-list" class="space-y-3 max-h-60 overflow-y-auto no-scrollbar">
-      <p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>
-    </div>
-  </div>
+  <!-- Notification panel is injected by ../js/notifications.js (shared) -->
 
   <!-- ── Profile Details Modal ── -->
   <div id="profile-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
@@ -334,6 +324,7 @@
   <script type="module">
     import { api, ui, handleApiError, token, renderSponsorshipAd } from '../js/api.js';
     import { initSession, bindLogout } from '../js/auth.js';
+    import { initNotifications, notifications } from '../js/notifications.js';
 
     // Expose sidebar handlers globally for the mobile hamburger/overlay onclicks.
     window.openSidebar = () => {
@@ -354,6 +345,7 @@
     document.addEventListener('DOMContentLoaded', async () => {
       const u = await initSession();
       bindLogout();
+      initNotifications();
 
       if (u) {
         // Load owned teams for invitation console
@@ -397,7 +389,7 @@
         // Muat daftar matchmaking pertama kali
         await loadMatchmaking('all');
         await renderSponsorshipAd('matchmaking', 'sponsorship-banner');
-        await updateNotificationState();
+        await notifications.refresh();
       }
     });
 
@@ -660,136 +652,6 @@
       }
     }
 
-  // Notifikasi Toggle Panel & Status
-  async function updateNotificationState() {
-    const badgeDesktop = document.getElementById('notif-badge-desktop');
-    const badgeMobile = document.getElementById('notif-badge-mobile');
-    const panel = document.getElementById('notification-panel');
-    const list = document.getElementById('notification-list');
-    const clearBtn = document.getElementById('mark-all-read-btn');
-
-    try {
-      const countData = await api.notifications.unreadCount();
-      const n = countData;
-      
-      // Update badge desktop & mobile secara sinkron
-      const refreshBadge = (badge) => {
-        if (badge) {
-          if (n > 0) {
-            badge.classList.remove('hidden');
-            badge.textContent = n > 99 ? '99+' : n;
-          } else {
-            badge.classList.add('hidden');
-            badge.textContent = '';
-          }
-        }
-      };
-
-      refreshBadge(badgeDesktop);
-      refreshBadge(badgeMobile);
-
-      // Tampilkan Notifikasi di Dropdown
-      const loadNotifications = async () => {
-        list.innerHTML = '<p class="text-center text-xs text-gray-400 py-4">Memuat notifikasi…</p>';
-        try {
-          const res = await api.notifications.list();
-          if (res.length === 0) {
-            list.innerHTML = '<p class="text-center text-xs text-gray-400 py-6">Tidak ada notifikasi baru.</p>';
-            return;
-          }
-          list.innerHTML = res.map(notif => {
-            let clickHandler = '';
-            let cursorClass = '';
-            
-            if (notif.title === 'Undangan Bergabung Tim') {
-              clickHandler = `onclick="viewInvitation(${notif.teamId}, '${notif.title}', '${notif.message}')"`;
-              cursorClass = 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]';
-            } else if (notif.applicantId) {
-              clickHandler = `onclick="viewApplicantProfile(${notif.applicantId}, ${notif.teamId || 'null'})"`;
-              cursorClass = 'cursor-pointer hover:bg-primary-light/20 hover:scale-[1.01]';
-            }
-            
-            const isPendingJoin = notif.teamId && notif.applicantId && notif.memberStatus === 'applied';
-            const isPendingConnection = !notif.teamId && notif.applicantId && notif.connectionStatus === 'pending';
-            const isPendingInvite = notif.teamId && notif.memberStatus === 'invited' && notif.title === 'Undangan Bergabung Tim';
-            const isPending = isPendingJoin || isPendingConnection || isPendingInvite;
-            
-            const pendingBadge = isPending 
-              ? `<span class="bg-orange-100 text-orange-700 text-[9px] font-700 px-1.5 py-0.5 rounded-md uppercase flex-shrink-0">Pending</span>` 
-              : '';
-
-            return `
-              <div ${clickHandler} class="p-2.5 rounded-xl ${notif.isRead ? 'bg-gray-50/50' : 'bg-primary-light/10 border-l-4 border-primary'} ${cursorClass} flex flex-col gap-1 transition-all">
-                <div class="flex items-center justify-between gap-2">
-                  <p class="text-xs font-700 text-gray-800 leading-snug">${notif.title}</p>
-                  ${pendingBadge}
-                </div>
-                <p class="text-[10px] text-gray-500 mt-0.5 leading-relaxed">${notif.message}</p>
-                <span class="text-[8px] text-gray-400 mt-1 block">${ui.formatDate(notif.createdAt)}</span>
-              </div>
-            `;
-          }).join('');
-        } catch(err) {
-          list.innerHTML = '<p class="text-center text-xs text-red-500 py-4">Gagal memuat notifikasi.</p>';
-        }
-      };
-
-      // Togel Handler
-      const togglePanel = async (e) => {
-        e.stopPropagation();
-        const isOpen = !panel.classList.contains('hidden');
-        if (isOpen) {
-          panel.classList.add('hidden');
-        } else {
-          panel.classList.remove('hidden');
-          await loadNotifications();
-          // Tandai sudah dibaca secara otomatis
-          if (n > 0) {
-            await api.notifications.markAllRead();
-            await updateNotificationState();
-          }
-        }
-      };
-
-      // Pasang click handler ke tombol notifikasi desktop & mobile
-      const notifBtnDesktop = document.getElementById('notif-btn-desktop');
-      const notifBtnMobile = document.getElementById('notif-btn-mobile');
-
-      if (notifBtnDesktop) {
-        notifBtnDesktop.onclick = togglePanel;
-      }
-      if (notifBtnMobile) {
-        notifBtnMobile.onclick = togglePanel;
-      }
-
-      // Close panel saat klik di luar
-      document.addEventListener('click', (e) => {
-        const clickedInsidePanel = panel && panel.contains(e.target);
-        const clickedNotifBtn = e.target.closest('#notif-btn-desktop') || e.target.closest('#notif-btn-mobile');
-        
-        if (!clickedInsidePanel && !clickedNotifBtn) {
-          panel.classList.add('hidden');
-        }
-      });
-
-      // Clear notifications button
-      if (clearBtn) {
-        clearBtn.onclick = async () => {
-          try {
-            await api.notifications.markAllRead();
-            ui.toast('✅ Semua notifikasi ditandai telah dibaca', 'success');
-            await loadNotifications();
-            await updateNotificationState();
-          } catch(e) {
-            handleApiError(e);
-          }
-        };
-      }
-
-    } catch(e) {
-      console.warn('Gagal memuat notifikasi:', e.message);
-    }
-  }
 
   // Tampilkan Profile Modal untuk Calon Anggota
   window.viewApplicantProfile = async (applicantId, teamId = null) => {
@@ -936,7 +798,7 @@
       ui.toast(`✅ Permohonan ${applicantName} berhasil ${actionMsg}`, 'success');
       
       window.closeProfileModal();
-      await updateNotificationState();
+      await notifications.refresh();
     } catch(e) {
       handleApiError(e, 'Gagal memproses permohonan bergabung');
     } finally {
@@ -953,7 +815,7 @@
       ui.toast(`✅ Koneksi dengan ${senderName} berhasil ${actionMsg}`, 'success');
       
       window.closeProfileModal();
-      await updateNotificationState();
+      await notifications.refresh();
       if (typeof loadMatchmaking === 'function') {
         await loadMatchmaking(currentCategory);
       }
@@ -1001,7 +863,7 @@
       ui.toast(`✅ Undangan berhasil ${actionMsg}`, 'success');
       
       window.closeProfileModal();
-      await updateNotificationState();
+      await notifications.refresh();
       if (typeof loadMatchmaking === 'function') {
         await loadMatchmaking(currentCategory);
       }
