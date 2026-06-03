@@ -4,6 +4,29 @@ SideQuest adalah platform pencarian mitra kompetisi (*matchmaking*) dan rekrutme
 
 ---
 
+## 0. Kontrol Dokumen
+
+| Field | Nilai |
+| :--- | :--- |
+| **Status dokumen** | Draf untuk ditinjau |
+| **Versi** | 2.0 |
+| **Terakhir diperbarui** | 2026-06-03 |
+| **Pemilik dokumen** | Manajemen Produk |
+| **Kontributor** | Engineering, Desain, Tim pendiri |
+| **Peninjau / penyetuju** | _Belum ditentukan — tetapkan sebelum sign-off_ |
+| **Sumber kebenaran** | Dokumen ini divalidasi-balik terhadap kode yang berjalan (`backend/`, `frontend/`). Bila narasi dan kode berbeda, lihat §14 *Ketidaksesuaian yang Diketahui*. |
+
+**Catatan perubahan**
+
+| Versi | Tanggal | Penulis | Ringkasan |
+| :--- | :--- | :--- | :--- |
+| 1.0 | (awal) | Tim pendiri | Spesifikasi fitur/arsitektur awal (§1–§8). |
+| 2.0 | 2026-06-03 | Manajemen Produk | Menambah Tujuan & Metrik Keberhasilan (§9), User Story & Kriteria Penerimaan hasil rekayasa-balik (§10), Persyaratan Non-Fungsional (§11), Asumsi/Dependensi/Batasan (§12), Risiko (§13), Ketidaksesuaian & Pertanyaan Terbuka (§14), rencana Analitik (§15), Glosarium (§16). |
+
+> **Panduan baca.** §1–§8 adalah spesifikasi fitur dan arsitektur asli dan tetap menjadi acuan untuk *apa yang dilakukan produk*. §9–§16 ditambahkan agar dokumen memenuhi kelengkapan PRD profesional: *mengapa kita membangunnya, bagaimana mengukur keberhasilan, apa yang secara eksplisit di luar cakupan, apa yang bisa salah, dan apa yang masih belum diputuskan.*
+
+---
+
 ## 1. Ringkasan Eksekutif & Visi
 
 Mahasiswa sering kali mengalami kesulitan untuk menemukan rekan tim yang pas untuk kompetisi seperti hackathon, rencana bisnis (*business plan*), desain UI/UX, dan karya tulis ilmiah. Media komunikasi umum (seperti WhatsApp, Discord, atau Telegram) kurang terstruktur, tidak memfasilitasi verifikasi portofolio keahlian, dan tidak terintegrasi langsung dengan konteks kompetisi. Di sisi lain, penyelenggara lomba (*Event Organizer*) kesulitan mempromosikan event dan memverifikasi data pendaftar kelompok.
@@ -378,3 +401,266 @@ SideQuest mempersiapkan pilar monetisasi premium terpadu yang dapat diaktifkan s
 ### Fase 5: Chat Real-Time & WebSockets (Backlog Masa Depan)
 - **Komponen Instant Messaging Chat**: Membuat tabel `chat_rooms` dan `messages` di database. Mengganti toast pesan masuk dengan sidebar obrolan pesan aktif fungsional.
 - **WebSocket Integration**: Memasang koneksi soket real-time untuk pengiriman pesan instan dan notifikasi desktop.
+
+---
+
+## 9. Tujuan, Non-Tujuan & Metrik Keberhasilan
+
+### 9.1. Sasaran Bisnis
+
+SideQuest hadir untuk menjadi lapisan infrastruktur baku bagi pembentukan tim kompetisi mahasiswa di Indonesia. Sasaran produk, menurut prioritas:
+
+1. **Likuiditas** — Membangun pasar dua sisi yang cukup padat sehingga setiap mahasiswa yang mencari rekan menemukan kecocokan yang relevan dan responsif. Ini sasaran eksistensial; sisanya sekunder.
+2. **Kepercayaan** — Membuat sinyal keahlian, portofolio, dan identitas cukup andal sehingga mahasiswa yakin bertim dengan orang asing.
+3. **Adopsi penyelenggara** — Menjadi kanal pilihan Penyelenggara untuk mempublikasikan dan mengelola kompetisi, menciptakan gravitasi sisi-permintaan yang menarik mahasiswa.
+4. **Kesiapan monetisasi** — Menyiapkan rel premium, sponsor, dan analitik *sebelum* dibutuhkan, sehingga pendapatan bisa diaktifkan begitu ambang pertumbuhan tercapai (lihat §7.2), bukan dibangun reaktif.
+
+### 9.2. Tujuan (dalam cakupan produk saat ini)
+
+- Loop menyeluruh yang berfungsi: **temukan kompetisi → cari/bentuk tim → terhubung → daftar**.
+- Matchmaking AI yang deterministik dan dapat dijelaskan (tanpa dependensi LLM eksternal, tanpa biaya per-panggilan).
+- Platform berbasis peran penuh untuk lima peran: Mahasiswa, Penyelenggara, Sponsor, Moderator, Superadmin.
+- Perkakas tata kelola operasional (ban, *feature flag*, mode pemeliharaan) agar platform dapat dijalankan dengan aman oleh tim kecil.
+- Modul premium/sponsor dibangun dan dorman, dikunci di balik ambang pertumbuhan.
+
+### 9.3. Non-Tujuan (eksplisit di luar cakupan — beserta alasannya)
+
+| Non-Tujuan | Alasan |
+| :--- | :--- |
+| **Chat / pesan real-time** | Ditunda ke Fase 5. Saat ini koneksi dialihkan ke tautan kontak eksternal. Membangun chat WebSocket yang andal adalah proyek tersendiri dan tidak diperlukan untuk memvalidasi loop inti. |
+| **Aplikasi mobile native (iOS/Android)** | Produk adalah web responsif. Native belum beralasan sebelum *product-market fit* web terbukti. |
+| **Pemrosesan pembayaran nyata** | Modul monetisasi (§7.2) mensimulasikan perhitungan biaya; belum ada gateway pembayaran. |
+| **Pengiriman email/SMS nyata** | Verifikasi email *disimulasikan* (token dicetak ke konsol server). Email transaksional nyata adalah *fast-follow*, bukan penghambat loop inti. |
+| **Matchmaking / chat berbasis LLM generatif** | Mesin matchmaking dan SideKick sengaja deterministik/berbasis kata kunci — terprediksi, gratis dijalankan, mudah di-debug. |
+| **Scraping media sosial nyata & otomatis** | "AI Web Scraper" adalah *simulasi* produktivitas penyelenggara yang mengisi draf kompetisi; tidak benar-benar merayapi Instagram. |
+| **Multi-negara / multi-bahasa di luar ID + EN** | Produk dibangun untuk kampus Indonesia lebih dulu. |
+
+### 9.4. Metrik Keberhasilan & Target
+
+Kerangka GWA (§7.1) menyebut metrik yang tepat tetapi tanpa target. Tabel berikut mengusulkan **target fase-peluncuran** agar kerangka dapat ditindaklanjuti — rekomendasi PM untuk dua kuartal pertama, perlu diratifikasi tim pendiri.
+
+| Tingkat | Metrik | Definisi | Target usulan (2 kuartal pertama) | Terinstrumentasi? |
+| :--- | :--- | :--- | :--- | :---: |
+| **North Star** | **Pembentukan Tim Berhasil** | Tim unik yang mencapai `min_members` dan mendaftar kompetisi | 250 | ⚠️ Bisa diturunkan dari `team_members` + `competition_registrations`; belum disurfacing |
+| Growth | MAU / DAU | Pengguna aktif unik dalam jendela 30/1 hari | 2.000 MAU / rasio DAU-MAU ≥ 20% | ❌ Belum ada pelacakan event |
+| Growth | Tingkat Keberhasilan Tim | % tim yang melengkapi roster & mendaftar | ≥ 35% | ⚠️ Bisa diturunkan |
+| Growth | Listing Kompetisi Aktif | Kompetisi `is_active=true` dengan deadline ke depan | ≥ 60 aktif | ✅ Dapat di-query |
+| Growth | Aktivasi penyelenggara | Penyelenggara yang mem-publish ≥ 1 kompetisi / total disetujui | ≥ 50% | ⚠️ Bisa diturunkan |
+| Watch | Rerata Skor Matchmaking | Rerata kompatibilitas kartu yang ditampilkan | ≥ 75% (batas bawah 60%) | ⚠️ Dihitung per-permintaan, tidak dicatat |
+| Watch | Tingkat penerimaan koneksi | accepted / (accepted+rejected+pending) di `connections` | ≥ 40% | ⚠️ Bisa diturunkan |
+| Watch | Tingkat persetujuan ATS | pelamar disetujui / total lamaran | ≥ 30% | ⚠️ Bisa diturunkan |
+| Watch | Volume & resolusi SideKick | Query/hari & % yang mengembalikan rich card vs fallback | Lacak sejak hari-1 | ❌ Belum dicatat |
+| Aware | Latensi API p95 | Waktu respons persentil-95 | < 500 ms (non-AI), < 1 d (matchmaking) | ❌ Belum diukur |
+| Aware | Uptime | Ketersediaan backend | ≥ 99,5% | ❌ Belum ada monitoring |
+| Aware | Penyelesaian verifikasi email | % pendaftar yang verifikasi | ≥ 70% | ⚠️ `is_verified` bisa diturunkan |
+
+> **Catatan PM.** Pola berulang "⚠️ bisa diturunkan, belum disurfacing" adalah celah analitik terbesar: data ada di PostgreSQL tetapi tidak ada yang mengagregasi atau memvisualisasikannya dari waktu ke waktu. Lihat §15. Sampai itu ada, setiap target di atas tak terverifikasi di produksi.
+
+---
+
+## 10. User Story & Kriteria Penerimaan
+
+> Story ini **direkayasa-balik dari endpoint dan controller yang terimplementasi** (`backend/routes/*`, `backend/controllers/*`) dan halaman frontend (`frontend/pages/*`), sehingga menggambarkan perilaku yang *benar-benar ditunjukkan sistem hari ini*. Format: `Sebagai [peran], saya ingin [kemampuan], agar [hasil]`, diikuti kriteria Given/When/Then. Prioritas: **P0** = loop inti, **P1** = penting, **P2** = pendukung.
+
+### Epik A — Autentikasi & Onboarding
+
+**A1 (P0) — Daftar sebagai mahasiswa atau penyelenggara.** *Sebagai calon pengguna, saya ingin mendaftar dengan peran yang tepat, agar masuk ke pengalaman yang sesuai.* (`POST /api/auth/register`)
+- Tab Mahasiswa membuat user `peserta`; tab Penyelenggara membuat user `organizer` dengan `is_approved=false` (menunggu tinjauan staf) di produksi.
+- Registrasi dari `localhost` otomatis menyetel `is_verified` & `is_approved` = `true` (kemudahan pengembangan).
+- Di produksi, `verification_token` dibuat dan tautan verifikasi dipancarkan (kini ke konsol server sebagai email simulasi).
+- **Edge:** email duplikat ditolak; password hanya disimpan sebagai hash bcrypt, tidak pernah teks polos.
+
+**A2 (P0) — Verifikasi email sebelum login pertama.** (`GET /api/auth/verify?token=…`)
+- Akun belum terverifikasi yang mencoba login menerima `403` *"Silakan verifikasi email Anda terlebih dahulu."*
+- Token valid menyetel `is_verified=true` dan menghapus token.
+
+**A3 (P0) — Login dengan penjagaan benar.** (`POST /api/auth/login`)
+- JWT (`expiresIn: 1d`) hanya diberikan ketika akun lolos berurutan: `is_active`, `is_approved`, `is_verified`, lalu kecocokan password bcrypt. Tiap kegagalan memberi pesan berbeda sesuai peran.
+
+**A4 (P1) — Pulihkan password.** (`POST /api/auth/forgot-password`) — email dikenal menampilkan konfirmasi sukses; email tak dikenal menampilkan error berbeda.
+
+**A5 (P1) — Setujui penyelenggara tertunda (staf).** (`PATCH /api/admin/approve-organizer/:id`) — organizer `is_approved=false` menjadi dapat login.
+
+### Epik B — Penemuan & Pendaftaran Kompetisi
+
+**B1 (P0) — Telusuri & saring kompetisi.** (`GET /api/competitions`, publik) — saring kategori/cakupan/biaya, urut deadline terdekat; `daysLeft` tersedia; listing kedaluwarsa/nonaktif disembunyikan.
+**B2 (P0) — Lihat detail kompetisi.** (`GET /api/competitions/:id`) — menampilkan `min_members`/`max_members`, model hosted vs eksternal.
+**B3 (P1) — Simpan kompetisi.** (`POST`/`DELETE /api/competitions/:id/save`, `GET /saved`).
+**B4 (P0) — Daftar kompetisi.** (`POST /api/competitions/:id/register`) — status dapat di-query; tak bisa daftar ganda.
+**B5 (P1) — Publikasi & kelola kompetisi (penyelenggara).** (`/organizer/create`, `PUT /organizer/:id`, `publish`, `announce`, `/organizer/mine`) — hanya pemilik/staf yang boleh mengubah; kuota anggota ditegakkan.
+**B6 (P1) — Tinjau roster (penyelenggara).** (`GET /organizer/:id/applicants`, `PATCH /organizer/:id/applicants/:userId`).
+
+### Epik C — Matchmaking AI & Koneksi
+
+**C1 (P0) — Saran rekan berperingkat & dijelaskan.** (`GET /api/matchmaking`)
+- **Penerimaan (divalidasi terhadap `matchmakingController.js`):** skor mulai **50**; **+20** bila kandidat mengisi celah keahlian (atau +10 parsial); **+15** sinergi lintas-domain (atau +5 sedomain); **+8** minat kategori sama; **+5** universitas sama; skor akhir **dibatasi 60–99**.
+- Tiap kartu mengembalikan `aiInsight`, disclaimer `⚡ Generated by SideQuest AI`, dan chip *"Mengisi Celah"*; status koneksi tercermin.
+
+**C2 (P0) — Kirim & auto-balas permintaan koneksi.** (`POST /api/matchmaking/connect`)
+- Tanpa relasi sebelumnya → koneksi `pending` + notifikasi ke penerima. Bila penerima telah lebih dulu mengirim ke saya → **otomatis diterima**. `UNIQUE(sender_id, receiver_id)` mencegah duplikat.
+
+**C3 (P0) — Respons koneksi dari notifikasi.** (`PATCH /api/connections/:id`) — status diperbarui, notifikasi hilang, badge berkurang.
+
+### Epik D — Rekrutmen Tim (ATS)
+
+**D1 (P0) — Buat tim perekrut.** (`POST /api/teams`) — deskripsi, maks anggota, kompetisi target, tautan kontak, keahlian dibutuhkan.
+**D2 (P0) — Lamar ke tim.** (`POST /api/teams/:id/apply`).
+**D3 (P0) — Setujui/tolak pelamar (ATS).** (`POST /api/teams/:id/respond`) — disetujui menambah `team_members` (peran `member`) & memberi notifikasi.
+**D4 (P1) — Undang kandidat langsung.** (`POST /:id/invite`, `POST /:id/respond-invite`).
+**D5 (P1) — Telusuri kandidat & tim saya.** (`GET /candidates`, `/me`, `/:id`, `PUT /:id`) — daftar publik (`GET /api/teams`) memakai *optional auth* untuk pengurutan prioritas-koneksi.
+
+### Epik E — Notifikasi
+**E1 (P0) — Badge belum-dibaca akurat.** (`GET /api/notifications/unread-count`) — menjumlah notifikasi belum dibaca, koneksi tertunda, gabungan tim.
+**E2 (P0) — Tindak lanjuti notifikasi.** (`GET /api/notifications`, `PATCH /read-all`) — dropdown menampilkan item PENDING yang membuka profil/modal terkait.
+
+### Epik F — Asisten AI SideKick
+**F1 (P1) — Tanya SideKick bahasa natural.** (`POST /api/sidekick/chat`) — intent kata-kunci: cari kompetisi, cari rekan (users ⨝ skills), FAQ, atau fallback percakapan; hasil terstruktur jadi rich card; riwayat di `localStorage` (`sq_sidekick_chat_history`).
+
+### Epik G — Profil & Portofolio
+**G1 (P1) — Lihat & sunting profil.** (`GET /api/users/me`, `PUT /api/users/me`, juga di `/api/profile`) — portofolio, keahlian, pencapaian, pengalaman.
+
+### Epik H — Suite Premium Hosted-Event (Penyelenggara)
+> **Direkayasa-balik dari `premiumRoutes.js`/`premiumController.js` — jauh lebih kaya dari yang didokumentasikan §3, termasuk alur penjurian.**
+
+**H1 (P1) — Konfigurasi event hosted.** (`GET/POST /premium/organizer/settings/:compId`, `/fields/:compId`).
+**H2 (P1) — Kumpulkan & tinjau submission.** (`/organizer/submissions/:compId`; peserta: `/participant/fields/:compId`, `/participant/submit/:compId`).
+**H3 (P1) — Kelola juri & penilaian.** (`GET/POST /premium/organizer/judges/:compId`).
+**H4 (P1) — Portal juri.** (`/premium/judge/auth`, `/judge/submissions`, `/judge/grade`; UI `judge-portal.html`). ⚠️ **Catatan keamanan:** endpoint juri **tidak** di balik `authMiddleware` (token via query param). Lihat §13/§14.
+**H5 (P1) — Analitik event.** (`GET /premium/organizer/analytics/:compId`).
+
+### Epik I — Sponsor & Iklan Tertarget
+**I1 (P1) — Buat & kelola kampanye iklan (sponsor).** (`POST /api/sponsor/ads`, `GET /ads`) — biaya dihitung dari harga efektif-tanggal.
+**I2 (P1) — Tayangkan & ukur banner (sisi mahasiswa).** (`GET /active-ads`, `POST /ads/impression`, `POST /ads/:id/click`) — rotasi di 4 halaman; **fallback ke kartu promo SideKick** bila tak ada kampanye.
+**I3 (P1) — Undang sponsor & audit biaya (staf).** (`/admin/invite-sponsor`, `/sponsorships`, `:id/toggle`, `:id/cost`, `/sponsorship-pricing`, `:id/logs`) — penyesuaian biaya wajib beralasan & menulis baris immutable ke `sponsorship_cost_logs`.
+
+### Epik J — Tata Kelola Platform (Staf)
+**J1 (P0) — Ban/pulihkan akun, tim, kompetisi.** (`PATCH /api/admin/toggle/:type/:id`) — membalik `is_active`; akun diban mendapat `403`.
+**J2 (P1) — Scraping kompetisi tersimulasi.** (`POST /api/admin/scrape`) — mengisi draf dari URL (simulasi).
+**J3 (P1) — Lihat KPI platform.** (`GET /api/admin/stats`, `/data`).
+**J4 (P1) — Superadmin: toggle staf, feature flag, maintenance.** (`/super/moderator/:id/toggle`, `/super/features`, `/super/maintenance`) — flag di `platform_settings`: `feature_competitions, feature_teams, feature_matchmaking, feature_connections, feature_premium_organizer`, plus `maintenance_mode`; `maintenance_mode='true'` mengarahkan user reguler ke `maintenance.html`, staf bypass (middleware `checkPlatformStatus`).
+
+---
+
+## 11. Persyaratan Non-Fungsional (NFR)
+
+> Item bertanda *aspirasional* belum terimplementasi, ditandai agar peninjau tidak menganggapnya sudah ada.
+
+### 11.1. Performa & Skalabilitas
+- **Latensi API:** p95 < 500 ms untuk CRUD/list; < 1 d untuk `GET /api/matchmaking`. *Aspirasional — belum diukur.*
+- **Konkurensi:** akses PostgreSQL dipool (`pg.Pool`); ukuran pool disetel ke paket Supabase; produksi via **pooler** Supabase (port 6543).
+- **Disiplin payload:** endpoint list perlu paginasi sebelum katalog melewati ~1k baris (kini tanpa paginasi — tebing skalabilitas yang diketahui).
+
+### 11.2. Ketersediaan & Keandalan
+- **Target uptime:** ≥ 99,5% untuk backend (Render) & DB (Supabase). *Belum ada monitoring/alert — disarankan.*
+- **Degradasi anggun:** widget iklan sudah turun ke kartu promo saat kosong/error; pola defensif sama berlaku di mana pun data eksternal bisa kosong.
+
+### 11.3. Keamanan & Privasi
+- **AuthN:** JWT stateless (HS256), kedaluwarsa 1 hari; password bcrypt (cost 10).
+- **AuthZ:** `authMiddleware`; `adminMiddleware` (`isModeratorOrAdmin`/`isSuperadmin`); akun diban (`is_active=false`) ditolak.
+- **Celah yang diketahui (wajib diperbaiki sebelum skala):**
+  - **Tidak ada endpoint refresh token**, padahal frontend memanggil `/api/auth/refresh` (§14). Sesi kedaluwarsa keras di 24 jam.
+  - **Endpoint juri melewati `authMiddleware`** dan menerima token via query string (§10 H4).
+  - `JWT_SECRET` jatuh ke string default ter-hardcode bila tak diset — produksi wajib menyetel rahasia kuat.
+  - **Tanpa rate limiting** pada auth/endpoint tulis.
+  - **Tanpa CSRF/pembatasan origin**; CORS terbuka lebar (`app.use(cors())`).
+- **Kepatuhan:** produk melayani mahasiswa Indonesia; regime yang berlaku adalah **UU PDP (UU No. 27/2022)**, *bukan* GDPR seperti tersirat di §4.1. Kebijakan privasi & retensi/penghapusan data ditulis mengikuti UU PDP.
+
+### 11.4. Aksesibilitas & Kualitas UX
+- Target **WCAG 2.1 AA** untuk alur sisi-mahasiswa (kontras pada UI glassmorphic adalah area risiko). *Aspirasional — belum diaudit.*
+- **Web responsif** satu-satunya permukaan; tetapkan matriks dukungan peramban (rekomendasi: 2 versi terbaru Chrome, Safari, Edge, Firefox; web mobile iOS/Android).
+
+### 11.5. Internasionalisasi
+- Produk **dwibahasa (Bahasa Indonesia utama, Inggris sekunder)** — PRD ini sendiri terbit dalam keduanya. Copy UI ID-dulu; perlakukan ID sebagai bahasa sumber.
+
+### 11.6. Pemeliharaan & Operabilitas
+- **Konfig:** semua rahasia via environment (`DATABASE_URL`, `JWT_SECRET`, `PORT`); `.env` di-gitignore.
+- **Observabilitas:** logging terstruktur & pelacakan error *belum* ada — disarankan sebelum peluncuran publik.
+- **Migrasi:** perubahan skema lewat skrip mandiri `run_*_migrations.js`. Skrip ini **tidak** berjalan otomatis saat deploy dan harus dijalankan manual terhadap produksi (jebakan operasional — lihat §13).
+
+---
+
+## 12. Asumsi, Dependensi & Batasan
+
+### 12.1. Asumsi
+- Mahasiswa umumnya mendaftar dengan email kampus valid (idealnya `.ac.id`); kepercayaan identitas bersandar pada ini.
+- Penyelenggara bersedia memindah pengelolaan listing + roster ke SideQuest dari spreadsheet/Google Form.
+- Skor deterministik "cukup baik" untuk mendorong koneksi pada skala peluncuran.
+- Permintaan terkonsentrasi pada siklus kompetisi kampus Indonesia (puncak musiman).
+
+### 12.2. Dependensi Eksternal
+| Dependensi | Peran | Risiko bila gagal |
+| :--- | :--- | :--- |
+| **Supabase** (PostgreSQL 17) | Database produksi (pooler:6543) | Padam total — tak bisa baca/tulis |
+| **Render** | Host API backend (`sidequest-backend-3930.onrender.com`) | API mati; cold start free-tier menambah latensi |
+| **Vercel** | Hosting frontend (auto-deploy saat push) | Situs statis tak tersedia |
+| **Paket npm** | `express, pg, jsonwebtoken, bcryptjs, cors, dotenv` (ramping) | Risiko dependensi standar |
+
+### 12.3. Batasan
+- **Tanpa belanja AI/LLM eksternal** — intelijen tetap deterministik/in-house (batasan biaya & prediktabilitas, by design).
+- **Tim operasi kecil** — perkakas tata kelola harus memungkinkan segelintir staf menjalankan platform.
+- **Email/pembayaran disimulasikan** — pengiriman/penagihan nyata di luar cakupan sampai ambang (§9.3).
+- **Frontend tanpa framework** (ES-module vanilla JS) — mengutamakan tanpa build step & portabilitas.
+
+---
+
+## 13. Risiko & Mitigasi
+
+| # | Risiko | Kemungkinan | Dampak | Mitigasi |
+| :-- | :--- | :--- | :--- | :--- |
+| R1 | **Cold-start / likuiditas** — pasar dua sisi tak berguna sampai kedua sisi padat. | Tinggi | Kritis | Tabur pasokan (penyelenggara + listing) dulu; fokus peluncuran 1–2 kampus untuk kepadatan lokal; data seed kaya sudah ada untuk demo. |
+| R2 | **Kegagalan kepercayaan** — keahlian tak terverifikasi memungkinkan misrepresentasi. | Sedang | Tinggi | Verified Talent Badge (§7.2); tinjauan portofolio; perkakas lapor/ban (sudah ada). |
+| R3 | **Celah keamanan** — tanpa rate limit, CORS terbuka, bypass auth juri, JWT secret default, endpoint refresh hilang. | Sedang | Tinggi | Jadikan "celah diketahui" §11.3 checklist pengerasan pra-peluncuran; tambah rate limit & kunci CORS ke origin dikenal. |
+| R4 | **Jebakan migrasi manual** — `run_*_migrations.js` dijalankan manual ke prod. | Sedang | Tinggi | Adopsi migration runner/checklist; gerbang deploy pada status migrasi. |
+| R5 | **Cold start free-tier Render** menurunkan latensi permintaan pertama. | Tinggi | Sedang | Naik ke instance hangat sebelum peluncuran/demo investor; tambah ping keep-alive. |
+| R6 | **Plafon kualitas matchmaking** — skor deterministik bisa stagnan seiring pool membesar. | Sedang | Sedang | Pantau rerata skor & tingkat penerimaan (§9.4); simpan opsi swap LLM. |
+| R7 | **Token GitHub & kredensial DB terekspos** di tooling/URL remote. | Sedang | Tinggi | Rotasi PAT GitHub & password Supabase; pindah ke kredensial per-pengembang & secret management. |
+| R8 | **Tanpa analitik** — target §9.4 tak terverifikasi. | Tinggi | Sedang | Kirim rencana instrumentasi §15 sebelum menyatakan peluncuran. |
+
+---
+
+## 14. Ketidaksesuaian yang Diketahui & Pertanyaan Terbuka
+
+### 14.1. Ketidaksesuaian Dok ↔ Kode
+1. **Skema §5.3 usang.** Tabel `users` nyata memiliki jauh lebih banyak kolom (`is_verified, is_approved, verification_token, university_city, university_province, office_address, phone_number`, dst.). SQL di PRD ilustratif, bukan terkini.
+2. **Suite premium kurang terdokumentasi.** Kode mengimplementasikan alur **hosted-event + custom-fields + submissions + juri + penilaian** penuh (Epik H) yang hanya disinggung di §3.
+3. **Refresh token setengah-jadi.** Frontend (`api.js`) memiliki alur 401→`/api/auth/refresh`, tetapi **tidak ada route `/auth/refresh`** di backend. Bangun endpoint-nya atau hapus logika klien.
+4. **Mismatch regime kepatuhan.** §4.1 menyebut "GDPR"; regime yang benar untuk pengguna Indonesia adalah **UU PDP**.
+5. **Jumlah feature flag.** §3.7 mengesankan 3 toggle; ada **6** kunci di `platform_settings`.
+
+### 14.2. Pertanyaan Terbuka (perlu pemilik keputusan)
+- **OQ1:** Berapa ambang pertumbuhan nyata untuk mengaktifkan monetisasi — apakah "10rb MAU / 100 EO" di §7.2 final atau placeholder?
+- **OQ2:** Apakah verifikasi email akan jadi email transaksional *nyata* sebelum peluncuran publik, atau tetap simulasi untuk kohort pertama?
+- **OQ3:** Berapa harga/tier konkret untuk empat modul premium (§7.2 menyebut tanpa angka)?
+- **OQ4:** Beachhead satu-kampus vs peluncuran nasional — mana yang paling menurunkan risiko cold-start (R1)?
+- **OQ5:** Siapa pemilik pengerasan keamanan §11.3, dan apakah jadi gerbang peluncuran keras?
+
+---
+
+## 15. Rencana Analitik & Instrumentasi
+
+GWA (§7.1, §9.4) hanya senyata pipeline datanya. Kini **belum ada pelacakan event**; metrik paling banter diturunkan via SQL ad-hoc. Rencana:
+
+1. **Taksonomi event** — instrumentasi event loop-inti: `register`, `verify_email`, `login`, `competition_view`, `competition_register`, `matchmaking_view`, `connect_sent`, `connect_accepted`, `team_created`, `team_application`, `team_member_joined`, `sidekick_query` (dengan boolean `resolved`), `ad_impression`, `ad_click`.
+2. **Definisi funnel** — funnel North Star: `register → verify → competition_view → (matchmaking_view | team_view) → connect_sent → connect_accepted → team_member_joined → competition_register`. Ukur drop-off tiap langkah.
+3. **Permukaan agregasi** — kembangkan dashboard admin Superadmin (yang sudah menampilkan hitungan langsung) menjadi **dashboard GWA** yang mentren metrik §9.4 dari waktu ke waktu.
+4. **Telemetri operasional** — tambah logging latensi permintaan (tingkat Aware) dan monitoring/alert uptime di Render + Supabase.
+5. **Privasi** — analitik wajib menghormati UU PDP; hindari menyimpan PII di payload event; dokumentasikan retensi.
+
+---
+
+## 16. Glosarium
+
+| Istilah | Makna |
+| :--- | :--- |
+| **GWA** | Growth · Watch · Aware — hierarki metrik tiga-tingkat pemantau kesehatan platform (§7.1). |
+| **ATS** | Applicant Tracking System — alur pemilik tim meninjau & menyetujui/menolak pelamar (Epik D). |
+| **SideKick** | Chatbot asisten AI deterministik dalam aplikasi (`POST /api/sidekick/chat`, Epik F). |
+| **Mengisi Celah** | Chip UI yang menandai keahlian kandidat yang mengisi celah keahlian pengguna. |
+| **Peserta** | Mahasiswa peserta (`role='peserta'`). |
+| **Penyelenggara / EO** | Event Organizer (`role='organizer'`). |
+| **Soloist / Owner** | Persona mahasiswa: soloist mencari tim; owner menjalankan tim perekrut. |
+| **Hosted vs Non-Hosted** | Apakah pendaftaran kompetisi terjadi di dalam SideQuest (hosted/`terpadu`) atau dialihkan keluar (eksternal). |
+| **Domain sinergi** | Salah satu 5 kelompok jurusan (Tech, Design, Business, Science, Social) untuk skor lintas-fungsi. |
+| **Maintenance Mode** | Flag `platform_settings` yang mengarahkan user reguler ke `maintenance.html` sementara staf bypass. |
+| **UU PDP** | UU Pelindungan Data Pribadi Indonesia (UU No. 27/2022) — regime privasi yang berlaku. |
+| **North Star** | Pembentukan Tim Berhasil — metrik tunggal penangkap nilai produk terbaik (§9.4). |

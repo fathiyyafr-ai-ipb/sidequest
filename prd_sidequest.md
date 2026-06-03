@@ -4,6 +4,29 @@ SideQuest is a comprehensive, premium co-competition and partner-matchmaking pla
 
 ---
 
+## 0. Document Control
+
+| Field | Value |
+| :--- | :--- |
+| **Document status** | Draft for review |
+| **Version** | 2.0 |
+| **Last updated** | 2026-06-03 |
+| **Document owner** | Product Management |
+| **Contributors** | Engineering, Design, Founding team |
+| **Reviewers / approvers** | _TBD — assign before sign-off_ |
+| **Source of truth** | This file is reverse-validated against the live codebase (`backend/`, `frontend/`). Where prose and code diverge, see §14 *Known Discrepancies*. |
+
+**Change log**
+
+| Version | Date | Author | Summary |
+| :--- | :--- | :--- | :--- |
+| 1.0 | (initial) | Founding team | Original feature/architecture spec (§1–§8). |
+| 2.0 | 2026-06-03 | Product Management | Added Goals & Success Metrics (§9), reverse-engineered User Stories & Acceptance Criteria (§10), Non-Functional Requirements (§11), Assumptions/Dependencies/Constraints (§12), Risks (§13), Known Discrepancies & Open Questions (§14), Analytics plan (§15), Glossary (§16). |
+
+> **Reading guide.** §1–§8 are the original feature and architecture specification and remain authoritative for *what the product does*. §9–§16 were added to bring the document to professional PRD completeness: *why we build it, how we measure success, what is explicitly out of scope, what could go wrong, and what is still undecided.*
+
+---
+
 ## 1. Executive Summary & Vision
 
 University students frequently struggle to find suitable partners for hackathons, business plan competitions, UI/UX design challenges, and scientific paper contests. Existing general-purpose messaging platforms (like WhatsApp, Discord, or Telegram) lack structured profiles, portfolio verification, and contextualized team recruitment. Conversely, competition organizers (EO) lack targeted channels to promote events and manage participant registers.
@@ -378,3 +401,320 @@ SideQuest is architected with premium monetization modules designed to be automa
 ### Phase 5: Instant Messaging & WebSockets (Future Backlog)
 - **Real-Time Messaging Widget**: Chat rooms and messages tables in DB. Replace the placeholder toast `"💬 Fitur pesan masuk segera hadir!"` with a functional socket-backed sidebar.
 - **WebSocket Integration**: Establish a socket connection for real-time chat delivery and instant head-up desktop notifications.
+
+---
+
+## 9. Goals, Non-Goals & Success Metrics
+
+### 9.1. Business Objectives
+
+SideQuest exists to become the default infrastructure layer for student competition team formation in Indonesia. The product objectives, in priority order:
+
+1. **Liquidity** — Build a two-sided marketplace dense enough that any student seeking a teammate finds a relevant, responsive match. This is the existential goal; everything else is secondary.
+2. **Trust** — Make skill, portfolio, and identity signals reliable enough that students confidently team with strangers.
+3. **Organizer adoption** — Become the channel where Event Organizers prefer to publish and manage competitions, creating the demand-side gravity that pulls students in.
+4. **Monetization readiness** — Stand up the premium, sponsorship, and analytics rails *before* they are needed, so revenue can be switched on the moment growth thresholds are met (see §7.2), not built reactively.
+
+### 9.2. Goals (in scope for the current product)
+
+- A working, end-to-end loop: **discover competition → find/form team → connect → register**.
+- Deterministic, explainable AI matchmaking (no external LLM dependency, no per-call cost).
+- Full role-based platform for five roles: Student, Organizer, Sponsor, Moderator, Superadmin.
+- Operational governance tooling (bans, feature flags, maintenance mode) so the platform can be run safely by a small team.
+- Premium/sponsorship modules built and dormant, gated behind growth thresholds.
+
+### 9.3. Non-Goals (explicitly out of scope — and why)
+
+Stating these prevents scope creep and sets reviewer expectations.
+
+| Non-Goal | Rationale |
+| :--- | :--- |
+| **Real-time chat / messaging** | Deferred to Phase 5. Today, connections hand off to external contact links. Building reliable WebSocket chat is a project in itself and is not required to validate the core matchmaking loop. |
+| **Native mobile apps (iOS/Android)** | The product is a responsive web app. Native is unjustified until web product-market fit is proven. |
+| **Real payment processing** | Monetization modules (§7.2) simulate cost calculation; no payment gateway is integrated. Charging is a post-threshold concern. |
+| **Real email/SMS delivery** | Email verification is *simulated* (token logged to server console). Real transactional email is a fast-follow, not a core-loop blocker. |
+| **Generative-LLM matchmaking or chat** | The matchmaking and SideKick engines are deterministic/keyword-based by deliberate design — predictable, free to run, and debuggable. Swapping in an LLM is a future option, not a requirement. |
+| **Automated, real social-media scraping** | The "AI Web Scraper" is an organizer-productivity *simulation* that pre-fills competition drafts; it does not actually crawl Instagram. |
+| **Multi-country / multi-language beyond ID + EN** | The product is built for Indonesian universities first. |
+
+### 9.4. Success Metrics & Targets
+
+The original GWA framework (§7.1) names the right metrics but sets no targets. The table below proposes **launch-phase targets** to make the framework actionable. These are PM recommendations for the first two quarters post-launch and should be ratified with the founding team.
+
+| Tier | Metric | Definition | Proposed target (first 2 quarters) | Instrumented today? |
+| :--- | :--- | :--- | :--- | :---: |
+| **North Star** | **Successful Team Formations** | Distinct teams that reach `min_members` and register for a competition | 250 in first 2 quarters | ⚠️ Derivable from `team_members` + `competition_registrations`; not surfaced |
+| Growth | MAU / DAU | Unique active users in 30/1-day windows | 2,000 MAU / DAU-MAU ratio ≥ 20% | ❌ No event tracking yet |
+| Growth | Team Formation Success Rate | % of created teams that fill roster & register | ≥ 35% | ⚠️ Derivable, not surfaced |
+| Growth | Active Competition Listings | Competitions with `is_active=true` and future deadline | ≥ 60 live at any time | ✅ Queryable (admin stats) |
+| Growth | Organizer activation | Organizers who publish ≥ 1 competition / total approved | ≥ 50% | ⚠️ Derivable |
+| Watch | Avg. Matchmaking Score served | Mean compatibility of surfaced cards | ≥ 75% (floor 60%) | ⚠️ Computed per request, not logged |
+| Watch | Connection acceptance rate | accepted / (accepted+rejected+pending) on `connections` | ≥ 40% | ⚠️ Derivable from `connections.status` |
+| Watch | ATS approval rate | approved applicants / total team applications | ≥ 30% | ⚠️ Derivable from `team_members` |
+| Watch | SideKick query volume & resolution | Queries/day and % returning a rich card vs. fallback | Track from day 1 | ❌ Not logged |
+| Aware | API p95 latency | 95th-percentile response time | < 500 ms (non-AI), < 1 s (matchmaking) | ❌ Not measured |
+| Aware | Uptime | Backend availability | ≥ 99.5% | ❌ No monitoring |
+| Aware | Email verification completion | % of registrants who verify | ≥ 70% | ⚠️ `is_verified` derivable |
+
+> **PM note.** The recurring "⚠️ derivable, not surfaced" pattern is the single biggest analytics gap: the data exists in PostgreSQL but nothing aggregates or visualizes it over time. See §15 for the instrumentation plan. Until that lands, every target above is unverifiable in production.
+
+---
+
+## 10. User Stories & Acceptance Criteria
+
+> These stories are **reverse-engineered from the implemented endpoints and controllers** (`backend/routes/*`, `backend/controllers/*`) and the frontend pages (`frontend/pages/*`), so they describe behavior the system *actually exhibits today*, not aspiration. Format: `As a [role], I want [capability], so that [outcome]`, followed by Given/When/Then acceptance criteria. Priorities: **P0** = core loop, **P1** = important, **P2** = supporting.
+
+### Epic A — Authentication & Onboarding
+
+**A1 (P0) — Register as a student or organizer.**
+*As a prospective user, I want to sign up under the correct role, so that I land in the right experience.*
+- **Given** I am on `register.html` and select the Student tab, **when** I submit name, email, password, university, and study program, **then** a `peserta` user is created (`POST /api/auth/register`) and I am told to complete verification.
+- **Given** I select the Organizer tab, **when** I submit institution details, **then** an `organizer` user is created with `is_approved=false` (pending staff review) in production.
+- **Given** I register from `localhost`, **then** `is_verified` and `is_approved` are auto-set `true` (development convenience).
+- **Given** I register in production, **then** a `verification_token` is generated and the verification link is emitted (currently to the server console as a simulated email).
+- **Edge:** duplicate email → registration rejected; password is stored only as a bcrypt hash, never plaintext.
+
+**A2 (P0) — Verify email before first login.**
+*As a registered user, I want to verify my email, so that I can access the platform.*
+- **Given** an unverified account, **when** I attempt login, **then** I receive `403` with *"Silakan verifikasi email Anda terlebih dahulu."*
+- **Given** I open `GET /api/auth/verify?token=…` with a valid token, **then** `is_verified` is set `true`, the token is cleared, and I may log in.
+
+**A3 (P0) — Log in and be gated correctly.**
+*As a user, I want secure login, so that only authorized, active, verified accounts get in.*
+- Login (`POST /api/auth/login`) returns a JWT (`expiresIn: 1d`) **only** when the account passes, in order: `is_active=true`, `is_approved=true`, `is_verified=true`, and bcrypt password match.
+- Each failed gate returns a distinct, role-appropriate message (deactivated / under review / verify email / wrong credentials).
+
+**A4 (P1) — Recover a forgotten password.**
+*As a user who forgot my password, I want a recovery path, so that I can regain access.*
+- **Given** a known email on `forgot-password.html`, **when** I submit, **then** I see a success confirmation; an unknown email shows a distinct error. (`POST /api/auth/forgot-password`)
+
+**A5 (P1) — Approve pending organizers (staff).**
+*As a Moderator/Superadmin, I want to approve organizer accounts, so that only legitimate hosts can publish.*
+- **Given** an organizer with `is_approved=false`, **when** I approve via `PATCH /api/admin/approve-organizer/:id`, **then** the organizer can log in and reach the EO dashboard.
+
+### Epic B — Competition Discovery & Registration
+
+**B1 (P0) — Browse and filter competitions.** *As anyone (guest included), I want to browse competitions filtered by category/scope/fee and sorted by nearest deadline, so that I find relevant contests fast.* (`GET /api/competitions`, public)
+- Results expose `daysLeft` and a humanized deadline; expired/inactive listings are excluded from the default view.
+
+**B2 (P0) — View competition detail.** *As a student, I want full requirements and team-size limits, so that I can decide to register.* (`GET /api/competitions/:id`)
+- Detail shows `min_members`/`max_members`, hosted vs. external model; an external listing's CTA redirects out, a hosted one registers in-platform.
+
+**B3 (P1) — Save/bookmark competitions.** *As a student, I want to save competitions, so that I can revisit them.* (`POST`/`DELETE /api/competitions/:id/save`, `GET /api/competitions/saved`) — requires auth.
+
+**B4 (P0) — Register for a competition.** *As a student, I want to register (solo or as a team), so that I'm entered.* (`POST /api/competitions/:id/register`)
+- Registration status is queryable (`GET /:id/registration-status`); a user cannot double-register.
+
+**B5 (P1) — Publish & manage competitions (organizer).** *As an organizer, I want to create, edit, publish, and announce results, so that I run my event end-to-end.* (`POST /organizer/create`, `PUT /organizer/:id`, `PATCH /organizer/:id/publish`, `PATCH /organizer/:id/announce`, `GET /organizer/mine`)
+- Only the owning organizer (or staff) may mutate a listing; member quotas are enforced at registration.
+
+**B6 (P1) — Review competition roster (organizer).** *As an organizer, I want to see and respond to registrants/applicants, so that I manage participation.* (`GET /organizer/:id/applicants`, `PATCH /organizer/:id/applicants/:userId`)
+
+### Epic C — AI Matchmaking & Connections
+
+**C1 (P0) — Get ranked, explained teammate suggestions.** *As a student, I want compatibility-scored candidates with reasons, so that I pick complementary teammates.* (`GET /api/matchmaking`)
+- **Acceptance (validated against `matchmakingController.js`):** score starts at **50**; **+20** when the candidate fills a skill gap (or +10 partial); **+15** cross-functional domain synergy (or +5 same-domain); **+8** shared category interest; **+5** same university; final score **clamped to 60–99**.
+- Each card returns an `aiInsight` string naming the synergy group and the bridged skill gaps, plus an `⚡ Generated by SideQuest AI` disclaimer and *"Mengisi Celah"* chips.
+- The current user's existing connection status to each candidate is reflected on the card.
+
+**C2 (P0) — Send and auto-reciprocate connection requests.** *As a student, I want to connect with a candidate, so that we can collaborate.* (`POST /api/matchmaking/connect`)
+- **Given** no prior relation, a `pending` connection + a notification to the receiver are created.
+- **Given** the receiver had already sent *me* a request, the system **auto-accepts** (status → `accepted`) and notifies both — no double-handshake needed.
+- A `UNIQUE(sender_id, receiver_id)` constraint prevents duplicate requests.
+
+**C3 (P0) — Respond to a connection from notifications.** *As a student, I want to accept/reject a request from the notification panel, so that I manage my network inline.* (`PATCH /api/connections/:id`)
+- On response, the connection status updates, the notification disappears, and the unread badge decrements (per the §6 sequence flow).
+
+### Epic D — Team Recruitment (ATS)
+
+**D1 (P0) — Create a recruiting team.** *As an owner, I want to post a team with description, max members, target competition, contact link, and required skills, so that specialists can find me.* (`POST /api/teams`)
+
+**D2 (P0) — Apply to a team.** *As a soloist, I want to apply to an open team, so that I can join.* (`POST /api/teams/:id/apply`)
+
+**D3 (P0) — Approve/reject applicants (ATS).** *As an owner, I want to review portfolios and approve/reject applicants in real time, so that I build the right roster.* (`POST /api/teams/:id/respond`)
+- Approving adds the user to `team_members` (role `member`) and notifies them; rejecting closes the application.
+
+**D4 (P1) — Invite a candidate directly.** *As an owner, I want to invite a specific candidate, so that I can proactively recruit.* (`POST /api/teams/:id/invite`, response via `POST /:id/respond-invite`)
+
+**D5 (P1) — Browse teammate candidates & my teams.** (`GET /api/teams/candidates`, `GET /api/teams/me`, `GET /api/teams/:id`, `PUT /api/teams/:id`)
+- The public team list (`GET /api/teams`) uses **optional auth** so logged-in users get connection-priority sorting.
+
+### Epic E — Notifications
+
+**E1 (P0) — See an accurate unread badge.** *As a user, I want a live unread count, so that I know when something needs me.* (`GET /api/notifications/unread-count`) — sums unread notifications, pending connections, and team joins.
+
+**E2 (P0) — Act on notifications.** *As a user, I want an actionable dropdown showing PENDING items that open the relevant profile/modal, so that I respond without leaving the page.* (`GET /api/notifications`, `PATCH /api/notifications/read-all`)
+
+### Epic F — SideKick AI Assistant
+
+**F1 (P1) — Ask SideKick in natural language.** *As a logged-in student, I want a chat assistant that finds competitions/teammates/answers FAQs, so that I get help without navigating menus.* (`POST /api/sidekick/chat`)
+- Intent is keyword-detected: competition search, teammate search (users ⨝ skills by skill/university), FAQ, or conversational fallback.
+- Structured results render as interactive rich cards (competition link, or teammate *"Hubungkan ✨"* that triggers a connection from chat).
+- Chat history persists in `localStorage` (`sq_sidekick_chat_history`) across page navigation.
+
+### Epic G — Profile & Portfolio
+
+**G1 (P1) — View and edit my profile.** *As a student, I want to maintain my portfolio, skills, achievements, and experience, so that I'm discoverable and credible.* (`GET /api/users/me`, `PUT /api/users/me`, also mounted at `/api/profile`)
+
+### Epic H — Premium Hosted-Event Suite (Organizer)
+
+> **Reverse-engineered from `premiumRoutes.js` / `premiumController.js` — substantially richer than §3 documents. This suite includes a full judging workflow not described elsewhere in this PRD.**
+
+**H1 (P1) — Configure a hosted event.** *As a premium organizer, I want event settings and custom registration fields, so that I tailor intake.* (`GET/POST /premium/organizer/settings/:compId`, `GET/POST /premium/organizer/fields/:compId`)
+
+**H2 (P1) — Collect & review submissions.** (`GET /premium/organizer/submissions/:compId`; participant side: `GET /premium/participant/fields/:compId`, `POST /premium/participant/submit/:compId`)
+
+**H3 (P1) — Manage judges and judging.** *As an organizer, I want to add judges who score submissions, so that I run fair evaluation.* (`GET/POST /premium/organizer/judges/:compId`)
+
+**H4 (P1) — Judge portal.** *As a judge, I want to log in, see assigned submissions, and grade them, so that I evaluate entries.* (`GET /premium/judge/auth`, `GET /premium/judge/submissions`, `POST /premium/judge/grade`; UI: `judge-portal.html`)
+- ⚠️ **Security note:** judge endpoints are **not** behind `authMiddleware` (token passed as a query param). See §13/§14.
+
+**H5 (P1) — View event analytics.** (`GET /premium/organizer/analytics/:compId`) — demographics, university representation, skill-gap and talent insights for registrants.
+
+### Epic I — Sponsorship & Targeted Ads
+
+**I1 (P1) — Create and manage ad campaigns (sponsor).** (`POST /api/sponsor/ads`, `GET /api/sponsor/ads`) — title, target URL, banner, target page keys, date range; cost computed from date-effective pricing.
+
+**I2 (P1) — Serve and measure targeted banners (student-facing).** (`GET /api/sponsor/active-ads`, `POST /api/sponsor/ads/impression`, `POST /api/sponsor/ads/:id/click`)
+- Active campaigns rotate across 4 student pages with impression/click tracking; **falls back to a SideKick promo card** when no campaign is active.
+
+**I3 (P1) — Invite sponsors & audit costs (staff).** (`POST /api/admin/invite-sponsor`, `GET /api/admin/sponsorships`, `PATCH /sponsorships/:id/toggle`, `PATCH /sponsorships/:id/cost`, `POST /api/admin/sponsorship-pricing`, `GET /sponsorships/:id/logs`)
+- A cost adjustment requires a mandatory reason and writes an immutable row to `sponsorship_cost_logs`.
+
+### Epic J — Platform Governance (Staff)
+
+**J1 (P0) — Ban/restore any account, team, or competition.** (`PATCH /api/admin/toggle/:type/:id`) — flips `is_active`; banned users get `403` at login and on every guarded endpoint.
+
+**J2 (P1) — Simulated competition scraping.** (`POST /api/admin/scrape`) — pre-fills a competition draft from a URL via a retro terminal log; saves to DB. (Simulation, not a real crawler.)
+
+**J3 (P1) — View platform KPIs.** (`GET /api/admin/stats`, `GET /api/admin/data`) — user/competition/team counts and active sponsor listings.
+
+**J4 (P1) — Superadmin: toggle staff, feature flags, maintenance.** (`PATCH /api/admin/super/moderator/:id/toggle`, `PATCH /super/features`, `PATCH /super/maintenance`)
+- Feature flags in `platform_settings`: `feature_competitions`, `feature_teams`, `feature_matchmaking`, `feature_connections`, `feature_premium_organizer`, plus `maintenance_mode`.
+- **Given** `maintenance_mode='true'`, regular users are routed to `maintenance.html`; staff bypass it (enforced by `checkPlatformStatus` middleware).
+
+---
+
+## 11. Non-Functional Requirements (NFRs)
+
+> The original PRD specifies functional behavior thoroughly but no quality attributes. These NFRs are **PM/architect recommendations**; items marked *aspirational* are not yet implemented and are flagged so reviewers don't assume coverage.
+
+### 11.1. Performance & Scalability
+- **API latency:** p95 < 500 ms for CRUD/list endpoints; < 1 s for `GET /api/matchmaking` (multi-table join + scoring). *Aspirational — not currently measured.*
+- **Concurrency:** PostgreSQL access is pooled (`pg.Pool`). Pool sizing and connection limits must be tuned to the Supabase plan; the app connects via the Supabase **pooler** (port 6543) in production.
+- **Payload discipline:** list endpoints should paginate before catalogs exceed ~1k rows (currently unpaginated — acceptable at seed scale, a known scaling cliff).
+
+### 11.2. Availability & Reliability
+- **Uptime target:** ≥ 99.5% for the backend (Render) and DB (Supabase). *No uptime monitoring/alerting configured yet — recommended.*
+- **Graceful degradation:** the ad widget already degrades to a promo card on no-campaign/error; the same defensive default should apply anywhere external data may be empty.
+
+### 11.3. Security & Privacy
+- **AuthN:** stateless JWT (HS256), 1-day expiry; passwords hashed with bcrypt (cost 10).
+- **AuthZ:** `authMiddleware` guards protected routes; `adminMiddleware` enforces `isModeratorOrAdmin` / `isSuperadmin`; banned accounts (`is_active=false`) are rejected.
+- **Known gaps (must-fix before scale):**
+  - **No token refresh endpoint** exists, yet the frontend calls `/api/auth/refresh` (§14). Sessions hard-expire at 24h.
+  - **Judge endpoints bypass `authMiddleware`** and accept a token via query string (§10 H4) — a privilege/exposure risk.
+  - `JWT_SECRET` falls back to a hardcoded default string when unset — production must set a strong secret.
+  - **No rate limiting** on auth or write endpoints (brute-force / abuse exposure).
+  - **No CSRF/origin restriction**; CORS is wide-open (`app.use(cors())`).
+- **Compliance:** the product serves Indonesian students; the governing regime is **UU PDP (UU No. 27/2022, Pelindungan Data Pribadi)**, *not* GDPR as §4.1 currently implies. Privacy Policy and data-retention/erasure handling should be written to UU PDP.
+
+### 11.4. Accessibility & UX Quality
+- Target **WCAG 2.1 AA** for the student-facing flows (color contrast on the glassmorphic UI is a known risk area). *Aspirational — not audited.*
+- **Responsive web** is the only supported surface; define a browser support matrix (recommend: latest 2 versions of Chrome, Safari, Edge, Firefox; iOS/Android mobile web).
+
+### 11.5. Internationalization
+- The product is **bilingual (Bahasa Indonesia primary, English secondary)** — this PRD itself ships in both (`prd_sidequest.md`, `prd_sidequest_id.md`). UI copy is currently ID-first; treat ID as the source language.
+
+### 11.6. Maintainability & Operability
+- **Config:** all secrets via environment (`DATABASE_URL`, `JWT_SECRET`, `PORT`); `.env` is gitignored.
+- **Observability:** structured logging and error tracking are *not* yet in place — recommended before public launch.
+- **Migrations:** schema changes are applied via standalone `run_*_migrations.js` scripts. These do **not** run automatically on deploy and must be executed manually against production (operational footgun — see §13).
+
+---
+
+## 12. Assumptions, Dependencies & Constraints
+
+### 12.1. Assumptions
+- Students predominantly register with valid (ideally `.ac.id`) university emails; identity trust leans on this.
+- Organizers are willing to migrate listing + roster management into SideQuest rather than spreadsheets/Google Forms.
+- Deterministic scoring is "good enough" matchmaking quality to drive connections at launch scale.
+- Demand is concentrated in Indonesian university competition cycles (seasonal peaks around major competitions).
+
+### 12.2. External Dependencies
+| Dependency | Role | Risk if it fails |
+| :--- | :--- | :--- |
+| **Supabase** (PostgreSQL 17) | Production database (pooler:6543) | Total outage — no read/write |
+| **Render** | Backend API host (`sidequest-backend-3930.onrender.com`) | API down; free-tier cold starts add latency |
+| **Vercel** | Frontend hosting (auto-deploy on push) | Static site unavailable |
+| **npm packages** | `express, pg, jsonwebtoken, bcryptjs, cors, dotenv` (lean, low supply-chain surface) | Standard dependency risk |
+
+### 12.3. Constraints
+- **No external AI/LLM spend** — intelligence must remain deterministic/in-house (cost & predictability constraint, by design).
+- **Small operating team** — governance tooling must let a handful of staff run the platform.
+- **Email/payments simulated** — real delivery/charging are out of scope until thresholds (§9.3).
+- **Frontend is framework-less** ES-module vanilla JS — favors zero build step and portability over rich component ergonomics.
+
+---
+
+## 13. Risks & Mitigations
+
+| # | Risk | Likelihood | Impact | Mitigation |
+| :-- | :--- | :--- | :--- | :--- |
+| R1 | **Cold-start / liquidity** — a two-sided market is useless until both sides are dense. Empty matchmaking kills retention. | High | Critical | Seed supply (organizers + listings) first; concentrate launch on 1–2 campuses to reach local density; rich seed data already exists for demos. |
+| R2 | **Trust failure** — unverified skills let bad actors misrepresent themselves. | Med | High | Verified Talent Badge (§7.2); portfolio review; report/ban tooling (already built). |
+| R3 | **Security gaps** — no rate limiting, open CORS, judge auth bypass, default JWT secret, missing refresh endpoint. | Med | High | Treat §11.3 "known gaps" as a pre-launch hardening checklist; add rate limiting and lock CORS to known origins. |
+| R4 | **Manual migration footgun** — `run_*_migrations.js` run by hand against prod; easy to forget or misapply. | Med | High | Adopt a migration runner / checklist; gate deploys on migration status; never edit prod schema ad hoc. |
+| R5 | **Render free-tier cold starts** degrade first-request latency and demo credibility. | High | Med | Upgrade to a warm instance before launch/investor demos; add a keep-alive ping. |
+| R6 | **Matchmaking quality ceiling** — deterministic scoring may plateau in relevance as the pool grows. | Med | Med | Monitor avg. score served & acceptance rate (§9.4); keep the LLM swap as a documented future option. |
+| R7 | **Single shared GitHub token & exposed DB credentials** in tooling/remote URLs. | Med | High | Rotate the embedded GitHub PAT and Supabase password; move to per-developer credentials and secret management. |
+| R8 | **No analytics** — targets in §9.4 are unverifiable, so the team flies blind on product decisions. | High | Med | Ship the §15 instrumentation plan before declaring launch. |
+
+---
+
+## 14. Known Discrepancies & Open Questions
+
+### 14.1. Doc ↔ Code Discrepancies (found during reverse-engineering)
+1. **§5.3 schema is outdated.** The live `users` table has many more columns than shown (`is_verified, is_approved, verification_token, university_city, university_province, office_address, phone_number`, etc.). The PRD's SQL is illustrative, not current.
+2. **Premium suite is under-documented.** §3 mentions premium analytics in passing, but the code implements a full **hosted-event + custom-fields + submissions + judges + grading** workflow (Epic H). This PRD now documents it; the original §3 should eventually absorb it.
+3. **Refresh token is half-built.** Frontend (`api.js`) implements a 401→`/api/auth/refresh` retry flow, but **no `/auth/refresh` route exists** in the backend. Either build the endpoint or remove the client logic.
+4. **Compliance regime mismatch.** §4.1 cites "GDPR"; the correct regime for Indonesian users is **UU PDP**.
+5. **Feature-flag count.** §3.7 implies 3 module toggles; there are **6** keys in `platform_settings` (incl. `feature_connections`, `feature_premium_organizer`).
+
+### 14.2. Open Questions (need a decision owner)
+- **OQ1:** What is the real launch growth threshold for flipping on monetization — is §7.2's "10k MAU / 100 EO" firm, or a placeholder?
+- **OQ2:** Will email verification ship as *real* transactional email before public launch, or stay simulated for the first cohort?
+- **OQ3:** What are concrete prices/tiers for the four premium modules (§7.2 names them but sets no numbers)?
+- **OQ4:** Single-campus beachhead vs. national launch — which de-risks the cold-start problem (R1) best for our team size?
+- **OQ5:** Who owns the §11.3 security hardening, and is it a hard launch gate?
+
+---
+
+## 15. Analytics & Instrumentation Plan
+
+The GWA metrics (§7.1, §9.4) are only as real as the data pipeline behind them. Today, **no event tracking exists**; metrics are at best derivable by ad-hoc SQL. Recommended plan:
+
+1. **Event taxonomy** — instrument the core-loop events: `register`, `verify_email`, `login`, `competition_view`, `competition_register`, `matchmaking_view`, `connect_sent`, `connect_accepted`, `team_created`, `team_application`, `team_member_joined`, `sidekick_query` (with `resolved` boolean), `ad_impression`, `ad_click`.
+2. **Funnel definition** — the North Star funnel: `register → verify → competition_view → (matchmaking_view | team_view) → connect_sent → connect_accepted → team_member_joined → competition_register`. Measure drop-off at each step.
+3. **Aggregation surface** — extend the existing Superadmin admin dashboard (which already shows live counts) into a **GWA dashboard** that trends the §9.4 metrics over time, rather than point-in-time counts.
+4. **Operational telemetry** — add request-latency logging (Aware tier) and uptime monitoring/alerting on Render + Supabase.
+5. **Privacy** — analytics must respect UU PDP; avoid storing PII in event payloads; document retention.
+
+---
+
+## 16. Glossary
+
+| Term | Meaning |
+| :--- | :--- |
+| **GWA** | Growth · Watch · Aware — the three-tier metrics hierarchy used to monitor platform health (§7.1). |
+| **ATS** | Applicant Tracking System — the team-owner workflow to review and approve/reject applicants (Epic D). |
+| **SideKick** | The in-app deterministic AI assistant chatbot (`POST /api/sidekick/chat`, Epic F). |
+| **Mengisi Celah** | "Filling the gap" — UI chips marking a candidate's skills that fill the current user's skill gaps. |
+| **Peserta** | Student participant (`role='peserta'`). |
+| **Penyelenggara / EO** | Event Organizer (`role='organizer'`). |
+| **Soloist / Owner** | Student personas: a soloist seeks a team; an owner runs a recruiting team. |
+| **Hosted vs. Non-Hosted** | Whether competition registration happens inside SideQuest (hosted/`terpadu`) or redirects out (external/`eksternal`). |
+| **Synergy domain** | One of 5 major groupings (Tech, Design, Business, Science, Social) used by the matchmaking engine for cross-functional scoring. |
+| **Maintenance Mode** | A `platform_settings` flag that routes regular users to `maintenance.html` while staff bypass it. |
+| **UU PDP** | Indonesia's Personal Data Protection Law (UU No. 27/2022) — the governing privacy regime. |
+| **North Star** | Successful Team Formations — the single metric that best captures delivered product value (§9.4). |
