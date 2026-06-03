@@ -6,13 +6,16 @@ const { Pool } = require('pg');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'sidequest2',
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT, 10) || 5432,
-});
+// Use DATABASE_URL (e.g. Supabase production) when provided; else local Postgres.
+const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+  : new Pool({
+      user: process.env.DB_USER || 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      database: process.env.DB_NAME || 'sidequest2',
+      password: process.env.DB_PASSWORD,
+      port: parseInt(process.env.DB_PORT, 10) || 5432,
+    });
 
 async function runMigrations() {
   console.log('=== STARTING MATCHMAKING SCHEMA MIGRATIONS ===');

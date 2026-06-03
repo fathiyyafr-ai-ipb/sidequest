@@ -15,13 +15,17 @@
 const { Pool } = require('pg');
 const crypto = require('crypto');
 
-const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'sidequest2',
-  password: process.env.DB_PASSWORD || 'PIa1234!', // Local development postgres password
-  port: parseInt(process.env.DB_PORT, 10) || 5432,
-});
+// Use DATABASE_URL (e.g. Supabase production) when provided; otherwise fall
+// back to the local Postgres config. The whole seed runs in one transaction.
+const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+  : new Pool({
+      user: process.env.DB_USER || 'postgres',
+      host: process.env.DB_HOST || 'localhost',
+      database: process.env.DB_NAME || 'sidequest2',
+      password: process.env.DB_PASSWORD || 'PIa1234!', // Local development postgres password
+      port: parseInt(process.env.DB_PORT, 10) || 5432,
+    });
 
 const FIRST_NAMES = ['Aditya', 'Bagus', 'Candra', 'Daffa', 'Eka', 'Fajar', 'Gilang', 'Hendra', 'Indra', 'Joko', 'Kevin', 'Luthfi', 'Muhammad', 'Naufal', 'Oki', 'Pratama', 'Rian', 'Satria', 'Taufik', 'Utama', 'Wahyu', 'Yudi', 'Zacky', 'Annisa', 'Bella', 'Citra', 'Dian', 'Elsa', 'Fitri', 'Gita', 'Hesti', 'Indah', 'Jihan', 'Kartika', 'Laras', 'Mega', 'Nadia', 'Olivia', 'Putri', 'Qori', 'Rina', 'Siti', 'Tari', 'Ulfah', 'Vina', 'Wulan', 'Yulia', 'Zahra', 'Arif', 'Dewi', 'Hadi', 'Budi', 'Rahmat', 'Nur', 'Aulia', 'Farhan', 'Rizky', 'Tegar', 'Fadilah', 'Putu', 'Made', 'Nyoman', 'Ketut', 'Satria', 'Ari', 'Gusti', 'Anak', 'Agung', 'Cokorda', 'Ida', 'Raka'];
 const LAST_NAMES = ['Saputra', 'Wijaya', 'Santoso', 'Pratama', 'Hidayat', 'Kusuma', 'Putra', 'Setiawan', 'Wibowo', 'Nugroho', 'Gunawan', 'Suryadi', 'Budiman', 'Lestari', 'Putri', 'Sari', 'Indah', 'Rahmawati', 'Utami', 'Dewi', 'Fitriani', 'Wulandari', 'Kartika', 'Amalia', 'Siregar', 'Lubis', 'Nasution', 'Ginting', 'Sembiring', 'Harahap', 'Tanjung', 'Simanjuntak', 'Pangaribuan', 'Sinaga', 'Hasibuan', 'Manurung', 'Zulkarnain', 'Laksana', 'Hadi', 'Lazuardi', 'Pangestu', 'Suharto', 'Yudhoyono', 'Habibie', 'Megawati'];
@@ -622,13 +626,24 @@ async function seed() {
     await client.query('DELETE FROM sponsorship_cost_logs');
     await client.query('DELETE FROM sponsorships');
 
+    // 14 campaigns — one per sponsor account. Click counts give a realistic
+    // ~2–3% click-through rate (industry-credible, not inflated). `cost` is the
+    // campaign spend in IDR and varies with reach.
     const adCampaigns = [
-      { title: 'Gojek Tech Internship Challenge 2026 🚗', url: 'https://karir.gojek.com', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'matchmaking'], imp: 4890, clicks: 382 },
-      { title: 'Tokopedia Devcamp Hackathon — Daftar! 💻', url: 'https://tokopedia.com/devcamp', img: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=600&auto=format&fit=crop&q=80', pages: ['competitions', 'teams'], imp: 3950, clicks: 310 },
-      { title: 'Microsoft Imagine Cup 2026 — $100K! 🏆', url: 'https://imaginecup.microsoft.com', img: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'competitions'], imp: 6120, clicks: 565 },
-      { title: 'Traveloka Hackathon — Cari Solusi! ✈️', url: 'https://traveloka.com/career', img: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?w=600&auto=format&fit=crop&q=80', pages: ['matchmaking', 'teams'], imp: 2310, clicks: 180 },
-      { title: 'Grab Dev Challenge 2026 💚', url: 'https://grab.careers', img: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'competitions'], imp: 1950, clicks: 145 },
-      { title: 'Djarum Beasiswa Bulutangkis — Daftar! 🏸', url: 'https://djarumbeasiswabulutangkis.org', img: 'https://images.unsplash.com/photo-1521737711867-e3b90473bd58?w=600&auto=format&fit=crop&q=80', pages: ['teams', 'matchmaking'], imp: 1200, clicks: 92 }
+      { title: 'Gojek Tech Internship Challenge 2026 🚗', url: 'https://karir.gojek.com', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'matchmaking'], imp: 4890, clicks: 112, cost: 720000.00 },
+      { title: 'Tokopedia Devcamp Hackathon — Daftar! 💻', url: 'https://tokopedia.com/devcamp', img: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=600&auto=format&fit=crop&q=80', pages: ['competitions', 'teams'], imp: 3950, clicks: 99, cost: 600000.00 },
+      { title: 'Microsoft Imagine Cup 2026 — $100K! 🏆', url: 'https://imaginecup.microsoft.com', img: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'competitions'], imp: 6120, clicks: 165, cost: 950000.00 },
+      { title: 'Traveloka Hackathon — Cari Solusi! ✈️', url: 'https://traveloka.com/career', img: 'https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?w=600&auto=format&fit=crop&q=80', pages: ['matchmaking', 'teams'], imp: 2310, clicks: 48, cost: 380000.00 },
+      { title: 'Grab Dev Challenge 2026 💚', url: 'https://grab.careers', img: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'competitions'], imp: 1950, clicks: 45, cost: 350000.00 },
+      { title: 'Djarum Beasiswa Bulutangkis — Daftar! 🏸', url: 'https://djarumbeasiswabulutangkis.org', img: 'https://images.unsplash.com/photo-1521737711867-e3b90473bd58?w=600&auto=format&fit=crop&q=80', pages: ['teams', 'matchmaking'], imp: 1200, clicks: 22, cost: 250000.00 },
+      { title: 'Shopee Code League 2026 🛒', url: 'https://careers.shopee.co.id', img: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=600&auto=format&fit=crop&q=80', pages: ['competitions', 'dashboard'], imp: 5200, clicks: 140, cost: 800000.00 },
+      { title: 'BCA Finhacks 2026 — Fintech Hackathon 🏦', url: 'https://finhacks.id', img: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=600&auto=format&fit=crop&q=80', pages: ['competitions', 'matchmaking'], imp: 3100, clicks: 65, cost: 520000.00 },
+      { title: 'Telkom DigiUp Bootcamp 2026 📡', url: 'https://digiup.telkom.co.id', img: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&auto=format&fit=crop&q=80', pages: ['teams', 'dashboard'], imp: 2750, clicks: 80, cost: 470000.00 },
+      { title: 'AWS Cloud Student Challenge ☁️', url: 'https://aws.amazon.com/student', img: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'competitions'], imp: 4400, clicks: 106, cost: 680000.00 },
+      { title: 'GDSC Solution Challenge 2026 🌐', url: 'https://developers.google.com/community/gdsc-solution-challenge', img: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600&auto=format&fit=crop&q=80', pages: ['matchmaking', 'competitions'], imp: 3600, clicks: 97, cost: 560000.00 },
+      { title: 'Bukalapak Engineering Fellowship 🧑‍💻', url: 'https://careers.bukalapak.com', img: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&auto=format&fit=crop&q=80', pages: ['teams', 'matchmaking'], imp: 1850, clicks: 37, cost: 330000.00 },
+      { title: 'Dicoding Academy Scholarship 🎓', url: 'https://dicoding.com/scholarship', img: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=600&auto=format&fit=crop&q=80', pages: ['dashboard', 'teams'], imp: 2980, clicks: 84, cost: 490000.00 },
+      { title: 'Niagahoster Web Dev Contest 🌍', url: 'https://niagahoster.co.id/lomba', img: 'https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=600&auto=format&fit=crop&q=80', pages: ['competitions', 'teams'], imp: 1450, clicks: 28, cost: 290000.00 }
     ];
 
     let totalImp = 0;
@@ -637,10 +652,11 @@ async function seed() {
     for (let i = 0; i < adCampaigns.length; i++) {
       const camp = adCampaigns[i];
       const sponsor = allSponsors[i % allSponsors.length];
+      const oldCost = Math.round(camp.cost * 0.7);
 
       const spRes = await client.query(`
         INSERT INTO sponsorships (sponsor_id, title, target_url, image_url, pages, start_date, end_date, total_cost, impressions, clicks, is_active)
-        VALUES ($1, $2, $3, $4, $5, CURRENT_DATE - INTERVAL '30 days', CURRENT_DATE + INTERVAL '15 days', 650000.00, $6, $7, true)
+        VALUES ($1, $2, $3, $4, $5, CURRENT_DATE - INTERVAL '30 days', CURRENT_DATE + INTERVAL '15 days', $6, $7, $8, true)
         RETURNING id
       `, [
         sponsor.id,
@@ -648,20 +664,22 @@ async function seed() {
         camp.url,
         camp.img,
         camp.pages,
+        camp.cost,
         camp.imp,
         camp.clicks
       ]);
       totalImp += camp.imp;
       totalClicks += camp.clicks;
 
-      // Seed cost log
+      // Seed a moderator cost-adjustment audit log per campaign.
       await client.query(`
         INSERT INTO sponsorship_cost_logs (sponsorship_id, modified_by, old_cost, new_cost, reason)
-        VALUES ($1, $2, 450000.00, 650000.00, 'Audit penyesuaian tarif halaman dashboard & matchmaking premium')
-      `, [spRes.rows[0].id, allStudents[0].id]);
+        VALUES ($1, $2, $3, $4, 'Audit penyesuaian tarif slot iklan sesuai jangkauan halaman premium')
+      `, [spRes.rows[0].id, allStudents[0].id, oldCost, camp.cost]);
     }
 
-    console.log(`   Seeded ${adCampaigns.length} campaigns. Total metrics: ${totalImp} impressions, ${totalClicks} clicks.`);
+    const ctr = totalImp > 0 ? ((totalClicks / totalImp) * 100).toFixed(2) : '0';
+    console.log(`   Seeded ${adCampaigns.length} campaigns. Total metrics: ${totalImp} impressions, ${totalClicks} clicks (CTR ${ctr}%).`);
 
     // ==========================================
     // 11. PLATFORM SETTINGS & AUTO VERIFY ALL
