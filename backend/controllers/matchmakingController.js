@@ -69,16 +69,39 @@ const getMatchmaking = async (req, res) => {
     const myGroup = getMajorGroup(myUserProdi);
     const filterSkill = req.query.skill;
 
+    // ── Bulk-load skills and connection statuses for ALL candidates up front.
+    // Previously this did 2 queries per candidate inside the loop (an N+1 that
+    // took ~28s for ~190 users); now it's 2 queries total.
+    const candidateIds = result.rows.map(r => r.id);
+    const skillsByUser = new Map();
+    if (candidateIds.length > 0) {
+      const allSkillsRes = await pool.query(
+        `SELECT us.user_id, s.name
+         FROM user_skills us JOIN skills s ON s.id = us.skill_id
+         WHERE us.user_id = ANY($1)`,
+        [candidateIds]
+      );
+      for (const r of allSkillsRes.rows) {
+        if (!skillsByUser.has(r.user_id)) skillsByUser.set(r.user_id, []);
+        skillsByUser.get(r.user_id).push(r.name);
+      }
+    }
+
+    const connByUser = new Map();
+    const allConnRes = await pool.query(
+      `SELECT sender_id, receiver_id, status
+       FROM connections
+       WHERE sender_id = $1 OR receiver_id = $1`,
+      [userId]
+    );
+    for (const conn of allConnRes.rows) {
+      const other = conn.sender_id === userId ? conn.receiver_id : conn.sender_id;
+      if (!connByUser.has(other)) connByUser.set(other, conn);
+    }
+
     for (const row of result.rows) {
-      // 3. Ambil skill untuk kandidat ini
-      const skillsRes = await pool.query(`
-        SELECT s.name 
-        FROM skills s 
-        JOIN user_skills us ON s.id = us.skill_id 
-        WHERE us.user_id = $1
-      `, [row.id]);
-      
-      const skills = skillsRes.rows.map(s => s.name);
+      // 3. Skill kandidat ini (dari bulk map, tanpa query per-baris)
+      const skills = skillsByUser.get(row.id) || [];
 
       // Cek filter chip
       if (filterSkill && filterSkill !== 'all') {
@@ -162,17 +185,10 @@ const getMatchmaking = async (req, res) => {
         complementarySkills: complementarySkills.slice(0, 3)
       };
 
-      // 5. Cek status koneksi antara user login dengan kandidat
-      const connRes = await pool.query(`
-        SELECT status, sender_id 
-        FROM connections 
-        WHERE (sender_id = $1 AND receiver_id = $2) 
-           OR (sender_id = $2 AND receiver_id = $1)
-      `, [userId, row.id]);
-
+      // 5. Status koneksi (dari bulk map, tanpa query per-baris)
       let connectionStatus = 'none'; // default
-      if (connRes.rows.length > 0) {
-        const conn = connRes.rows[0];
+      const conn = connByUser.get(row.id);
+      if (conn) {
         if (conn.status === 'accepted') {
           connectionStatus = 'connected';
         } else if (conn.status === 'pending') {

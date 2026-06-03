@@ -243,30 +243,28 @@ const getTeams = async (req, res) => {
 
     const result = await pool.query(query, values);
 
+    // Bulk-load joined members for ALL teams in one query (was 2 queries per
+    // team — an N+1 that took ~10s for 64 teams).
+    const teamIds = result.rows.map(r => r.id);
+    const membersByTeam = new Map();
+    if (teamIds.length > 0) {
+      const allMembersRes = await pool.query(
+        `SELECT tm.team_id, u.id, u.name, u.avatar_color
+         FROM team_members tm JOIN users u ON tm.user_id = u.id
+         WHERE tm.team_id = ANY($1) AND tm.status = 'joined'
+         ORDER BY tm.role DESC`,
+        [teamIds]
+      );
+      for (const m of allMembersRes.rows) {
+        if (!membersByTeam.has(m.team_id)) membersByTeam.set(m.team_id, []);
+        membersByTeam.get(m.team_id).push({ id: m.id, name: m.name, avatarColor: m.avatar_color || 'bg-primary' });
+      }
+    }
+
     const formattedTeams = [];
     for (const row of result.rows) {
-      // Hitung jumlah anggota dinamis yang joined
-      const membersCountRes = await pool.query(
-        `SELECT COUNT(*) FROM team_members WHERE team_id = $1 AND status = 'joined'`,
-        [row.id]
-      );
-      const membersCount = parseInt(membersCountRes.rows[0].count) || 0;
-
-      // Ambil nama dan warna avatar dari seluruh anggota tim yang tergabung
-      const membersRes = await pool.query(
-        `SELECT u.id, u.name, u.avatar_color
-         FROM team_members tm
-         JOIN users u ON tm.user_id = u.id
-         WHERE tm.team_id = $1 AND tm.status = 'joined'
-         ORDER BY tm.role DESC`,
-        [row.id]
-      );
-      
-      const membersList = membersRes.rows.map(m => ({
-        id: m.id,
-        name: m.name,
-        avatarColor: m.avatar_color || 'bg-primary'
-      }));
+      const membersList = membersByTeam.get(row.id) || [];
+      const membersCount = membersList.length;
 
       formattedTeams.push({
         id: row.id,
